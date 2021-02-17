@@ -18,16 +18,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/login", name="login")
-     */
-    public function login(): Response
-    {
-        return $this->render('home/login.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
-    }
-
+    
     /**
      * @Route("/register", name="register")
      */
@@ -49,7 +40,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/legalNotice", name="legalNotice")
+     * @Route("/legal-Notice", name="legalNotice")
      */
     public function legaleNotice(): Response
     {
@@ -70,12 +61,23 @@ class HomeController extends AbstractController
 
 
     /**
-     * @Route("/privacyPolicy", name="privacyPolicy")
+     * @Route("/privacy-Policy", name="privacyPolicy")
      */
     public function privacyPolicy(): Response
     {
 
         return $this->render('home/privacyPolicy.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
+
+    /**
+     * @Route("/who-are-we", name="whoAreWe")
+     */
+    public function who(): Response
+    {
+        return $this->render('home/whoAreWe.html.twig', [
             'controller_name' => 'HomeController',
         ]);
     }
