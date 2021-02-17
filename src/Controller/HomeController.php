@@ -37,4 +37,46 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
+
+    /**
+     * @Route("/cgu", name="cgu")
+     */
+    public function cgu(): Response
+    {
+        return $this->render('home/cgu.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
+    /**
+     * @Route("/legalNotice", name="legalNotice")
+     */
+    public function legaleNotice(): Response
+    {
+        return $this->render('home/legalNotice.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
+    /**
+     * @Route("/plan", name="plan")
+     */
+    public function plan(): Response
+    {
+        return $this->render('home/plan.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
+
+    /**
+     * @Route("/privacyPolicy", name="privacyPolicy")
+     */
+    public function privacyPolicy(): Response
+    {
+
+        return $this->render('home/privacyPolicy.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
 }
