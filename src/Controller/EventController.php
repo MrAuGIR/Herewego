@@ -16,12 +16,13 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/event/{category_slug}/{slug}", name="event_show")
+     * @Route("/event/{category_slug}/{event_slug}", name="event_show")
      */
-    public function show($slug)
+    public function show($category_slug, $event_slug)
     {
         return $this->render('event/show.html.twig', [
-            'slug' => $slug
+            'categorySlug' => $category_slug,
+            'eventSlug' => $event_slug,
         ]);
     }
 
@@ -67,12 +68,12 @@ class EventController extends AbstractController
     public function delete($id)
     {
         
+
+        dd($id);
         // traitement de la suppression
 
         // redirection
 
-        return $this->render('event/delete.html.twig', [
-            'id' => $id
-        ]);
+        // return $this->render('event/delete.html.twig');
     }
 }
