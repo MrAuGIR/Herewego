@@ -56,6 +56,7 @@ class EventController extends AbstractController
             throw $this->createNotFoundException("la catégorie demandée n'existe pas!");
         }
 
+        dump($category);
 
         return $this->render('event/category.html.twig', [
             'category' => $category

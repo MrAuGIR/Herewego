@@ -32,6 +32,11 @@ class Picture
      */
     private $orderPriority;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="pictures")
+     */
+    private $event;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +74,18 @@ class Picture
     public function setOrderPriority(int $orderPriority): self
     {
         $this->orderPriority = $orderPriority;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }

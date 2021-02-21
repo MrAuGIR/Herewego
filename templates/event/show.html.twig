@@ -24,5 +24,8 @@
         {% if event.category %}
             <p>{{ event.category.name }}</p>
         {% endif %}
+        {% for picture in event.pictures %}
+            <img src="{{ picture.path }}" alt="">
+        {% endfor %}
     </div>  
 {% endblock %}
