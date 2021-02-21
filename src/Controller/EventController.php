@@ -2,9 +2,19 @@
 
 namespace App\Controller;
 
+use DateTime;
+use App\Entity\Event;
+use App\Form\EventType;
+use App\Entity\SocialNetwork;
 use App\Repository\EventRepository;
+use App\Entity\EventSocialNetworkLink;
 use App\Repository\CategoryRepository;
+use App\Repository\EventSocialNetworkLinkRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SocialNetworkRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EventController extends AbstractController
@@ -67,26 +77,79 @@ class EventController extends AbstractController
     /**
      * @Route("/organizer/create", name="event_create")
      */
-    public function create()
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, SocialNetworkRepository $socialNetworkRepository)
     {
-        // formualire de creation de l'event
+        $event = new Event;
 
-        // lorsque le formulaire est soumis, ou est ce redirigé ? à voir ?
+        $form = $this->createForm(EventType::class, $event);
+        $form->handleRequest($request);
 
-        return $this->render('event/create.html.twig');
+        if($form->isSubmitted()) {
+            //event
+            $event->setSlug(strtolower($slugger->slug($event->getTitle())));
+            $event->setTag(strtoupper($slugger->slug($event->getTitle())));
+            $event->setCreatedAt(new DateTime());
+            $em->persist($event);
+
+            //gestion des url social network (pas réussi encore a l'utiliser avec le composant Form mais cela fonctionne comme cela au pire ) 
+            $facebook = $socialNetworkRepository->find(20);
+            $eventSocialNetworkLink = new EventSocialNetworkLink;
+            $eventSocialNetworkLink->setEvent($event)
+                ->setLink($request->request->get('facebook'))
+                ->setSocialNetwork($facebook);
+            $em->persist($eventSocialNetworkLink);
+
+
+            $em->flush();
+            return $this->redirectToRoute('home');
+        }
+
+        $formView = $form->createView();
+
+        return $this->render('event/create.html.twig', [
+            'formView' => $formView
+        ]);
     }
 
     /**
      * @Route("/organizer/update/{id}", name="event_update")
      */
-    public function update($id)
+    public function update($id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request, EntityManagerInterface $em, EventSocialNetworkLinkRepository $eventSocialNetworkLinkRepository)
     {
-        // formulaire pour update l'event avec l'{id}
+        
+        $event = $eventRepository->find($id);
 
-        // lorsque le formulaire est soumis, ou est ce redirigé ? à voir ?
+        if (!$event) {
+            throw $this->createNotFoundException("l'event demandé n'existe pas!");
+        }
+
+        $form = $this->createForm(EventType::class, $event);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()) {
+            $event->setSlug(strtolower($slugger->slug($event->getTitle())));
+            $event->setTag(strtoupper($slugger->slug($event->getTitle())));
+
+
+            $linkFacebook = $eventSocialNetworkLinkRepository->findOneBy([
+                'event' => $event->getId()
+            ]);
+            
+            $linkFacebook->setLink($request->request->get('facebook'));
+
+
+            $em->flush(); 
+
+            return $this->redirectToRoute('home');
+        }
+
+        $formView = $form->createView();
 
         return $this->render('event/update.html.twig', [
-            'id' => $id
+            'formView' => $formView,
+            'event' => $event
+
         ]);
     }
 

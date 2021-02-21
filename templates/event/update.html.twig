@@ -4,6 +4,21 @@
 
 
 {% block body %}
-    <p>Page affichant un formulaire permettant de modifier un event</p>
-    <p>id : {{ id }}</p>
+    <h2>Modification d'un Event</h2>
+    {{ form_start(formView) }}
+
+    {{ form_widget(formView) }}
+    
+    {{ form_errors(formView) }}
+
+        <input type="text" name="facebook" placeholder="link facebook">
+        <input type="text" name="twitter" placeholder="link twitter">
+        <input type="text" name="instagram" placeholder="link instagram">
+         
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i>
+            Modifier l'event
+        </button>
+            
+    {{ form_end(formView) }}
 {% endblock %}

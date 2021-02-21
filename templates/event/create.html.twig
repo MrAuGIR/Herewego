@@ -4,5 +4,22 @@
 
 
 {% block body %}
-    <p>Page affichant un formualire permettant de créer un event</p>
+    <h2>Creation d'un event</h2>
+
+    {{ form_start(formView) }}
+
+    {{ form_widget(formView) }}
+    
+    {{ form_errors(formView) }}
+
+        <input type="text" name="facebook" placeholder="link facebook">
+        <input type="text" name="twitter" placeholder="link twitter">
+        <input type="text" name="instagram" placeholder="link instagram">
+         
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i>
+            Créér l'event
+        </button>
+            
+    {{ form_end(formView) }}
 {% endblock %}
