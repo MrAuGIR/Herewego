@@ -8,6 +8,8 @@ use App\Entity\Event;
 use App\Entity\Picture;
 use App\Entity\Category;
 use App\Entity\EventGroup;
+use App\Entity\QuestionAdmin;
+use App\Entity\QuestionUser;
 use App\Entity\SocialNetwork;
 use App\Entity\Transport;
 use Doctrine\Persistence\ObjectManager;
@@ -101,6 +103,25 @@ class AppFixtures extends Fixture
                 ->setCommentary("comment $t-".$faker->text());
 
             $manager->persist($transport);
+        }
+
+        //question utilisateur
+        for($i=1; $i<= 20; $i++){
+            $questionUser = new QuestionUser();
+            $questionUser->setQuestion($faker->text(250))
+                ->setSubject($faker->text(99));
+
+            $manager->persist($questionUser);
+        }
+
+        //question administrateur
+        for($i=1; $i<=20; $i++){
+            $questionAdmin = new QuestionAdmin();
+            $questionAdmin->setQuestion($faker->text(255))
+                ->setAnswer($faker->text(255))
+                ->setImportance($faker->numberBetween(1,10));
+
+            $manager->persist($questionAdmin);
         }
 
         $manager->flush();
