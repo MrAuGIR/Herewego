@@ -77,6 +77,11 @@ class Event
      */
     private $eventGroup;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="events")
+     */
+    private $category;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -222,6 +227,18 @@ class Event
     public function setEventGroup(?EventGroup $eventGroup): self
     {
         $this->eventGroup = $eventGroup;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

@@ -21,6 +21,9 @@
         {% if event.eventGroup %}
             <p>{{ event.eventGroup.name }}</p>
         {% endif %}
+        {% if event.category %}
+            <p>{{ event.category.name }}</p>
+        {% endif %}
     </div>        
     {% endfor %}
 {% endblock %}

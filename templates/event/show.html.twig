@@ -18,5 +18,11 @@
         <p>{{ event.tag }}</p>
         <p>{{ event.slug }}</p>
         <p>{{ event.createdAt | date('Y-m-d') }} à {{ event.createdAt | date('H:i:s')}}</p>
+        {% if event.eventGroup %}
+            <p>{{ event.eventGroup.name }}</p>
+        {% endif %}
+        {% if event.category %}
+            <p>{{ event.category.name }}</p>
+        {% endif %}
     </div>  
 {% endblock %}

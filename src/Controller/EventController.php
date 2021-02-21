@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Repository\EventRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\CategoryRepository;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EventController extends AbstractController
 {
@@ -45,12 +46,22 @@ class EventController extends AbstractController
     /**
      * @Route("/event/{category_slug}", name="event_category")
      */
-    public function category($category_slug)
+    public function category($category_slug, CategoryRepository $categoryRepository)
     {
+        $category = $categoryRepository->findOneBy([
+            'slug' => $category_slug
+        ]);
+
+        if (!$category) {
+            throw $this->createNotFoundException("la catégorie demandée n'existe pas!");
+        }
+
+
         return $this->render('event/category.html.twig', [
-            'categorySlug' => $category_slug
+            'category' => $category
         ]);
     }
+
     
     /**
      * @Route("/organizer/create", name="event_create")

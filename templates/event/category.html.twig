@@ -1,10 +1,37 @@
 {% extends 'base.html.twig' %}
-{% block title %}Êvenements de la category {{ categorySlug }}{% endblock %}
-
+{% block title %}Êvenements de la category
+	{{ category.name }}
+{% endblock %}
 
 
 {% block body %}
-<p>Page affichant les êvenements de la categorie souhaitée</p>
-<p>category : {{ categorySlug }} </p>
-    
+	<p>Page affichant les êvenements de la categorie souhaitée</p>
+	{% for event in category.events %}
+		<div class="border">
+			<p>{{ event.title }}</p>
+			<p>{{ event.description }}</p>
+			<p>{{ event.startedAt | date('Y-m-d') }}
+				à
+				{{ event.startedAt | date('H:i:s')}}</p>
+			<p>{{ event.endedAt | date('Y-m-d') }}
+				à
+				{{ event.endedAt | date('H:i:s')}}</p>
+			<p>{{ event.email }}</p>
+			<p>{{ event.website }}</p>
+			<p>{{ event.phone }}</p>
+			<p>{{ event.countViews }}</p>
+			<p>{{ event.tag }}</p>
+			<p>{{ event.slug }}</p>
+			<p>{{ event.createdAt | date('Y-m-d') }}
+				à
+				{{ event.createdAt | date('H:i:s')}}</p>
+			{% if event.eventGroup %}
+				<p>{{ event.eventGroup.name }}</p>
+			{% endif %}
+			{% if event.category %}
+				<p>{{ event.category.name }}</p>
+			{% endif %}
+		</div>
+	{% endfor %}
+
 {% endblock %}
