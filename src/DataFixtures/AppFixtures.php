@@ -11,6 +11,7 @@ use App\Entity\EventGroup;
 use App\Entity\QuestionAdmin;
 use App\Entity\QuestionUser;
 use App\Entity\SocialNetwork;
+use App\Entity\Ticket;
 use App\Entity\Transport;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -122,6 +123,18 @@ class AppFixtures extends Fixture
                 ->setImportance($faker->numberBetween(1,10));
 
             $manager->persist($questionAdmin);
+        }
+
+        //tickets
+        for($i=1; $i<=20; $i++){
+            $ticket = new Ticket();
+            $ticket->setAskedAt($faker->dateTime())
+                ->setCountPlaces($faker->numberBetween(1,4))
+                ->setCommentary($faker->text(155))
+                ->setIsValidate($faker->boolean(40))
+                ->setValidateAt($faker->dateTime());
+
+            $manager->persist($ticket);
         }
 
         $manager->flush();
