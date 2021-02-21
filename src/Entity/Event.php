@@ -89,9 +89,15 @@ class Event
      */
     private $pictures;
 
+    /**
+     * @ORM\OneToMany(targetEntity=EventSocialNetworkLink::class, mappedBy="event")
+     */
+    private $EventSocialNetworkLinks;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
+        $this->EventSocialNetworkLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -279,6 +285,36 @@ class Event
             // set the owning side to null (unless already changed)
             if ($picture->getEvent() === $this) {
                 $picture->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|EventSocialNetworkLink[]
+     */
+    public function getEventSocialNetworkLinks(): Collection
+    {
+        return $this->EventSocialNetworkLinks;
+    }
+
+    public function addEventSocialNetworkLink(EventSocialNetworkLink $eventSocialNetworkLink): self
+    {
+        if (!$this->EventSocialNetworkLinks->contains($eventSocialNetworkLink)) {
+            $this->EventSocialNetworkLinks[] = $eventSocialNetworkLink;
+            $eventSocialNetworkLink->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEventSocialNetworkLink(EventSocialNetworkLink $eventSocialNetworkLink): self
+    {
+        if ($this->EventSocialNetworkLinks->removeElement($eventSocialNetworkLink)) {
+            // set the owning side to null (unless already changed)
+            if ($eventSocialNetworkLink->getEvent() === $this) {
+                $eventSocialNetworkLink->setEvent(null);
             }
         }
 

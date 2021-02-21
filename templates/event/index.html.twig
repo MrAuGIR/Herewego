@@ -27,6 +27,11 @@
         {% for picture in event.pictures %}
             <img src="{{ picture.path }}" alt="">
         {% endfor %}
+        {% for socialNetworkLink in event.EventSocialNetworkLinks %}
+            <p>{{ socialNetworkLink.link }}</p>
+            <p>{{ socialNetworkLink.socialNetwork.name }}</p>
+            <p>{{ socialNetworkLink.socialNetwork.pathLogo }}</p>            
+        {% endfor %}
     </div>        
     {% endfor %}
 {% endblock %}
