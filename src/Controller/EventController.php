@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\EventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -10,19 +11,34 @@ class EventController extends AbstractController
     /**
      * @Route("/event", name="event")
      */
-    public function index()
+    public function index(EventRepository $eventRepository)
     {
-        return $this->render('event/index.html.twig');
+        $events = $eventRepository->findAll();
+
+        dump($events);
+
+        return $this->render('event/index.html.twig', [
+            'events' => $events
+        ]);
     }
 
     /**
      * @Route("/event/{category_slug}/{event_slug}", name="event_show")
      */
-    public function show($category_slug, $event_slug)
+    public function show($event_slug, EventRepository $eventRepository)
     {
+        $event = $eventRepository->findOneBy([
+            'slug' => $event_slug
+        ]);
+
+        if (!$event) {
+            throw $this->createNotFoundException("l'event demandé n'existe pas!");
+        }
+
+        dump($event);
+
         return $this->render('event/show.html.twig', [
-            'categorySlug' => $category_slug,
-            'eventSlug' => $event_slug,
+            'event' => $event
         ]);
     }
 
