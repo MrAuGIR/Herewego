@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EventGroupRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,6 +28,16 @@ class EventGroup
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $pathImage;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="eventGroup")
+     */
+    private $Events;
+
+    public function __construct()
+    {
+        $this->Events = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -52,6 +64,36 @@ class EventGroup
     public function setPathImage(?string $pathImage): self
     {
         $this->pathImage = $pathImage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getEvents(): Collection
+    {
+        return $this->Events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->Events->contains($event)) {
+            $this->Events[] = $event;
+            $event->setEventGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->Events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getEventGroup() === $this) {
+                $event->setEventGroup(null);
+            }
+        }
 
         return $this;
     }

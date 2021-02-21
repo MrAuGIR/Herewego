@@ -51,7 +51,7 @@ class EventController extends AbstractController
             'categorySlug' => $category_slug
         ]);
     }
-
+    
     /**
      * @Route("/organizer/create", name="event_create")
      */

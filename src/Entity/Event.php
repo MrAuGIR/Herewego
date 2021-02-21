@@ -72,6 +72,11 @@ class Event
      */
     private $slug;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=EventGroup::class, inversedBy="Events")
+     */
+    private $eventGroup;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -205,6 +210,18 @@ class Event
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getEventGroup(): ?EventGroup
+    {
+        return $this->eventGroup;
+    }
+
+    public function setEventGroup(?EventGroup $eventGroup): self
+    {
+        $this->eventGroup = $eventGroup;
 
         return $this;
     }
