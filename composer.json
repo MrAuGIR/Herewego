@@ -71,6 +71,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "fakerphp/faker": "^1.13",
         "symfony/debug-bundle": "^5.2",
         "symfony/monolog-bundle": "^3.0",
         "symfony/stopwatch": "^5.2",
