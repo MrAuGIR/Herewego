@@ -2,6 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Category;
+use App\Entity\City;
+use App\Entity\Event;
+use App\Entity\EventGroup;
 use App\Entity\QuestionUser;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -35,6 +39,11 @@ class AdminController extends AbstractDashboardController
         return [ MenuItem::linktoDashboard('Dashboard', 'fa fa-home'),
             MenuItem::section('Users'),
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
+            MenuItem::linkToCrud('Villes','fa fa-city', City::class),
+            MenuItem::section('Event'),
+            MenuItem::linkToCrud('Event', 'fas fa-calendar-week', Event::class),
+            MenuItem::linkToCrud('Catégorie', 'fas fa-layer-group', Category::class),
+            MenuItem::linkToCrud('Groupe event', 'fas fa-object-group', EventGroup::class),
             MenuItem::section('FAQ'),
             MenuItem::linkToCrud('Question utilisateurs', 'fa fa-question', QuestionUser::class),
             MenuItem::linkToCrud('Question Administrateur', 'fa fa-reply', QuestionAdmin::class),
