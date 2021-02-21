@@ -106,14 +106,7 @@ class AppFixtures extends Fixture
             $manager->persist($transport);
         }
 
-        //question utilisateur
-        for($i=1; $i<= 20; $i++){
-            $questionUser = new QuestionUser();
-            $questionUser->setQuestion($faker->text(250))
-                ->setSubject($faker->text(99));
-
-            $manager->persist($questionUser);
-        }
+        
 
         //question administrateur
         for($i=1; $i<=20; $i++){
@@ -126,6 +119,7 @@ class AppFixtures extends Fixture
         }
 
         //tickets
+        /*
         for($i=1; $i<=20; $i++){
             $ticket = new Ticket();
             $ticket->setAskedAt($faker->dateTime())
@@ -135,7 +129,7 @@ class AppFixtures extends Fixture
                 ->setValidateAt($faker->dateTime());
 
             $manager->persist($ticket);
-        }
+        }*/
 
         $manager->flush();
     }
