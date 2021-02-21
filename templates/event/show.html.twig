@@ -32,5 +32,10 @@
             <p>{{ socialNetworkLink.socialNetwork.name }}</p>
             <p>{{ socialNetworkLink.socialNetwork.pathLogo }}</p>            
         {% endfor %}
+        <div class="bg-primary">        
+            {% for transport in event.transports %}
+                <p>id : {{ transport.id }}</p>
+            {% endfor %}
+        </div>
     </div>  
 {% endblock %}

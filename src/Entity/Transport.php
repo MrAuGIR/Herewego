@@ -62,6 +62,11 @@ class Transport
      */
     private $createdAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="transports")
+     */
+    private $event;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -171,6 +176,18 @@ class Transport
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }

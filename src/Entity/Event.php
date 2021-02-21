@@ -94,10 +94,16 @@ class Event
      */
     private $EventSocialNetworkLinks;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="event")
+     */
+    private $transports;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
         $this->EventSocialNetworkLinks = new ArrayCollection();
+        $this->transports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -315,6 +321,36 @@ class Event
             // set the owning side to null (unless already changed)
             if ($eventSocialNetworkLink->getEvent() === $this) {
                 $eventSocialNetworkLink->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transport[]
+     */
+    public function getTransports(): Collection
+    {
+        return $this->transports;
+    }
+
+    public function addTransport(Transport $transport): self
+    {
+        if (!$this->transports->contains($transport)) {
+            $this->transports[] = $transport;
+            $transport->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransport(Transport $transport): self
+    {
+        if ($this->transports->removeElement($transport)) {
+            // set the owning side to null (unless already changed)
+            if ($transport->getEvent() === $this) {
+                $transport->setEvent(null);
             }
         }
 
