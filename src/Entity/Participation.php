@@ -22,6 +22,12 @@ class Participation
      */
     private $addedAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="participations")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +41,18 @@ class Participation
     public function setAddedAt(\DateTimeInterface $addedAt): self
     {
         $this->addedAt = $addedAt;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

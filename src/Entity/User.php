@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -88,6 +90,33 @@ class User implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $isPremium;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="users")
+     */
+    private $localisation;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="user")
+     */
+    private $tickets;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="user")
+     */
+    private $participations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=QuestionUser::class, mappedBy="user")
+     */
+    private $questionUsers;
+
+    public function __construct()
+    {
+        $this->tickets = new ArrayCollection();
+        $this->participations = new ArrayCollection();
+        $this->questionUsers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -298,6 +327,108 @@ class User implements UserInterface
     public function setIsPremium(bool $isPremium): self
     {
         $this->isPremium = $isPremium;
+
+        return $this;
+    }
+
+    public function getLocalisation(): ?Localisation
+    {
+        return $this->localisation;
+    }
+
+    public function setLocalisation(?Localisation $localisation): self
+    {
+        $this->localisation = $localisation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ticket[]
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): self
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets[] = $ticket;
+            $ticket->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): self
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getUser() === $this) {
+                $ticket->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Participation[]
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): self
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations[] = $participation;
+            $participation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): self
+    {
+        if ($this->participations->removeElement($participation)) {
+            // set the owning side to null (unless already changed)
+            if ($participation->getUser() === $this) {
+                $participation->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|QuestionUser[]
+     */
+    public function getQuestionUsers(): Collection
+    {
+        return $this->questionUsers;
+    }
+
+    public function addQuestionUser(QuestionUser $questionUser): self
+    {
+        if (!$this->questionUsers->contains($questionUser)) {
+            $this->questionUsers[] = $questionUser;
+            $questionUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuestionUser(QuestionUser $questionUser): self
+    {
+        if ($this->questionUsers->removeElement($questionUser)) {
+            // set the owning side to null (unless already changed)
+            if ($questionUser->getUser() === $this) {
+                $questionUser->setUser(null);
+            }
+        }
 
         return $this;
     }

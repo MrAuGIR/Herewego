@@ -27,6 +27,12 @@ class QuestionUser
      */
     private $subject;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="questionUsers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +58,18 @@ class QuestionUser
     public function setSubject(?string $subject): self
     {
         $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

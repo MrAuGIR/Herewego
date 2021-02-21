@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,6 +28,16 @@ class City
      * @ORM\Column(type="string", length=50)
      */
     private $cityCp;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Localisation::class, mappedBy="city")
+     */
+    private $localisations;
+
+    public function __construct()
+    {
+        $this->localisations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -52,6 +64,36 @@ class City
     public function setCityCp(string $cityCp): self
     {
         $this->cityCp = $cityCp;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Localisation[]
+     */
+    public function getLocalisations(): Collection
+    {
+        return $this->localisations;
+    }
+
+    public function addLocalisation(Localisation $localisation): self
+    {
+        if (!$this->localisations->contains($localisation)) {
+            $this->localisations[] = $localisation;
+            $localisation->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLocalisation(Localisation $localisation): self
+    {
+        if ($this->localisations->removeElement($localisation)) {
+            // set the owning side to null (unless already changed)
+            if ($localisation->getCity() === $this) {
+                $localisation->setCity(null);
+            }
+        }
 
         return $this;
     }
