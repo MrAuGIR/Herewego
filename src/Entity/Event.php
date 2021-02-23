@@ -99,11 +99,22 @@ class Event
      */
     private $transports;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="event")
+     */
+    private $participations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="events")
+     */
+    private $localisation;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
         $this->EventSocialNetworkLinks = new ArrayCollection();
         $this->transports = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -353,6 +364,48 @@ class Event
                 $transport->setEvent(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Participation[]
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): self
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations[] = $participation;
+            $participation->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): self
+    {
+        if ($this->participations->removeElement($participation)) {
+            // set the owning side to null (unless already changed)
+            if ($participation->getEvent() === $this) {
+                $participation->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLocalisation(): ?Localisation
+    {
+        return $this->localisation;
+    }
+
+    public function setLocalisation(?Localisation $localisation): self
+    {
+        $this->localisation = $localisation;
 
         return $this;
     }

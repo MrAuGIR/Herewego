@@ -53,6 +53,11 @@ class Ticket
      */
     private $user;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Transport::class, inversedBy="tickets")
+     */
+    private $transport;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -138,6 +143,18 @@ class Ticket
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTransport(): ?Transport
+    {
+        return $this->transport;
+    }
+
+    public function setTransport(?Transport $transport): self
+    {
+        $this->transport = $transport;
 
         return $this;
     }

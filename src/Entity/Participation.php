@@ -28,6 +28,11 @@ class Participation
      */
     private $user;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="participations")
+     */
+    private $event;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +58,18 @@ class Participation
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }

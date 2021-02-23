@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TransportRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -66,6 +68,26 @@ class Transport
      * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="transports")
      */
     private $event;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="transport")
+     */
+    private $tickets;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="transports")
+     */
+    private $localisation_start;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="transports")
+     */
+    private $localisation_return;
+
+    public function __construct()
+    {
+        $this->tickets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -188,6 +210,60 @@ class Transport
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ticket[]
+     */
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): self
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets[] = $ticket;
+            $ticket->setTransport($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): self
+    {
+        if ($this->tickets->removeElement($ticket)) {
+            // set the owning side to null (unless already changed)
+            if ($ticket->getTransport() === $this) {
+                $ticket->setTransport(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLocalisationStart(): ?Localisation
+    {
+        return $this->localisation_start;
+    }
+
+    public function setLocalisationStart(?Localisation $localisation_start): self
+    {
+        $this->localisation_start = $localisation_start;
+
+        return $this;
+    }
+
+    public function getLocalisationReturn(): ?Localisation
+    {
+        return $this->localisation_return;
+    }
+
+    public function setLocalisationReturn(?Localisation $localisation_return): self
+    {
+        $this->localisation_return = $localisation_return;
 
         return $this;
     }

@@ -40,9 +40,21 @@ class Localisation
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="localisation")
+     */
+    private $events;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="localisation_start")
+     */
+    private $transports;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->events = new ArrayCollection();
+        $this->transports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,6 +122,66 @@ class Localisation
             // set the owning side to null (unless already changed)
             if ($user->getLocalisation() === $this) {
                 $user->setLocalisation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setLocalisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getLocalisation() === $this) {
+                $event->setLocalisation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transport[]
+     */
+    public function getTransports(): Collection
+    {
+        return $this->transports;
+    }
+
+    public function addTransport(Transport $transport): self
+    {
+        if (!$this->transports->contains($transport)) {
+            $this->transports[] = $transport;
+            $transport->setLocalisationStart($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransport(Transport $transport): self
+    {
+        if ($this->transports->removeElement($transport)) {
+            // set the owning side to null (unless already changed)
+            if ($transport->getLocalisationStart() === $this) {
+                $transport->setLocalisationStart(null);
             }
         }
 
