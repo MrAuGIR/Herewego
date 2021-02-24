@@ -82,6 +82,37 @@ class EventType extends AbstractType
                 },
                 'required' => false
             ])
+            ->add('facebookLink', UrlType::class, [
+                'label' => "Lien Facebook",
+                'attr' => [
+                    'placeholder' => "Tapez un lien facebook"
+                ],
+                'required' => false
+            ])
+            ->add('instagramLink', UrlType::class, [
+                'label' => "Lien Instagram",
+                'attr' => [
+                    'placeholder' => "Tapez un lien instagram"
+                ],
+                'required' => false
+            ])
+            ->add('twitterLink', UrlType::class, [
+                'label' => "Lien Twitter",
+                'attr' => [
+                    'placeholder' => "Tapez un lien Twitter"
+                ],
+                'required' => false
+            ])
+            ->add('localisation', EntityType::class, [
+                'label' => "Groupe d'évênements",
+                'placeholder' => "-- Choisir une groupe d'évênements --",
+                'class' => EventGroup::class,
+                'choice_label' => function (EventGroup $eventGroup) {
+                    return strtoupper($eventGroup->getName());
+                },
+                'required' => false
+            ])
+            
             ;
     }
 
