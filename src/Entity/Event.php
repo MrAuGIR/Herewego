@@ -89,11 +89,7 @@ class Event
      */
     private $pictures;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EventSocialNetworkLink::class, mappedBy="event")
-     */
-    private $EventSocialNetworkLinks;
-
+   
     /**
      * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="event")
      */
@@ -109,10 +105,24 @@ class Event
      */
     private $localisation;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $facebookLink;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $instagramLink;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterLink;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
-        $this->EventSocialNetworkLinks = new ArrayCollection();
         $this->transports = new ArrayCollection();
         $this->participations = new ArrayCollection();
     }
@@ -308,35 +318,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection|EventSocialNetworkLink[]
-     */
-    public function getEventSocialNetworkLinks(): Collection
-    {
-        return $this->EventSocialNetworkLinks;
-    }
-
-    public function addEventSocialNetworkLink(EventSocialNetworkLink $eventSocialNetworkLink): self
-    {
-        if (!$this->EventSocialNetworkLinks->contains($eventSocialNetworkLink)) {
-            $this->EventSocialNetworkLinks[] = $eventSocialNetworkLink;
-            $eventSocialNetworkLink->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEventSocialNetworkLink(EventSocialNetworkLink $eventSocialNetworkLink): self
-    {
-        if ($this->EventSocialNetworkLinks->removeElement($eventSocialNetworkLink)) {
-            // set the owning side to null (unless already changed)
-            if ($eventSocialNetworkLink->getEvent() === $this) {
-                $eventSocialNetworkLink->setEvent(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|Transport[]
@@ -406,6 +387,42 @@ class Event
     public function setLocalisation(?Localisation $localisation): self
     {
         $this->localisation = $localisation;
+
+        return $this;
+    }
+
+    public function getFacebookLink(): ?string
+    {
+        return $this->facebookLink;
+    }
+
+    public function setFacebookLink(?string $facebookLink): self
+    {
+        $this->facebookLink = $facebookLink;
+
+        return $this;
+    }
+
+    public function getInstagramLink(): ?string
+    {
+        return $this->instagramLink;
+    }
+
+    public function setInstagramLink(?string $instagramLink): self
+    {
+        $this->instagramLink = $instagramLink;
+
+        return $this;
+    }
+
+    public function getTwitterLink(): ?string
+    {
+        return $this->twitterLink;
+    }
+
+    public function setTwitterLink(?string $twitterLink): self
+    {
+        $this->twitterLink = $twitterLink;
 
         return $this;
     }

@@ -5,13 +5,9 @@ namespace App\Controller;
 use DateTime;
 use App\Entity\Event;
 use App\Form\EventType;
-use App\Entity\SocialNetwork;
 use App\Repository\EventRepository;
-use App\Entity\EventSocialNetworkLink;
 use App\Repository\CategoryRepository;
-use App\Repository\EventSocialNetworkLinkRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\SocialNetworkRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -73,32 +69,21 @@ class EventController extends AbstractController
         ]);
     }
 
-    
     /**
      * @Route("/organizer/create", name="event_create")
      */
-    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, SocialNetworkRepository $socialNetworkRepository)
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {
         $event = new Event;
 
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
-            //event
+        if ($form->isSubmitted()) {
             $event->setSlug(strtolower($slugger->slug($event->getTitle())));
             $event->setTag(strtoupper($slugger->slug($event->getTitle())));
             $event->setCreatedAt(new DateTime());
             $em->persist($event);
-
-            //gestion des url social network (pas réussi encore a l'utiliser avec le composant Form mais cela fonctionne comme cela au pire ) 
-            $facebook = $socialNetworkRepository->find(20);
-            $eventSocialNetworkLink = new EventSocialNetworkLink;
-            $eventSocialNetworkLink->setEvent($event)
-                ->setLink($request->request->get('facebook'))
-                ->setSocialNetwork($facebook);
-            $em->persist($eventSocialNetworkLink);
-
 
             $em->flush();
             return $this->redirectToRoute('home');
@@ -114,9 +99,9 @@ class EventController extends AbstractController
     /**
      * @Route("/organizer/update/{id}", name="event_update")
      */
-    public function update($id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request, EntityManagerInterface $em, EventSocialNetworkLinkRepository $eventSocialNetworkLinkRepository)
+    public function update($id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request, EntityManagerInterface $em)
     {
-        
+
         $event = $eventRepository->find($id);
 
         if (!$event) {
@@ -127,19 +112,11 @@ class EventController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
+        if ($form->isSubmitted()) {
             $event->setSlug(strtolower($slugger->slug($event->getTitle())));
             $event->setTag(strtoupper($slugger->slug($event->getTitle())));
 
-
-            $linkFacebook = $eventSocialNetworkLinkRepository->findOneBy([
-                'event' => $event->getId()
-            ]);
-            
-            $linkFacebook->setLink($request->request->get('facebook'));
-
-
-            $em->flush(); 
+            $em->flush();
 
             return $this->redirectToRoute('home');
         }
@@ -158,7 +135,7 @@ class EventController extends AbstractController
      */
     public function delete($id)
     {
-        
+
 
         dd($id);
         // traitement de la suppression
