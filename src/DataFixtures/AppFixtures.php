@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 
 use Faker\Factory;
+use App\Entity\City;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Ticket;
@@ -12,11 +13,13 @@ use App\Entity\Category;
 use App\Entity\Transport;
 use App\Entity\EventGroup;
 use App\Entity\Localisation;
-use App\Entity\City;
+use App\Entity\Participation;
 use App\Entity\QuestionUser;
 use App\Entity\QuestionAdmin;
 use App\Entity\SocialNetwork;
 use App\Repository\CityRepository;
+use Bezhanov\Faker\Provider\Commerce;
+use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -27,22 +30,20 @@ class AppFixtures extends Fixture
     
     private $slugger;
     private $passwordEncoder;
-    protected $cityRepository;
 
     public function __construct(SluggerInterface $slugger, UserPasswordEncoderInterface $passwordEncoder, CityRepository $cityRepository)
     {
         $this->slugger = $slugger;
         $this->passwordEncoder = $passwordEncoder;
-        $this->cityRepository = $cityRepository;
     }
 
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('fr_FR');
+        $faker->addProvider(new \Bezhanov\Faker\Provider\Commerce($faker));
+        $faker->addProvider(new \Bluemmb\Faker\PicsumPhotosProvider($faker));
 
-        
-        for($i=0; $i<30; $i++){
-            
+        function makeLocalisation($faker, $manager) {
             $city = new City();
             $city->setCityName($faker->city())
             ->setCityCp($faker->numberBetween(10000, 90000));
@@ -51,159 +52,192 @@ class AppFixtures extends Fixture
             $localisation = new Localisation();
             $localisation->setAdress($faker->address())
                 ->setCity($city);
-
             $manager->persist($localisation);
+            return $localisation;
+        }
+    
+
+        $admin = new User();
+        $localisation = makeLocalisation($faker, $manager);
+
+        $admin->setLastname('Mine')
+            ->setFirstname('Johnad')
+            ->setCompanyName('herewego')
+            ->setEmail('admin@hwg.com')
+            ->setPhone('0836656565')
+            ->setIsValidate(True)
+            ->setIsPremium(True)
+            ->setRegisterAt(new \DateTime())
+            ->setValidatedAt(new \DateTime())
+            ->setRoles(['ROLE_ADMIN'])
+            ->setLocalisation($localisation)
+            ->setPassword($this->passwordEncoder->encodePassword($admin, 'password'));            
+        $manager->persist($admin);
+
+
+        for($i=0; $i<10; $i++){
+
+            $user = new User();
+            $localisation = makeLocalisation($faker, $manager);
+            $user->setLastname($faker->name())
+            ->setFirstname($faker->firstName())
+            ->setEmail($faker->email())
+            ->setPhone($faker->phoneNumber())
+            ->setIsValidate($faker->boolean(60))
+            ->setIsPremium(false)
+            ->setRegisterAt(new \DateTime())
+            ->setValidatedAt(new \DateTime())
+            ->setRoles(['ROLE_USER'])
+            ->setPathAvatar('https://via.placeholder.com/100')
+            ->setLocalisation($localisation)
+            ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
+            $manager->persist($user);
+
+            $question = new QuestionUser();
+            $question->setQuestion($faker->sentence(). " ?")
+                ->setSubject($faker->words(3, true))
+                ->setUser($user);
+            $manager->persist($question);
+            
         }
 
-        // $admin = new User();
-        // // aller cherche une localisation
+            
 
-        // $admin->setLastname('Mine')
-        //     ->setFirstname('Johnad')
-        //     ->setCompanyName('herewego')
-        //     ->setEmail('admin@hwg.com')
-        //     ->setPhone('0836656565')
-        //     ->setIsValidate(True)
-        //     ->setIsPremium(True)
-        //     ->setRegisterAt(new \DateTime())
-        //     ->setValidatedAt(new \DateTime())
-        //     ->setRoles(['ROLE_ADMIN'])
-        //     ->setLocalisation('passer la localisation - objet');
-        
-        // $admin->setPassword($this->passwordEncoder->encodePassword($admin, 'admin'));
-        // // https://via.placeholder.com/100
-        
-        // $manager->persist($admin);
+        for($i=1; $i<=20; $i++){
+            $questionAdmin = new QuestionAdmin();
+            $questionAdmin->setQuestion($faker->text(255))
+                ->setAnswer($faker->text(255))
+                ->setImportance($faker->numberBetween(1,10));
 
-        // for($i=0; $i<10; $i++){
-        //     $user = new User();
+            $manager->persist($questionAdmin);
+        }
 
-        //     $user->setLastname($faker->name())
-        //     ->setFirstname($faker->firstName())
-        //     ->setCompanyName($faker->word())
-        //     ->setEmail($faker->email())
-        //     ->setPhone($faker->phoneNumber())
-        //     ->setIsValidate($faker->boolean(60))
-        //     ->setIsPremium(false)
-        //     ->setRegisterAt(new \DateTime())
-        //     ->setValidatedAt(new \DateTime())
-        //     ->setRoles(['ROLE_USER']);
+        for ($c=1; $c < 4; $c++) { 
+            $category = new Category;
+            $category->setName($faker->department())
+                ->setSlug(strtolower($this->slugger->slug($category->getName())))
+                ->setColor($faker->colorName())
+                ->setPathLogo("https://via.placeholder.com/50");
+            $manager->persist($category);
+            
+            
+            for ($e=1; $e < 8; $e++) { 
+                
+                $organizer = new User();
+                $localisation = makeLocalisation($faker, $manager);
+                $organizer->setLastname($faker->name())
+                ->setFirstname($faker->firstName())
+                ->setCompanyName($faker->word())
+                ->setEmail($faker->email())
+                ->setPhone($faker->phoneNumber())
+                ->setIsValidate($faker->boolean(60))
+                ->setIsPremium(false)
+                ->setRegisterAt(new \DateTime())
+                ->setValidatedAt(new \DateTime())
+                ->setRoles(['ROLE_ORGANIZER'])
+                ->setPathAvatar('https://via.placeholder.com/100')
+                ->setPassword($this->passwordEncoder->encodePassword($organizer, 'password'))
+                ->setSiret("siret-".$faker->numberBetween(10000, 99999))
+                ->setCompanyName($faker->company())
+                ->setLocalisation($localisation)
+                ->setWebSite($faker->url());
+                $manager->persist($organizer);
+                
+                $localisation = makeLocalisation($faker, $manager);
 
-        //     $user->setPassword($this->passwordEncoder->encodePassword(
-        //         $user,
-        //         'user'
-        //     ));
-
-        //     $manager->persist($user);
-
-        //     //question utilisateur
-        //     for ($j = 1; $j <= 20; $j++) {
-        //         $questionUser = new QuestionUser;
-        //         $questionUser->setQuestion($faker->text(250))
-        //             ->setSubject($faker->text(99))
-        //             ->setUser($user);
+                for ($i=0; $i < mt_rand(1, 3); $i++) { 
                     
-        //         $manager->persist($questionUser);
-        //     }
+                    $event = new Event;
+                    $event->setTitle("event $e ".$faker->words(3, true))
+                    ->setDescription($faker->text())
+                    ->setStartedAt($faker->dateTime())
+                    ->setEndedAt($faker->dateTime())
+                    ->setEmail($faker->email())
+                    ->setWebsite($faker->url())
+                    ->setPhone($faker->phoneNumber())
+                    ->setCountViews(0)
+                    ->setSlug(strtolower($this->slugger->slug($event->getTitle())))
+                    ->setTag("tag-" . $event->getSlug())
+                    ->setCreatedAt($faker->dateTime())
+                    ->setInstagramLink($faker->url()."-insta")
+                    ->setFacebookLink($faker->url()."-fb")
+                    ->setTwitterLink($faker->url()."-twt")
+                    ->setUser($organizer)
+                    ->setLocalisation($localisation)
+                    ->setCategory($category);            
+                    $manager->persist($event);
+    
+                    $picture = new Picture;
+                    $picture->setTitle("ma picture de ".$event->getTitle())
+                        ->setOrderPriority(1)
+                        ->setPath($faker->imageUrl())
+                        ->setEvent($event);
+                    $manager->persist($picture);
 
+                    for ($t=0; $t < 5; $t++) { 
+                        $user = new User();
+                        $localisation = makeLocalisation($faker, $manager);
+                        $user->setLastname($faker->name())
+                        ->setFirstname($faker->firstName())
+                        ->setEmail($faker->email())
+                        ->setPhone($faker->phoneNumber())
+                        ->setIsValidate($faker->boolean(60))
+                        ->setIsPremium(false)
+                        ->setRegisterAt(new \DateTime())
+                        ->setValidatedAt(new \DateTime())
+                        ->setRoles(['ROLE_USER'])
+                        ->setPathAvatar('https://via.placeholder.com/100')
+                        ->setLocalisation($localisation)
+                        ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
+                        $manager->persist($user);
 
+                        $question = new QuestionUser();
+                        $question->setQuestion($faker->words(7, true). " ?")
+                            ->setSubject($faker->words(3, true))
+                            ->setUser($user);
+                        $manager->persist($question);
 
-        // // les events groupes
-        // for ($eg=0; $eg < 10; $eg++) { 
-        //     $eventGroup = new EventGroup;
-        //     $eventGroup->setName("groupe Event $eg")
-        //         ->setPathImage("https://picsum.photos/200");
-        //     $manager->persist($eventGroup);
-        // }
+                        $localisationS = makeLocalisation($faker, $manager);
+                        $localisationR = makeLocalisation($faker, $manager);
 
-        // // les catégories
-        // for ($c=0; $c < 5; $c++) { 
-        //     $category = new Category;
-        //     $category->setName("event category $c")
-        //         ->setSlug(strtolower($this->slugger->slug($category->getName())))
-        //         ->setColor("color $c")
-        //         ->setPathLogo("https://picsum.photos/200");
+                        $transport = new Transport;
+                        $transport->setGoStartedAt($faker->dateTime())
+                            ->setGoEndedAt($faker->dateTime())
+                            ->setReturnStartedAt($faker->dateTime())
+                            ->setReturnEndedAt($faker->dateTime())
+                            ->setCreatedAt($faker->dateTime())
+                            ->setPlacePrice($faker->numberBetween(5, 30))
+                            ->setTotalPlace($faker->numberBetween(2, 5))
+                            ->setRemainingPlace($faker->numberBetween(0, 2))
+                            ->setCommentary("comment $t-".$faker->text())
+                            ->setEvent($event)
+                            ->setUser($user)
+                            ->setLocalisationStart($localisationS)
+                            ->setLocalisationReturn($localisationR);
 
-        //     $manager->persist($category);
-        // }
+                        $manager->persist($transport);
+                    }
+                }                
+            }
+        }      
 
-        // // les pictures
-        // for ($p=0; $p < 50; $p++) { 
-        //     $picture = new Picture;
-        //     $picture->setTitle("picture title $p")
-        //         ->setOrderPriority(1)
-        //         ->setPath("https://picsum.photos/200");
+        //tickets        
+        for($i=1; $i<=20; $i++){
+            $ticket = new Ticket();
+            $ticket->setAskedAt($faker->dateTime())
+                ->setCountPlaces($faker->numberBetween(1,4))
+                ->setCommentary($faker->text(155))
+                ->setIsValidate($faker->boolean(40))
+                ->setValidateAt($faker->dateTime());
 
-        //     $manager->persist($picture);
-        // }
+            $manager->persist($ticket);
+        }
 
-        // // les social network
-        // for ($sn=0; $sn < 3; $sn++) { 
-        //     $socialNetwork = new SocialNetwork;
-        //     $socialNetwork->setName("social network $sn")
-        //         ->setPathLogo("https://picsum.photos/200");
-
-        //     $manager->persist($socialNetwork);
-        // }
-
-        // // events
-        // for ($e=0; $e < 30; $e++) { 
-        //     $event = new Event;
-        //     $event->setTitle("title event $e")
-        //         ->setDescription($faker->text())
-        //         ->setStartedAt($faker->dateTime())
-        //         ->setEndedAt($faker->dateTime())
-        //         ->setEmail($faker->email())
-        //         ->setWebsite($faker->url())
-        //         ->setPhone($faker->phoneNumber())
-        //         ->setCountViews(0)
-        //         ->setSlug(strtolower($this->slugger->slug($event->getTitle())))
-        //         ->setTag("tag-" . $event->getSlug())
-        //         ->setCreatedAt($faker->dateTime());
-
-        //     $manager->persist($event);
-        // }
-
-        // // transport
-        // for ($t=0; $t < 30; $t++) { 
-        //     $transport = new Transport;
-        //     $transport->setGoStartedAt($faker->dateTime())
-        //         ->setGoEndedAt($faker->dateTime())
-        //         ->setReturnStartedAt($faker->dateTime())
-        //         ->setReturnEndedAt($faker->dateTime())
-        //         ->setCreatedAt($faker->dateTime())
-        //         ->setPlacePrice($faker->numberBetween(5, 30))
-        //         ->setTotalPlace($faker->numberBetween(2, 5))
-        //         ->setRemainingPlace($faker->numberBetween(0, 2))
-        //         ->setCommentary("comment $t-".$faker->text());
-
-        //     $manager->persist($transport);
-        // }
-
-        
-
-        // //question administrateur
-        // for($i=1; $i<=20; $i++){
-        //     $questionAdmin = new QuestionAdmin();
-        //     $questionAdmin->setQuestion($faker->text(255))
-        //         ->setAnswer($faker->text(255))
-        //         ->setImportance($faker->numberBetween(1,10));
-
-        //     $manager->persist($questionAdmin);
-        // }
-
-        // //tickets
-        // /*
-        // for($i=1; $i<=20; $i++){
-        //     $ticket = new Ticket();
-        //     $ticket->setAskedAt($faker->dateTime())
-        //         ->setCountPlaces($faker->numberBetween(1,4))
-        //         ->setCommentary($faker->text(155))
-        //         ->setIsValidate($faker->boolean(40))
-        //         ->setValidateAt($faker->dateTime());
-
-        //     $manager->persist($ticket);
-        // }*/
+        for($i=1; $i<=20; $i++){
+            $participation = new Participation();
+            $participation->setAddedAt($faker->dateTime());
+            $manager->persist($participation);
+        }
 
         $manager->flush();
     }
