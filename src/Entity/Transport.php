@@ -84,6 +84,11 @@ class Transport
      */
     private $localisation_return;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transports")
+     */
+    private $user;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -264,6 +269,18 @@ class Transport
     public function setLocalisationReturn(?Localisation $localisation_return): self
     {
         $this->localisation_return = $localisation_return;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

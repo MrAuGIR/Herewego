@@ -120,6 +120,11 @@ class Event
      */
     private $twitterLink;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="events")
+     */
+    private $user;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
@@ -423,6 +428,18 @@ class Event
     public function setTwitterLink(?string $twitterLink): self
     {
         $this->twitterLink = $twitterLink;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
