@@ -47,11 +47,11 @@ class TransportController extends AbstractController
         ]);
     }
     /**
-     * @Route("/manager/update/{transport_id}", name="transport_update")
+     * @Route("/manager/edit/{transport_id}", name="transport_edit")
      */
-    public function update($transport_id)
+    public function edit($transport_id)
     {
-        return $this->render('transport/update.html.twig', [
+        return $this->render('transport/edit.html.twig', [
             'transportId' => $transport_id,
         ]);
     }

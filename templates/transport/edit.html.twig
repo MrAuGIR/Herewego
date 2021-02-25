@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}proposer un transport
-{% endblock %}
+{% block title %}modifier un transport{% endblock %}
 
 {% block body %}
-	<p>proposer un transport</p>
-	<p>slug de l'event :
-		{{ eventSlug }}</p>
-	<div class="row">
+<p>modifier un transport</p>
+<p>id du transport : {{ transportId }}</p>
+
+ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
+<div class="row">
 		<div class="col-2">
 			<div class="absolute-navbar">
 				<nav id="navbar" class="navbar navbar-light bg-light">

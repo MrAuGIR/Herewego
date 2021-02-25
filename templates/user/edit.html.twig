@@ -1,24 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}profil organizer
+{% block title %}update profil user
 {% endblock %}
 
 {% block body %}
-	dash organizer : profil
+	form update profil user
 	<div class="card text-center">
 		<div class="card-header mb-5">
 			<ul class="nav nav-tabs card-header-tabs">
 				<li class="nav-item w-25">
-					<a class="nav-link active" aria-current="true" href="dash-organizer-profil.php">Profil</a>
+					<a class="nav-link active" aria-current="true" href="dash-user-profil.php">Profil</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-organizer-events.php">Events</a>
+					<a class="nav-link" href="dash-user-events.php">Events</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-organizer-archives.php">Historique</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-organizer-stats.php">Statistiques</a>
+					<a class="nav-link" href="dash-user-archives.php">Historique</a>
 				</li>
 			</ul>
 		</div>
@@ -32,24 +29,33 @@
 					</div>
 				</div>
 				<div class="col-12 col-md-8">
-					<p class="text-uppercase fs-6 fw-bold lh-1">Nom organizer</p>
-					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom organizer</p>
+					<p class="text-uppercase fs-6 fw-bold lh-1">Nom user</p>
+					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom user</p>
 					<p class="fs-7 lh-1">Membre depuis le 01/11/2019</p>
+				</div>
+				<div class="col-12 mt-3">
+					<table class="table">
+						<tbody>
+							<tr>
+								<td>Nombre de transport éffectués</td>
+								<td>42</td>
+							</tr>
+							<tr>
+								<td>Nombre de participation à un évent</td>
+								<td>15</td>
+							</tr>
+							<tr>
+								<td>Nombre de transport organisés</td>
+								<td>5</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 			<!-- Section information -->
 			<h2 class="my-5 border-top text-center">Mes informations</h2>
 			<form action="">
-
 				<div class="row pb-4">
-					<div class="col-12 col-md-6 mb-3">
-						<label for="raison_sociale" class="form-label">Raison sociale</label>
-						<input type="text" class="form-control" id="raison_sociale">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="numero_siret" class="form-label">Numero de Siret</label>
-						<input type="text" class="form-control" id="numero_siret">
-					</div>
 					<div class="col-12 col-md-6 mb-3">
 						<label for="nom" class="form-label">Nom</label>
 						<input type="text" class="form-control" id="nom">
@@ -78,16 +84,13 @@
 						<label for="adresse" class="form-label">Adresse</label>
 						<input type="text" class="form-control" id="adresse">
 					</div>
-					<div class="col-12 mb-3">
-						<label for="web_site" class="form-label">Web site</label>
-						<input type="text" class="form-control" id="web_site">
-					</div>
 					<button type="submit" class="btn btn-primary w-25 m-auto">Modifier</button>
 				</div>
 			</form>
 			<!-- Section modification mot de passe -->
 			<h2 class="mb-5 border-top text-center">Mot de passe</h2>
 			<form action="">
+
 				<div class="row mb-2">
 					<div class="col-12 col-md-6  mb-3">
 						<label for="ancien_pass" class="form-label">Ancien mot de passe</label>

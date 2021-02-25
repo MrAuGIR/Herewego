@@ -16,11 +16,11 @@ class UserController extends AbstractController
     }
     
     /**
-     * @Route("/user/profil/update", name="user_update")
+     * @Route("/user/profil/edit", name="user_edit")
      */
-    public function update()
+    public function edit()
     {
-        return $this->render('user/update.html.twig');
+        return $this->render('user/edit.html.twig');
     }
 
     /**

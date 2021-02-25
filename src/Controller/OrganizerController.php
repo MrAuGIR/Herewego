@@ -16,11 +16,11 @@ class OrganizerController extends AbstractController
     }
     
     /**
-     * @Route("/organizer/profil/update", name="organizer_update")
+     * @Route("/organizer/profil/edit", name="organizer_edit")
      */
     public function update()
     {
-        return $this->render('organizer/update.html.twig');
+        return $this->render('organizer/edit.html.twig');
     }
 
     /**
