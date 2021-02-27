@@ -12,7 +12,6 @@ use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -103,16 +102,46 @@ class EventType extends AbstractType
                 ],
                 'required' => false
             ])
-            ->add('localisation', EntityType::class, [
-                'label' => "Groupe d'évênements",
-                'placeholder' => "-- Choisir une groupe d'évênements --",
-                'class' => EventGroup::class,
-                'choice_label' => function (EventGroup $eventGroup) {
-                    return strtoupper($eventGroup->getName());
-                },
-                'required' => false
+            ->add('cityName', TextType::class, [
+                'label' => "Ville",
+                'attr' => [
+                    'placeholder' => "Ville"
+                ],
+                'required' => false,
+                'mapped' => false
             ])
-            
+            ->add('cityCp', TextType::class, [
+                'label' => "Cp",
+                'attr' => [
+                    'placeholder' => "Cp"
+                ],
+                'required' => false,
+                'mapped' => false
+            ])
+            ->add('adress', TextType::class, [
+                'label' => "Adresse",
+                'attr' => [
+                    'placeholder' => "Adresse"
+                ],
+                'required' => false,
+                'mapped' => false
+            ])
+            ->add('picturePath', TextType::class, [
+                'label' => "Chemin de l'image de l'event",
+                'attr' => [
+                    'placeholder' => "Chemin de l'image de l'event"
+                ],
+                'required' => false,
+                'mapped' => false
+            ])
+            ->add('pictureTitle', TextType::class, [
+                'label' => "Titre de l'image de l'event",
+                'attr' => [
+                    'placeholder' => "Titre de l'image de l'event"
+                ],
+                'required' => false,
+                'mapped' => false
+            ])
             ;
     }
 

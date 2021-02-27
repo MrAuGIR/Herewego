@@ -1,23 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}transports d'un event
-{% endblock %}
+{% block title %}Transport : {{ transport.id }}{% endblock %}
 
 {% block body %}
-	<p>page du manager, liste des demandes...</p>
-	<p>id du transport :
-		{{ transportId }}</p>
+	<h2>Gestion du transport : {{ transport.id }}</h2>
 	<div class="row">
 		<div class="col-12">
 			<div class="card text-center">
 				<div class="card-header">
 					<span>Transport pour l'evenement
-						<strong>U2 au stade de france</strong>
+						<strong>{{ transport.event.title }}</strong>
 					</span><br>
 				</div>
 				<div class="card-body">
-					<p class="card-text">De 8h300 le 19/02/2021 -----------> vers ------------> stade de france le 19/02/2021 à 21h00</p>
-					<a href="modification-transport.php" class="btn btn-primary">Modifier le transport</a>
+					<p>Infos Aller : </p>
+					{# <ul>
+						<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.city.cityCp }}, {{ transport.localisationStart.city.cityName }}</li>
+						<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+						<hr>
+						<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.city.cityCp }}, {{ transport.localisationReturn.city.cityName }}</li>
+						<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+					</ul> #}
+					<p>infos Retour : </p>
+					{# <ul>
+						<li>Départ : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.city.cityCp }}, {{ transport.localisationReturn.city.cityName }}</li>
+						<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+						<hr>
+						<li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.city.cityCp }}, {{ transport.localisationStart.city.cityName }}</li>
+						<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+					</ul> #}
 				</div>
 			</div>
 		</div>
@@ -30,112 +41,40 @@
 						<th scope="col">Numéro</th>
 						<th scope="col">Status</th>
 						<th scope="col">Nom</th>
-						<th scope="col">Places réservées</th>
+						<th scope="col">Places souhaitées</th>
+						<th scope="col">faite le</th>
 						<th scope="col">Commentaire</th>
-						<th scope="col">Valider</th>
-						<th scope="col">Décliner</th>
+						<th scope="col" colspan="2">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<th scope="row">1</th>
-						<td>En attente</td>
-						<td>Jean Mi</td>
-						<td>2</td>
-						<td>Bonjour, je souhaite prendre deux places pour moi et ma
-							<a href="#">Lire la suite</a>
-						</td>
-						<td>
-							<a href="#">Valider</a>
-						</td>
-						<td>
-							<a href="#">Annuler</a>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">2</th>
-						<td>Validé</td>
-						<td>Marc</td>
-						<td>1</td>
-						<td>Bonjour, je souhaite prendre deux places pour moi et ma
-							<a href="#">Lire la suite</a>
-						</td>
-						<td>
-							<a href="#">Valider</a>
-						</td>
-						<td>
-							<a href="" ">Annuler</a>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">3</th>
-						<td>Annulé</td>
-						<td>Michelle</td>
-						<td>5</td>
-						<td>Bonjour, je souhaite prendre deux places pour moi et ma
-							<a href="#">Lire la suite</a>
-						</td>
-						<td>
-							<a href="#">Valider</a>
-						</td>
-						<td>
-							<a href="" ">Annuler</a>
-						</td>
-					</tr>
+					{% for ticket in transport.tickets %}						
+						<tr>
+							<th scope="row">{{ ticket.id}}</th>
+							<td>
+							{% if ticket.isValidate is null %}
+								En attente
+							{% elseif ticket.isValidate %}
+								validé le {{ ticket.validateAt | date('Y-m-d') }}
+							{% else %}
+								refusé
+							{% endif %}
+							
+							</td>
+							<td>{{ ticket.user.firstName }}</td>
+							<td>{{ ticket.countPlaces }}</td>
+							<td>{{ ticket.askedAt | date('Y-m-d') }}</td>
+							<td>{{ ticket.commentary }}</td>
+							<td>
+								<a href="{{ path('transport_accept_ticket', {ticket_id: ticket.id }) }}">Valider</a>
+							</td>
+							<td>
+								<a href="{{ path('transport_decline_ticket', {ticket_id: ticket.id }) }}">Annuler</a>
+							</td>
+						</tr>
+					{% endfor %}			
 				</tbody>
 			</table>
-		</div>
-		<div
-			class="col-12 col-lg-4 border-start">
-			<!-- detail du ticket-->
-			<div class="row border-bottom mb-3 mx-1">
-				<div class="col-12">
-					<h4>Detail du ticket selectionner</h4>
-				</div>
-				<div class="col-12">
-					<ul class="list-group border-0">
-						<li class="list-group-item border-0">Nom</li>
-						<li class="list-group-item border-0">Nombre de place</li>
-						<li class="list-group-item border-0">date de demande</li>
-						<li class="list-group-item border-0">commentaire</li>
-					</ul>
-				</div>
-
-			</div>
-			<!-- detail de l'event -->
-			<div class="row border-bottom mb-3 mx-1">
-				<div class="col-12">
-					<h4>Event
-						<strong>U2 au stade de France</strong>
-					</h4>
-				</div>
-				<div class="col-6">
-					<ul class="list-group">
-						<li class="list-group-item border-0">Date de début</li>
-						<li class="list-group-item border-0">Date de fin</li>
-						<li class="list-group-item border-0">Lieu de deroulement</li>
-						<li class="list-group-item border-0">Catégorie</li>
-					</ul>
-				</div>
-				<div class="col-6">
-					<div class="picture border">
-						<img src="#" alt="">
-						<p>photo
-						</p>
-					</div>
-				</div>
-				<div class="col-12">
-					<ul class="list-group">
-						<li class="list-group-item border-0">Facebook</li>
-						<li class="list-group-item border-0">Twitter</li>
-						<li class="list-group-item border-0">Instagram</li>
-					</ul>
-				</div>
-				<div class="col-12">
-					<a href="event.php">Lien vers la page de l'event</a>
-				</div>
-			</div>
-
 		</div>
 	</div>
 {% endblock %}

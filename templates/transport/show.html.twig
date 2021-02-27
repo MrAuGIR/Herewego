@@ -1,21 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}un transport{% endblock %}
+{% block title %}Transport : {{ transport.id }}{% endblock %}
 
 {% block body %}
-<p>page d'un transport</p>
-<p>slug de l'event : {{ eventSlug }}</p>
-<p>id du transport {{ transportId }}</p>
+<h2>Transport : {{ transport.id }} / de l'event : {{ transport.event.title }}</h2>
 <div>
-    <h2>Recapitulatif du transport</h2>
-    <p>nom du responsable</p>
-    <p>Aller - lieu de rendez vous - heure de départ - lieu d'arrivée</p>
-    <p>Retour lieu de rendez vous - heure de départ - lieu d'arrivée</p>
-    <p>Commentaires dur esponsables - prix de la place</p>
-    <p>nombre de places restantes</p>
+    <h3>Recap du transport</h3>
+    <p>manager : {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+    <p>Infos Aller : </p>
+    <ul>
+        <li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.city.cityCp }}, {{ transport.localisationStart.city.cityName }}</li>
+        <li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+        <hr>
+        <li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.city.cityCp }}, {{ transport.localisationReturn.city.cityName }}</li>
+        <li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+    </ul>
+    <p>infos Retour : </p>
+    <ul>
+        <li>Départ : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.city.cityCp }}, {{ transport.localisationReturn.city.cityName }}</li>
+        <li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+        <hr>
+        <li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.city.cityCp }}, {{ transport.localisationStart.city.cityName }}</li>
+        <li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+    </ul>
+    <p>commentaires : {{ transport.commentary }}</p>
+    <p>Places disponibles : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+    <p>Prix du billet : {{ transport.placePrice }} €</p>
 </div>
 
 <hr>
+<h3>Demander à rejoindre le transport</h3>
 
 <!-- FORM -->
 <form>

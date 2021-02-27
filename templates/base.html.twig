@@ -16,97 +16,16 @@
         
     </head>
     <body>
+        
         <header>
         {% block header %}
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-                <div class="container">
-                    <a class="navbar-brand" href="{{path('home')}}" title="accueil"><img class="header-logo" src="{{ asset('img/logo.png') }}" alt="logo"></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="{{path('register')}}" title="Inscription">Inscription</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="{{path('app_login')}}" title="Connexion">Connexion</a>
-                            </li>                                        
-                        </ul>
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="{{path('home')}}" title="Accueil">Accueil</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="text-white">Utilisateur</span>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/user/profil">profil</a>
-                                    </li>  
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/user/events">events / transports</a>
-                                    </li>  
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/user/story">historique</a>
-                                    </li>   
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">déconnexion</a>
-                                    </li>                                  
-                                </ul>
-                            </li>   
-                            <li>
-                                <a class="navbar-brand" href="#" title="Profil"><i class="bi bi-person-circle fs-3"></i></a>
-                            </li>    
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="text-white">Organisateur</span>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/organizer/profil">profil</a>
-                                    </li>  
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/organizer/events">events / transports</a>
-                                    </li>  
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/organizer/history">historique</a>
-                                    </li>  
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/organizer/stats">statistiques</a>
-                                    </li> 
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="#">déconnexion</a>
-                                    </li>                                  
-                                </ul>
-                            </li>   
-                            <li>
-                                <a class="navbar-brand" href="#" title="Profil"><i class="bi bi-person-circle fs-3 text-white"></i></a>
-                            </li>    
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-warning" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="text-warning">Admin</span>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item" aria-current="page" href="/admin">Dashboard</a>
-                                    </li>                                 
-                                </ul>
-                            </li>   
-                            <li>
-                                <a class="navbar-brand" href="/admin" title="Profil"><i class="bi bi-person-circle fs-3 text-warning"></i></a>
-                            </li>    
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            {% include "shared/_navbar.html.twig" %}            
         {% endblock %}
         </header>
+        
             <main>
                 <div class="container">
+                
         {% block body %}{% endblock %}
                 </div>
             </main>
@@ -140,6 +59,8 @@
                 </div>            
             </div>
         </footer>
+        
+        <div>{{ dump(app.user) }}</div>
         {% endblock %}
         {% block javascripts %}
             <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
