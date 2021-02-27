@@ -79,7 +79,7 @@ class AppFixtures extends Fixture
 
             $user = new User();
             $localisation = makeLocalisation($faker, $manager);
-            $user->setLastname($faker->name())
+            $user->setLastname($faker->lastName())
             ->setFirstname($faker->firstName())
             ->setEmail($faker->email())
             ->setPhone($faker->phoneNumber())
@@ -88,13 +88,13 @@ class AppFixtures extends Fixture
             ->setRegisterAt(new \DateTime())
             ->setValidatedAt(new \DateTime())
             ->setRoles(['ROLE_USER'])
-            ->setPathAvatar('https://via.placeholder.com/100')
+            ->setPathAvatar('https://i.pravatar.cc/100')
             ->setLocalisation($localisation)
             ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
             $manager->persist($user);
 
             $question = new QuestionUser();
-            $question->setQuestion($faker->sentence(). " ?")
+            $question->setQuestion($faker->words(6, true). " ?")
                 ->setSubject($faker->words(3, true))
                 ->setUser($user);
             $manager->persist($question);
@@ -105,8 +105,8 @@ class AppFixtures extends Fixture
 
         for($i=1; $i<=20; $i++){
             $questionAdmin = new QuestionAdmin();
-            $questionAdmin->setQuestion($faker->text(255))
-                ->setAnswer($faker->text(255))
+            $questionAdmin->setQuestion($faker->words(10, true). " ?")
+                ->setAnswer($faker->text(150))
                 ->setImportance($faker->numberBetween(1,10));
 
             $manager->persist($questionAdmin);
@@ -125,9 +125,8 @@ class AppFixtures extends Fixture
                 
                 $organizer = new User();
                 $localisation = makeLocalisation($faker, $manager);
-                $organizer->setLastname($faker->name())
+                $organizer->setLastname($faker->lastName())
                 ->setFirstname($faker->firstName())
-                ->setCompanyName($faker->word())
                 ->setEmail($faker->email())
                 ->setPhone($faker->phoneNumber())
                 ->setIsValidate($faker->boolean(60))
@@ -135,7 +134,7 @@ class AppFixtures extends Fixture
                 ->setRegisterAt(new \DateTime())
                 ->setValidatedAt(new \DateTime())
                 ->setRoles(['ROLE_ORGANIZER'])
-                ->setPathAvatar('https://via.placeholder.com/100')
+                ->setPathAvatar('https://i.pravatar.cc/100')
                 ->setPassword($this->passwordEncoder->encodePassword($organizer, 'password'))
                 ->setSiret("siret-".$faker->numberBetween(10000, 99999))
                 ->setCompanyName($faker->company())
@@ -148,8 +147,8 @@ class AppFixtures extends Fixture
                 for ($i=0; $i < mt_rand(1, 3); $i++) { 
                     
                     $event = new Event;
-                    $event->setTitle("event $e ".$faker->words(3, true))
-                    ->setDescription($faker->text())
+                    $event->setTitle("ev ".$faker->words(3, true))
+                    ->setDescription($faker->text(50))
                     ->setStartedAt($faker->dateTime())
                     ->setEndedAt($faker->dateTime())
                     ->setEmail($faker->email())
@@ -170,14 +169,14 @@ class AppFixtures extends Fixture
                     $picture = new Picture;
                     $picture->setTitle("ma picture de ".$event->getTitle())
                         ->setOrderPriority(1)
-                        ->setPath($faker->imageUrl())
+                        ->setPath($faker->imageUrl(400, 400, true))
                         ->setEvent($event);
                     $manager->persist($picture);
 
                     for ($t=0; $t < 5; $t++) { 
                         $user = new User();
                         $localisation = makeLocalisation($faker, $manager);
-                        $user->setLastname($faker->name())
+                        $user->setLastname($faker->lastName())
                         ->setFirstname($faker->firstName())
                         ->setEmail($faker->email())
                         ->setPhone($faker->phoneNumber())
@@ -186,7 +185,7 @@ class AppFixtures extends Fixture
                         ->setRegisterAt(new \DateTime())
                         ->setValidatedAt(new \DateTime())
                         ->setRoles(['ROLE_USER'])
-                        ->setPathAvatar('https://via.placeholder.com/100')
+                        ->setPathAvatar('https://i.pravatar.cc/100')
                         ->setLocalisation($localisation)
                         ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
                         $manager->persist($user);
@@ -209,7 +208,7 @@ class AppFixtures extends Fixture
                             ->setPlacePrice($faker->numberBetween(5, 30))
                             ->setTotalPlace($faker->numberBetween(2, 5))
                             ->setRemainingPlace($faker->numberBetween(0, 2))
-                            ->setCommentary("comment $t-".$faker->text())
+                            ->setCommentary("t$t: ".$faker->text(55))
                             ->setEvent($event)
                             ->setUser($user)
                             ->setLocalisationStart($localisationS)

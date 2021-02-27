@@ -1,26 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}update profil user
-{% endblock %}
+{% block title %}Édition Profil {{ user.firstName }} {{ user.lastName }}{% endblock %}
 
 {% block body %}
-	form update profil user
 	<div class="card text-center">
 		<div class="card-header mb-5">
 			<ul class="nav nav-tabs card-header-tabs">
 				<li class="nav-item w-25">
-					<a class="nav-link active" aria-current="true" href="dash-user-profil.php">Profil</a>
+					<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-user-events.php">Events</a>
+					<a class="nav-link" href="{{path('user_events')}}">Events</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-user-archives.php">Historique</a>
+					<a class="nav-link" href="{{path('user_history')}}">Historique</a>
 				</li>
 			</ul>
 		</div>
 		<div class="card-body">
-			<h2 class="mb-5 text-center">Mon profil</h2>
+			<h2 class="mb-5 text-center">Édition de mon profil Utilisateur</h2>
 			<!--  Section profil  -->
 			<div class="row pb-4">
 				<div class="col-12 col-md-4">
@@ -32,6 +30,9 @@
 					<p class="text-uppercase fs-6 fw-bold lh-1">Nom user</p>
 					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom user</p>
 					<p class="fs-7 lh-1">Membre depuis le 01/11/2019</p>
+					{% if user.isPremium %}
+						<p class="fs-7 lh-1 text-warning">Membre Premium</p>
+					{% endif %}
 				</div>
 				<div class="col-12 mt-3">
 					<table class="table">

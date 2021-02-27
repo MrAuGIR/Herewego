@@ -1,146 +1,168 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}gestion events user
-{% endblock %}
+{% block title %}Events {{ user.firstName }} {{ user.lastName }}{% endblock %}
 
 {% block body %}
-	Dash user : events
 	<div class="card text-center">
 		<div class="card-header mb-5">
 			<ul class="nav nav-tabs card-header-tabs">
 				<li class="nav-item w-25">
-					<a class="nav-link" aria-current="true" href="dash-user-profil.php">Profil</a>
+					<a class="nav-link" aria-current="true" href="{{path('user_profil')}}">Profil</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link active" href="dash-user-events.php">Events</a>
+					<a class="nav-link active" href="{{path('user_events')}}">Events</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-user-archives.php">Historique</a>
+					<a class="nav-link" href="{{path('user_history')}}">Historique</a>
 				</li>
 			</ul>
 		</div>
 		<div class="card-body">
-			<h2 class="mb-5 text-center">Mes participations aux Events à venir</h2>
-			<div
-				class="accordion" id="accordionExample">
-				<!-- 1 -->
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingOne">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-							<div class="row w-100">
-								<div class="col-3">Nom de l'event</div>
-								<div class="col-3">12/05/21</div>
-								<div class="col-3">
-									<span class="btn btn-danger">Sans transport</span>
-								</div>
-							</div>
-						</button>
-					</h2>
-					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-							<div class="row w-100">
-								<div class="col-6 bg-danger">
-									<p class="text-center text-light">Vous n'avez pas de transport pour cet event ?
-									</p>
-								</div>
-								<div class="col-6">
-									<a class="btn btn-primary" href="event-transports.php" role="button">Rejoindre un transport existant</a>
-									<a class="btn btn-primary" href="creation-transport.php" role="button">Organiser vous-même un transport</a>
-								</div>
-							</div>
-						</div>
-					</div>
+			<h2 class="mb-5 text-center">Mes participations aux Êvenements à venir</h2>
+			{% if user.participations | length == 0 %}
+				<h4>aucune participations à ce jour</h4>
+			{% else %}		
+				<div class="accordion" id="accordionExample">
+					{% for p in user.participations %}		
+						{% set break = false %}
+						{% for transport in p.event.transports %}
+							{% if not break %}											
+								{% if transport.user.id == user.id %}
+									{# mon accordion item : vous proposez un transport #}
+									<div class="accordion-item">
+										<h2 class="accordion-header" id="heading{{p.id}}">
+											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+												<div class="row w-100">
+													<div class="col-3">{{p.event.title}}</div>
+													<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
+													<div class="col-5">
+														<span class="btn btn-info">vous proposez un transport</span>														
+													</div>
+												</div>
+											</button>
+										</h2>
+										<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+											<div class="accordion-body">
+												<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
+												<div class="row w-100">
+													<div class="col-6 bg-info">
+														<p class="text-center">Vous avez proposé un transport</p>
+														<p class="text-center">places restantes : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+													</div>
+													<div class="col-6">
+														<a class="btn btn-primary" href="{{ path('transport_manage', {transport_id: transport.id}) }}" role="button">Gerer mon transport</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									{% set break = true %}									
+								{% else %}
+									{% for ticket in transport.tickets %}
+										{% if not break %}		
+											{% if ticket.user.id == user.id %}
+												{% if ticket.isValidate %}
+													{# mon accordion item : Vous avez un transport #}
+													<div class="accordion-item">
+														<h2 class="accordion-header" id="heading{{p.id}}">
+															<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+																<div class="row w-100">
+																	<div class="col-3">{{p.event.title}}</div>
+																	<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
+																	<div class="col-5">
+																		<span class="btn btn-success">Vous avez un transport</span>														
+																	</div>
+																</div>
+															</button>
+														</h2>
+														<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+															<div class="accordion-body">
+																<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
+																<div class="row w-100">
+																	<div class="col-6 bg-success">
+																		<p class="text-center text-light">Vous faites partis d'un transport</p>
+																	</div>
+																	<div class="col-6">
+																		<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir mon transport</a>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													{% set break = true %}	
+												{% else %}
+													{# mon accordion item : Vous avez une demande de transport en cours #}
+													<div class="accordion-item">
+														<h2 class="accordion-header" id="heading{{p.id}}">
+															<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+																<div class="row w-100">
+																	<div class="col-3">{{p.event.title}}</div>
+																	<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
+																	<div class="col-5">
+																		<span class="btn btn-warning">Vous avez une demande de transport en cours</span>														
+																	</div>
+																</div>
+															</button>
+														</h2>
+														<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+															<div class="accordion-body">
+																<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
+																<div class="row w-100">
+																	<div class="col-6 bg-warning">
+																		<p class="text-center">Vous avez fait une demande pour rejoindre un transport</p>
+																		<p class="text-center">demande effectué le {{ ticket.askedAt | date('Y-m-d') }} auprès de {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+																	</div>
+																	<div class="col-6">
+																		<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir le transport</a>
+																		<a class="btn btn-secondary" href="#" role="button">Annuler ma demande</a>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													{% set break = true %}	
+												{% endif %}
+											{% endif %}
+										{% endif %}
+									{% endfor %}
+									{% if not break %}													
+										{# mon accordion item : Sans transport #}
+										<div class="accordion-item">
+											<h2 class="accordion-header" id="heading{{p.id}}">
+												<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+													<div class="row w-100">
+														<div class="col-3">{{p.event.title}}</div>
+														<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
+														<div class="col-5">
+															<span class="btn btn-danger">Vous n'avez pas de transport</span>														
+														</div>
+													</div>
+												</button>
+											</h2>
+											<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+												<div class="accordion-body">
+													<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
+													<div class="row w-100">
+														<div class="col-6 bg-danger">
+															<p class="text-center text-light">Vous n'avez pas de transport pour cet event ?
+															</p>
+														</div>
+														<div class="col-6">
+															<a class="btn btn-primary" href="{{ path('transport', {event_id: p.event.id}) }}" role="button">Rejoindre un transport existant</a>
+															<a class="btn btn-primary" href="{{ path('transport_create', {event_id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										{% set break = true %}	
+									{% endif %}
+								{% endif %}
+							{% endif %}
+						{% endfor %}	
+					{% endfor %}				
 				</div>
-				<!-- 2 -->
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingOTwo">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-							<div class="row w-100">
-								<div class="col-3">Nom de l'event</div>
-								<div class="col-3">12/05/21</div>
-								<div class="col-3">
-									<span class="btn btn-warning">Demande de transport en cours</span>
-								</div>
-							</div>
-						</button>
-					</h2>
-					<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingOTwo" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-							<div class="row w-100">
-								<div class="col-6 bg-warning">
-									<p class="text-center">Vous avez fait une demande pour rejoindre un transport
-									</p>
-									<p class="text-center">demande effectué le 12/03/2019 auprès de Michel P.</p>
-								</div>
-								<div class="col-6">
-									<a class="btn btn-primary" href="transport.php" role="button">Voir le transport</a>
-									<a class="btn btn-primary" href="#" role="button">Annuler ma demande</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- 3 -->
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingOThree">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-							<div class="row w-100">
-								<div class="col-3">Nom de l'event</div>
-								<div class="col-3">12/05/21</div>
-								<div class="col-3">
-									<span class="btn btn-info">vous proposez un transport</span>
-									<span class="badge bg-danger">!</span>
-								</div>
-							</div>
-						</button>
-					</h2>
-					<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingOThree" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-							<div class="row w-100">
-								<div class="col-6 bg-info">
-									<p class="text-center">Vous avez proposer un transport</p>
-									<p class="text-center">il restes des places disponibles</p>
-								</div>
-								<div class="col-6">
-									<a class="btn btn-primary" href="manager-transport.php" role="button">Gerer mon transport</a>
-									<span class="badge bg-danger">!</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- 4 -->
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingFour">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-							<div class="row w-100">
-								<div class="col-3">Nom de l'event</div>
-								<div class="col-3">12/05/21</div>
-								<div class="col-3">
-									<span class="btn btn-success">Vous avez un transport</span>
-								</div>
-							</div>
-						</button>
-					</h2>
-					<div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-							<div class="row w-100">
-								<div class="col-6 bg-success">
-									<p class="text-center text-light">Vous faites parti d'un transport</p>
-								</div>
-								<div class="col-6">
-									<a class="btn btn-primary" href="transport.php" role="button">Voir mon transport</a>
-								</div>
-							</div>
-
-						</div>
-					</div>
-				</div>
-			</div>
+			{% endif %}							
 		</div>
 	</div>
 {% endblock %}

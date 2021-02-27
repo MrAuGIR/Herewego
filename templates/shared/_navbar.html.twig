@@ -1,0 +1,135 @@
+{# <nav class="navbar navbar-expand-sm navbar-light bg-light">
+	<a class="navbar-brand" href="/">SymShop</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarColor03">
+		<ul class="navbar-nav mr-auto">
+			{% for c in categoryRepository.findAll() %}
+				<li class="nav-item">
+					<a href="#" class="nav-link">{{ c.name }}</a>
+				</li>
+			{% endfor %}
+		</ul>
+		<ul class="navbar-nav">
+			{% if app.user %}
+				<li class="nav-item">
+					<a href="{{ path('security_logout') }}" class="btn btn-danger">Logout</a>
+				</li>		
+			{% else %}	
+				<li class="nav-item">
+					<a href="#" class="nav-link">Inscription</a>
+				</li>
+				<li class="nav-item">
+					<a href="{{ path('security_login') }}" class="btn btn-success">Login</a>
+				</li>
+			{% endif %}
+		</ul>
+	</div>
+</nav> #}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{path('home')}}" title="accueil"><img class="header-logo" src="{{ asset('img/logo.png') }}" alt="logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if app.user %}
+                    {% if app.user.roles[0] == "ROLE_USER" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="text-white">Utilisateur</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">                        
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_profil')}}">profil</a>
+                                </li>  
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_events')}}">events / transports</a>
+                                </li>  
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_history')}}">historique</a>
+                                </li>      
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">déconnexion</a>
+                                </li>                           
+                            </ul>
+                        </li>   
+                        <li>
+                            <a class="navbar-brand" href="#" title="Profil"><i class="bi bi-person-circle fs-3"></i></a>
+                        </li>    
+                    {% elseif app.user.roles[0] == "ROLE_ORGANIZER" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="text-white">Organisateur</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_profil')}}">profil</a>
+                                </li>  
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_events')}}">events</a>
+                                </li>  
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_history')}}">historique</a>
+                                </li>  
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_stats')}}">statistiques</a>
+                                </li> 
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">déconnexion</a>
+                                </li>                                     
+                            </ul>
+                        </li>   
+                        <li>
+                            <a class="navbar-brand" href="#" title="Profil"><i class="bi bi-person-circle fs-3 text-white"></i></a>
+                        </li>    
+                    {% elseif app.user.roles[0] == "ROLE_ADMIN" %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-warning" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="text-warning">Admin</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('admin')}}">Dashboard</a>
+                                </li>  
+                                <li>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">déconnexion</a>
+                                </li>                                   
+                            </ul>
+                        </li>   
+                        <li>
+                            <a class="navbar-brand" href="/admin" title="Profil"><i class="bi bi-person-circle fs-3 text-warning"></i></a>
+                        </li>   
+                    {% endif %} 
+                {% else %}	
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{path('register')}}" title="Inscription">Inscription</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{path('app_login')}}" title="Connexion">Connexion</a>
+                    </li>                                        
+                {% endif %}	
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{path('home')}}" title="Accueil">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{{path('event')}}" title="Events">Les évênements</a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+                        
+                        
+                        

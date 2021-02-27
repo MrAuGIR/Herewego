@@ -1,123 +1,68 @@
 {% extends 'base.html.twig' %}
-{% block title %}un event
+{% block title %}{{ event.title }}
 {% endblock %}
 
 
 {% block body %}
-	<p>Page affichant un event</p>
-
-	<div class="border">
-		<p>{{ event.title }}</p>
-		<p>{{ event.description }}</p>
-		<p>{{ event.startedAt | date('Y-m-d') }}
-			à
-			{{ event.startedAt | date('H:i:s')}}</p>
-		<p>{{ event.endedAt | date('Y-m-d') }}
-			à
-			{{ event.endedAt | date('H:i:s')}}</p>
-		<p>{{ event.email }}</p>
-		<p>{{ event.website }}</p>
-		<p>{{ event.phone }}</p>
-		<p>{{ event.countViews }}</p>
-		<p>{{ event.tag }}</p>
-		<p>{{ event.slug }}</p>
-		<p>{{ event.createdAt | date('Y-m-d') }}
-			à
-			{{ event.createdAt | date('H:i:s')}}</p>
-		{% if event.eventGroup %}
-			<p>{{ event.eventGroup.name }}</p>
-		{% endif %}
-		{% if event.category %}
-			<p>{{ event.category.name }}</p>
-		{% endif %}
-		{% for picture in event.pictures %}
-			<img src="{{ picture.path }}" alt="">
-		{% endfor %}
-		<div class="bg-primary">
-			{% for transport in event.transports %}
-				<p>id :
-					{{ transport.id }}</p>
-			{% endfor %}
-		</div>
-	</div>
-
-
+	<h1>Event : {{ event.title }}</h1>
 	<div class="row d-flex justify-content-center my-5">
 		<div class="col-12 col-lg-8 border-end">
 			<div class="row px-2 py-2">
-				<div class="col-12">
-					<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-						<ol class="carousel-indicators">
-							<li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
-							<li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
-							<li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
-						</ol>
-						<div class="carousel-inner">
-							<div class="carousel-item active">
-								<img src="img/stade1.jpg" class="d-block w-100" alt="SDF">
-							</div>
-							<div class="carousel-item">
-								<img src="img/stade2.jpg" class="d-block w-100" alt="SDF">
-							</div>
-							<div class="carousel-item">
-								<img src="img/stade3.jpg" class="d-block w-100" alt="SDF">
-							</div>
+				{% if event.pictures is not empty %}
+						<div class="picture">
+							<img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
 						</div>
-						<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-							<span class="visually-hidden">Previous</span>
-						</a>
-						<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
-							<span class="carousel-control-next-icon" aria-hidden="true"></span>
-							<span class="visually-hidden">Next</span>
-						</a>
-					</div>
+					{% endif %}
+				<div class="col-12">
+					<p>{{ event.category.name }}</p>
 				</div>
-				<div class="col-12 mt-4 mb-4">
-					<p>
-						Integer vulputate at nunc ac sollicitudin. Integer feugiat ipsum sodales arcu accumsan, sed imperdiet tellus efficitur. Aliquam erat volutpat. Sed mollis ultricies bibendum. Donec rutrum orci velit, facilisis rutrum nulla venenatis quis. Mauris egestas elementum justo, facilisis congue massa fringilla lobortis. Proin magna arcu, lobortis ut mi ac, venenatis tempor risus. Sed pretium sem eu diam pulvinar facilisis. Proin sagittis maximus libero. Vestibulum facilisis lacus non turpis consectetur, id ultricies elit vulputate. Integer ultrices elit elit, sit amet convallis nisl volutpat nec. Quisque tempus malesuada euismod. Donec ex ante, vestibulum sed semper a, egestas a est. Aliquam sodales nec ante non sodales.
-					</p>
+				<div class="col-12">
+					<p>Description : {{ event.description }}</p>
 				</div>
 				<div class="col-12 col-md-6 mt-4 mb-4">
-					<a href="event-transports.php" class="btn btn-info">Les transports</a>
+					<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-info">Les transports</a>
 				</div>
 				<div class="col-12 col-md-6 mt-4 mb-4">
-					<a href="transport.php" class="btn btn-info">Proposer un transport</a>
+					<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-info">Proposer un transport</a>
 				</div>
 			</div>
 		</div>
 		<div class="col-12 col-lg-4">
 			<div class="row">
 				<div class="col-12 py-2">
-					<button type="button" class="btn btn-success">Je participe</button>
+					<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Je participe</a>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-12">
-					<p class="fs-5 fw-bold">Du 19/02/2021 au 21/02/2021</p>
+					<p class="fs-5 fw-bold">Du {{ event.startedAt | date('Y-m-d') }} au {{ event.endedAt | date('Y-m-d') }}</p>
 				</div>
 				<div class="col-12">
-					<p class="fs-5 fw-bold">Horaire : 19h - 20 h</p>
+					<p class="fs-5 fw-bold">Horaire D : {{ event.startedAt | date('H:i')}}</p>
+					<p class="fs-5 fw-bold">Horaire F : {{ event.endedAt | date('H:i')}}</p>
 				</div>
-				<div class="col-12">
-					<a href="#" title="">Voir les autres événement du même Event-group</a>
-				</div>
+				{% if event.eventGroup is not same as(null) %}
+					<div class="col-12">
+						<a href="{{ path('event_group', {group_id: event.eventGroup.id }) }}" title="">Voir les autres événement du même Event-group</a>
+					</div>				
+				{% endif %}
 			</div>
 			<div class="row">
 				<div class="col-12 py-2">
 					<div class="border-top">
-						<span class="fs-6  lh-1">1 rue du stade france</span><br>
-						<span class="fs-6 lh-1">Saint-Denis</span><br>
+						<span class="fs-6  lh-1">{{ event.localisation.adress }}</span><br>
+						<span class="fs-6 lh-1">{{ event.localisation.city.cityName }}</span><br>
 						<span class="fs-6 lh-1">France</span>
+						<span class="fs-6 lh-1">Tel : {{ event.phone }}</span>
 					</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-12 py-2">
 					<div class="border-top">
-						<span class="fs-6  lh-1">Facebook</span><br>
-						<span class="fs-6 lh-1">Twitter</span><br>
-						<span class="fs-6 lh-1">Instagram</span>
+						<span class="fs-6  lh-1">Facebook : <a href="{{ event.facebookLink }}">{{ event.facebookLink }}</a></span><br>
+						<span class="fs-6  lh-1">Twitter : <a href="{{ event.twitterLink }}">{{ event.twitterLink }}</a></span><br>
+						<span class="fs-6  lh-1">Instagram : <a href="{{ event.instagramLink }}">{{ event.instagramLink }}</a></span><br>
 					</div>
 				</div>
 			</div>
@@ -125,7 +70,7 @@
 				<div class="col-12 py-2">
 					<div class="border-top">
 						<span class="fs-6  lh-1">
-							<a href="#">www.site-du-stade-france.com</a>
+							Site de l'event :<a href="{{ event.website }}">{{ event.website }}</a>
 						</span><br>
 					</div>
 				</div>
