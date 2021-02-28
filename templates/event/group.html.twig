@@ -10,9 +10,11 @@
 	{% for event in eventGroup.Events %}		
 			<div class="col-12 col-md-8 col-lg-4 my-1">
 				<div class="card bg-dark text-white">
-					<div class="picture">
-						<img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
-					</div>
+					{% if event.pictures is not empty %}
+						<div class="picture">
+							<img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
+						</div>
+					{% endif %}
 					<div class="card-img-overlay">
 						<h5 class="card-title">{{ event.title }}</h5>
 						<p class="card-text">{{ event.description }}</p>

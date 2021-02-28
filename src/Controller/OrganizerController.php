@@ -18,7 +18,7 @@ class OrganizerController extends AbstractController
     /**
      * @Route("/organizer/profil/edit", name="organizer_edit")
      */
-    public function update()
+    public function edit()
     {
         return $this->render('organizer/edit.html.twig');
     }

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Locale;
 use DateTime;
 use App\Entity\City;
 use App\Entity\Event;
@@ -45,8 +44,6 @@ class EventController extends AbstractController
         $event = $eventRepository->findOneBy([
             'id' => $event_id
         ]);
-
-        
         
         if (!$event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
@@ -104,14 +101,14 @@ class EventController extends AbstractController
      */
     public function participate($event_id, EventRepository $eventRepository, Security $security, EntityManagerInterface $em)
     {
-        // recuperer l'event_id passé en param
+        // recuperer l'event
         $event = $eventRepository->find($event_id);
 
         // recuperer l'id du user connecté
         $user = $security->getUser();
 
         if (!$user) {
-           // rediriger cers la page de connection
+           // rediriger vers la page de connection
         }
 
         // rajouter une ligne dans la table participation        
@@ -121,7 +118,7 @@ class EventController extends AbstractController
             ->setAddedAt(new DateTime());
 
         // AVANT CA VERIFIER SI PARTICIPE PAS DEJA 
-        // pour l'instant possible de s'inscrire plusieur fois au emme event
+        // pour l'instant possible de s'inscrire plusieur fois au meme event
         
         $em->persist($participation);
         $em->flush();
@@ -132,14 +129,11 @@ class EventController extends AbstractController
         ]);
     }
 
-
-
     /**
      * @Route("/event/create", name="event_create")
      */
     public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, Security $security)
     {
-
         
         // verifier si c'est un ORGANIZER
         $event = new Event;
