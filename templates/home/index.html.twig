@@ -19,10 +19,10 @@
         </div>
         {% for event in lastEvents %}
             <div class="col-12 col-md-8 col-lg-4 my-1">
-                <div class="card bg-dark text-white">
+                <div class="card bg-dark text-dark">
                     {% if event.pictures is not empty %}
                         <div class="picture">
-                            <img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
+                            <img src="{{ event.pictures[0].path }}"  alt="{{ event.title }}">
                         </div>
                     {% endif %}
                     <div class="card-img-overlay">
