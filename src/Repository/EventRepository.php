@@ -35,6 +35,42 @@ class EventRepository extends ServiceEntityRepository
         ;
     }
     */
+    /**
+     * Retourne les derniers évènements créés (général ou par catégorie)
+     * @return Event[]
+     */
+    public function findLast($category = null){
+
+        if($category === null){
+            return $this->createQueryBuilder('e')
+                ->orderBy('e.createdAt', 'ASC')
+                ->setMaxResults(6)
+                ->getQuery()
+                ->getResult();
+        }
+        
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.category', $category)
+            ->orderBy('e.createdAt', 'ASC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+        
+    }
+
+    /**
+     * Retourne les events les plus populaires
+     * @return Event[]
+     */
+    public function findByPopularity(){
+
+        return $this->createQueryBuilder('e')
+            ->orderBy('e.countViews', 'ASC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+        
+    }
 
     /*
     public function findOneBySomeField($value): ?Event

@@ -2,18 +2,33 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\CategoryRepository;
+use App\Repository\EventRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home")
      */
-    public function index(): Response
+    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository): Response
     {
+        //derniers evenements créée
+        $lastEvents = $eventRepository->findLast();
+
+        //les events les plus populaires
+        $MostPopularityEvents = $eventRepository->findByPopularity();
+
+        //les catégories d'evenements
+        $Categories = $categoryRepository->findAll();
+
+
         return $this->render('home/index.html.twig', [
+            'lastEvents'=> $lastEvents,
+            'popularityEvents' => $MostPopularityEvents,
+            'categories' => $Categories,
             'controller_name' => 'HomeController',
         ]);
     }
