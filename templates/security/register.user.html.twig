@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+{% block title %}
+    Inscription
+{% endblock %}
+
+{% block body %}
+    {% include "shared/_choice.register.html.twig" %}   
+    <div class="row py-5">
+        <div class="col-12">
+            <h4>Inscription en tant qu'utilisateur</h4>
+        </div>
+    </div>
+    <div class="row">
+        {{form_start(form)}}
+        {% include "shared/_form.register.html.twig" %}
+        <div class="row my-2">
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Inscription</button>
+            </div>
+        </div>
+        {{form_end(form)}}
+
+    </div>  
+    
+{% endblock %}

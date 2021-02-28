@@ -7,9 +7,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(
+ * fields= {"email"},
+ * message="l'email est déjà utilisée"
+ * )
  */
 class User implements UserInterface
 {
@@ -22,6 +28,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email
      */
     private $email;
 
@@ -35,6 +42,11 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @Assert\EqualTo(propertyPath="password", message="mot de passe non identique")
+     */
+    public $confirmPassword;
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -62,7 +74,7 @@ class User implements UserInterface
     private $phone;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":0})
      */
     private $isValidate;
 
@@ -72,7 +84,7 @@ class User implements UserInterface
     private $registerAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $validatedAt;
 
@@ -87,7 +99,7 @@ class User implements UserInterface
     private $webSite;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":0})
      */
     private $isPremium;
 

@@ -1,0 +1,34 @@
+{% extends "base.html.twig" %}
+{% block title %}
+    Inscription
+{% endblock %}
+
+{% block body %}
+    {% include "shared/_choice.register.html.twig" %} 
+    <div class="row py-5">
+        <div class="col-12">
+            <h4>Inscription en tant qu'organisateur</h4>
+        </div>
+    </div>   
+    {{form_start(form)}}
+    <div class="row">
+        {% include "shared/_form.register.html.twig" %}
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.companyName)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.siret)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.webSite)}}
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Inscription</button>
+    </div>
+    {{form_end(form)}}
+{% endblock %}

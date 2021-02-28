@@ -18,17 +18,6 @@ class HomeController extends AbstractController
         ]);
     }
 
-    
-    /**
-     * @Route("/register", name="register")
-     */
-    public function register(): Response
-    {
-        return $this->render('home/register.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
-    }
-
     /**
      * @Route("/cgu", name="cgu")
      */
