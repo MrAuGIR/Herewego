@@ -2,13 +2,23 @@
 
 namespace App\Controller;
 
+
 use DateTime;
+
+use App\Form\TransportType;
+use App\Entity\City;
+use App\Entity\Transport;
+use App\Entity\Localisation;
+use App\Repository\CityRepository;
 use App\Repository\EventRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TransportRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class TransportController extends AbstractController
 {
@@ -87,20 +97,99 @@ class TransportController extends AbstractController
     }
 
 
-
-
-
-
-
     /**
      * @Route("/transport/create/{event_id}", name="transport_create")
      */
-    public function create($event_id)
+    public function create(Request $request, $event_id,EventRepository $eventRepository, Security $security, EntityManagerInterface $em)
     {
+        //Recuperation de l'event concerné par le transport
+        $event = $eventRepository->find($event_id);
+
+        //Recuperation de l'utilisateur connecté
+        $user = $security->getUser();
+
+        if (!$user) {
+            // rediriger vers la page de connection
+            $this->redirectToRoute('app_login');
+        }
+
+        //Instanciation d'un nouvel objet transport
+        $transport = new Transport();
+        //Creation de l'objet formulaire
+        $form = $this->createForm(TransportType::class,$transport);
+
+        $form->handleRequest($request);
+
+        //Soumission du formulaire
+        if ($form->isSubmitted() && $form->isValid()){
+            
+            dump($request);
+            /*Localisation de départ (aller) */
+            $localisationStart = new Localisation();
+            $cityStart = new City();
+            $idCityStart = $request->request->get('transport')['localisation_start']['city'];
+            $cityStart = $this->getDoctrine()->getRepository(City::class)->find($idCityStart);
+            
+            $localisationStart->setCity($cityStart)
+                              ->setAdress($request->request->get('transport')['localisation_start']['adress']);
+
+            /*Date et heure de départ (aller) */
+            $gostartedAt = $request->request->get('transport')['goStartedAt'];
+
+            /*Date et heure d'arrivé (aller) */
+            $goEndedAt = $request->request->get('transport')['goEndedAt'];
+
+            /* localisation de retour (au retour) */
+            $localisationReturn = new Localisation();
+            $cityReturn= new City();
+            $idCityReturn = $request->request->get('transport')['localisation_return']['city'];
+            $cityReturn = $this->getDoctrine()->getRepository(City::class)->find($idCityReturn);
+
+            $localisationReturn->setCity($cityReturn)
+                              ->setAdress($request->request->get('transport')['localisation_return']['adress']);
+
+
+            /*Date et heure de départ (au retour) */
+            $returnStartedAt = $request->request->get('transport')['returnStartedAt'];
+
+            /*Date et heure d'arrivé (au retour ) */
+            $returnEndedAt = $request->request->get('transport')['returnEndedAt'];
+
+            /*Prix des places */
+            $placePrice = $request->request->get('transport')['placePrice'];
+
+            /*Nombre de places */
+            $totalPlace = $request->request->get('transport')['totalPlace'];
+
+            /*Commentaire du createur */
+            $commentary = $request->request->get('transport')['commentary'];
+
+            /*Creation du transport*/
+            $transport->setUser($user)
+                      ->setEvent($event)
+                      ->setLocalisationStart($localisationStart)
+                      ->setLocalisationReturn($localisationReturn)
+                      ->setGoStartedAt($gostartedAt)
+                      ->setGoEndedAt($goEndedAt)
+                      ->setReturnStartedAt($returnStartedAt)
+                      ->setReturnEndedAt($returnEndedAt)
+                      ->setPlacePrice($placePrice)
+                      ->setTotalPlace($totalPlace)
+                      ->setCommentary($commentary)
+                      ->setRemainingPlace($totalPlace)
+            ;
+
+            dump($transport);
+
+        }
+
+
         return $this->render('transport/create.html.twig', [
             'eventId' => $event_id,
+            'form'=>$form->createView(),
         ]);
     }
+
     /**
      * @Route("/transport/edit/{transport_id}", name="transport_edit")
      */

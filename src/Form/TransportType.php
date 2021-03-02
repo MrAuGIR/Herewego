@@ -2,29 +2,70 @@
 
 namespace App\Form;
 
+use App\Entity\City;
 use App\Entity\Transport;
+use App\Entity\Localisation;
+use App\Form\LocalisationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+
+
+
 
 class TransportType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('goStartedAt')
-            ->add('goEndedAt')
-            ->add('returnStartedAt')
-            ->add('returnEndedAt')
-            ->add('placePrice')
-            ->add('totalPlace')
-            ->add('remainingPlace')
-            ->add('commentary')
-            ->add('createdAt')
-            ->add('event')
-            ->add('localisation_start')
-            ->add('localisation_return')
-            ->add('user')
+            //Localisation de départ
+            ->add('localisation_start',LocalisationType::class)
+            ->add('goStartedAt',DateTimeType::class, [
+                'label'=> 'Quand ?',
+                'date_widget'=> 'single_text',
+                'time_widget'=> 'single_text',
+                'attr'=> ['placeholder'=> 'Date de départ']
+            ])
+            ->add('goEndedAt',DateTimeType::class, [
+                'label'=> 'Arrivé ? (heure approximative)',
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+                'attr'=>['placeholder'=> 'Date et heure d\'arrivé']
+            ])
+            //Localisation de retour
+            ->add('localisation_return', LocalisationType::class)
+            ->add('returnStartedAt', DateTimeType::class, [
+                'label' => 'Quand ?',
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+                'attr' => ['placeholder' => 'Date de retour']
+            ])
+            ->add('returnEndedAt', DateTimeType::class, [
+                'label' => 'Arrivé ? (heure approximative)',
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+                'attr' => ['placeholder' => 'Date et heure d\'arrivé au retour']
+            ])
+            ->add('placePrice', MoneyType::class, [
+                'label' => 'Prix par place',
+                'attr' => ['placeholder'=> 'Prix/place']
+            ])
+            ->add('totalPlace', IntegerType::class, [
+                'label' => 'Nombre de place',
+                'attr' => ['placeholder'=> 'nombre de place']
+            ])
+            ->add('commentary', TextAreaType::class, [
+                'label' => 'Informations complémentaires',
+                'attr'=>['placeholder'=> 'Indiquer des informations supplémentaires sur le transport']
+            ])
+    
+            
+            
         ;
     }
 
