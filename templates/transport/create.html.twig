@@ -2,6 +2,14 @@
 
 {% block title %}proposer un transport
 {% endblock %}
+{% block stylesheets %}
+	{{parent()}}
+	https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.css
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+
+
 
 {% block body %}
 	<p>proposer un transport sur l'event : ...</p>
@@ -26,13 +34,13 @@
 				</nav>
 			</div>
 		</div>
-		<div class="col-10">
+		<div id="fullpage" class="col-10">
 			{{form_start(form)}}
 			<div data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="0" tabindex="0">
 				<div id="item-1" class="row">
 					<h3>Aller</h3>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">A partir d'où ?</h5>
 					</div>
@@ -42,7 +50,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">Quand ?</h5>
 					</div>
@@ -52,7 +60,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">Jusqu'a ?</h5>
 						<span>Ville de l'event : {{event.localisation.city.cityName}}</span></br>
@@ -67,7 +75,7 @@
 				<div id="item-1" class="row">
 					<h3>Retour</h3>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">Adresse de retour?</h5>
 					</div>
@@ -77,7 +85,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">Quand ?</h5>
 					</div>
@@ -87,7 +95,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">heure d'arrivé ?</h5>
 					</div>
@@ -97,10 +105,10 @@
 						</div>
 					</div>
 				</div>
-				<div id="item-1" class="row">
-					<h3>Détails</h3>
-				</div>
-				<div class="row make-transport">
+				<div class="row section">
+					<div class="col-12">
+						<h3>Détails</h3>
+					</div>
 					<div class="col-6">
 						<h5 id="item-1-1">Prix des places</h5>
 					</div>
@@ -110,7 +118,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">Nombre de places</h5>
 					</div>
@@ -120,7 +128,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row make-transport">
+				<div class="row section">
 					<div class="col-6">
 						<h5 id="item-1-1">Une courte description</h5>
 					</div>
@@ -131,7 +139,9 @@
 					</div>
 				</div>
 			</div>
-			<input type="submit" name="submit" value="Creer">
+			<div class="section">
+				<input type="submit" name="submit" value="Creer">
+			</div>
 			{{form_end(form)}}
 		</div>	
 
@@ -239,4 +249,18 @@
 		</div>
 	</div>
 	-->
+{% endblock %}
+{% block javascripts %}
+	{{parent()}}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.min.js"></script>
+	<script>
+		new fullpage('#fullpage', {
+			//options here
+			autoScrolling:true,
+			scrollHorizontally: false
+		});
+
+		//methods
+		fullpage_api.setAllowScrolling(true);
+	</script>
 {% endblock %}
