@@ -1,60 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}stats organizer
+{% block title %}Historique 
+	{{ user.firstName }}
+	{{ user.lastName }}
 {% endblock %}
 
 {% block body %}
-	dash stats organizer
 	<div class="card text-center">
 		<div class="card-header mb-5">
 			<ul class="nav nav-tabs card-header-tabs">
 				<li class="nav-item w-25">
-					<a class="nav-link" aria-current="true" href="dash-organizer-profil.php">Profil</a>
+					<a class="nav-link" aria-current="true" href="{{path('organizer_profil')}}">Profil</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link href=" dash-organizer-events.php">Events</a>
+					<a class="nav-link" href="{{path('organizer_events')}}">Events</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link" href="dash-organizer-archives.php">Hstorique</a>
+					<a class="nav-link" href="{{path('organizer_history')}}">Historique</a>
 				</li>
 				<li class="nav-item w-25">
-					<a class="nav-link active" " href=" dash-organizer-stats.php">Statistiques</a>
+					<a class="nav-link active" href="{{path('organizer_stats')}}">Statistiques</a>
 				</li>
 			</ul>
 		</div>
 		<div class="card-body">
-
-			<h2 class="mb-5 text-center">Mes stats des events</h2>
-
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">First</th>
-						<th scope="col">Last</th>
-						<th scope="col">Handle</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<th scope="row">1</th>
-						<td>Mark</td>
-						<td>Otto</td>
-						<td>@mdo</td>
-					</tr>
-					<tr>
-						<th scope="row">2</th>
-						<td>Jacob</td>
-						<td>Thornton</td>
-						<td>@fat</td>
-					</tr>
-					<tr>
-						<th scope="row">3</th>
-						<td colspan="2">Larry the Bird</td>
-						<td>@twitter</td>
-					</tr>
-				</tbody>
-			</table>
+			<h2 class="mb-5 text-center">Statistiques</h2>
+			<em>Les stats pourrait aparaitrent dans Events, sauf si stats plus global et alors dans Profil ?</em>
+			<p><a href="#">Exporter tous les events en fichier csv</a></p>
+			<p><a href="#">Exporter tous les events passés en fichier csv</a></p>
+			<p><a href="#">Exporter tous les events à venir en fichier csv</a></p>
 		</div>
 	</div>
 {% endblock %}

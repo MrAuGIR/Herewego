@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Édition Profil {{ user.firstName }} {{ user.lastName }}{% endblock %}
+{% block title %}Profil
+	{{ user.firstName }}
+	{{ user.lastName }}
+{% endblock %}
 
 {% block body %}
 	<div class="card text-center">
@@ -18,96 +21,51 @@
 			</ul>
 		</div>
 		<div class="card-body">
-			<h2 class="mb-5 text-center">Édition de mon profil Utilisateur</h2>
+			<h2 class="mb-5 text-center">Modifier mon profil Utilisateur</h2>
 			<!--  Section profil  -->
-			<div class="row pb-4">
-				<div class="col-12 col-md-4">
-					<div class="picture">
-						<img class="img-thumbnail" src="img/logo_user.png" alt="logo user">
+			{{form_start(formView)}}
+
+			<div class="row">
+				<div class="col-12 col-lg-6 my-4">
+					<div class="form-group">
+						{{form_row(formView.email)}}
 					</div>
 				</div>
-				<div class="col-12 col-md-8">
-					<p class="text-uppercase fs-6 fw-bold lh-1">Nom user</p>
-					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom user</p>
-					<p class="fs-7 lh-1">Membre depuis le 01/11/2019</p>
-					{% if user.isPremium %}
-						<p class="fs-7 lh-1 text-warning">Membre Premium</p>
-					{% endif %}
+				<div class="col-12 col-lg-6 my-4">
+					<div class="form-group">
+						{{form_row(formView.firstname)}}
+					</div>
 				</div>
-				<div class="col-12 mt-3">
-					<table class="table">
-						<tbody>
-							<tr>
-								<td>Nombre de transport éffectués</td>
-								<td>42</td>
-							</tr>
-							<tr>
-								<td>Nombre de participation à un évent</td>
-								<td>15</td>
-							</tr>
-							<tr>
-								<td>Nombre de transport organisés</td>
-								<td>5</td>
-							</tr>
-						</tbody>
-					</table>
+				<div class="col-12 col-lg-6 my-4">
+					<div class="form-group">
+						{{form_row(formView.lastname)}}
+					</div>
+				</div>
+				<div class="col-12 col-lg-6 my-4">
+					<div class="form-group">
+						{{form_row(formView.phone)}}
+					</div>
+				</div>
+				<div class="col-12 col-lg-6 my-4">
+					<div class="form-group">
+						{{form_row(formView.localisation.city)}}
+					</div>
+				</div>
+				<div class="col-12 col-lg-6 my-4">
+					<div class="form-group">
+						{{form_row(formView.localisation.adress)}}
+					</div>
+				</div>
+				<div class="row">
+					<button class="btn btn-primary w-25" type="submit">Modifier</button>
 				</div>
 			</div>
-			<!-- Section information -->
-			<h2 class="my-5 border-top text-center">Mes informations</h2>
-			<form action="">
-				<div class="row pb-4">
-					<div class="col-12 col-md-6 mb-3">
-						<label for="nom" class="form-label">Nom</label>
-						<input type="text" class="form-control" id="nom">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="prenom" class="form-label">Prenom</label>
-						<input type="text" class="form-control" id="prenom">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="email" class="form-label">Email</label>
-						<input type="email" class="form-control" id="email">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="telephone" class="form-label">Telephone</label>
-						<input type="text" class="form-control" id="telephone">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="ville" class="form-label">Ville</label>
-						<input type="text" class="form-control" id="ville">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="code_postal" class="form-label">Code postal</label>
-						<input type="text" class="form-control" id="code_postal">
-					</div>
-					<div class="col-12 mb-3">
-						<label for="adresse" class="form-label">Adresse</label>
-						<input type="text" class="form-control" id="adresse">
-					</div>
-					<button type="submit" class="btn btn-primary w-25 m-auto">Modifier</button>
-				</div>
-			</form>
-			<!-- Section modification mot de passe -->
-			<h2 class="mb-5 border-top text-center">Mot de passe</h2>
-			<form action="">
-
-				<div class="row mb-2">
-					<div class="col-12 col-md-6  mb-3">
-						<label for="ancien_pass" class="form-label">Ancien mot de passe</label>
-						<input type="password" class="form-control" id="ancien_pass">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="new_pass" class="form-label">Nouveau mot de passe</label>
-						<input type="password" class="form-control" id="new_pass">
-					</div>
-					<button type="submit" class="btn btn-primary w-25 m-auto">Modifier</button>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="confirm_pass" class="form-label">Confirmer mot de passe</label>
-						<input type="password" class="form-control" id="confirm_pass">
-					</div>
-				</div>
-			</form>
+			{{form_end(formView)}}
+		</div>
+		<hr>
+		<div>
+			<a href="{{ path('user_edit_password') }}" title="page de modification du mot de passe" class="btn btn-warning w-25 m-auto">je souhaite modifier mon mot de passe</a>
+			<a href="{{ path('user_delete') }}" title="suppression du compte" class="btn btn-danger w-25 m-auto">je souhaite supprimer mon compte</a>
 		</div>
 	</div>
 {% endblock %}
