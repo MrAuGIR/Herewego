@@ -16,8 +16,10 @@ use App\Repository\TransportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 
 class TransportController extends AbstractController
@@ -140,7 +142,7 @@ class TransportController extends AbstractController
             /*Date et heure d'arrivé (aller) */
             $goEndedAt = $request->request->get('transport')['goEndedAt'];
 
-            /* localisation de retour (au retour) */
+            /*Localisation de retour (au retour) */
             $localisationReturn = new Localisation();
             $cityReturn= new City();
             $idCityReturn = $request->request->get('transport')['localisation_return']['city'];
@@ -185,8 +187,6 @@ class TransportController extends AbstractController
 
             return $this->redirectToRoute('transport',['event_id'=>$event_id]);
 
-            dump($transport);
-
         }
 
 
@@ -198,12 +198,102 @@ class TransportController extends AbstractController
     }
 
     /**
-     * @Route("/transport/edit/{transport_id}", name="transport_edit")
+     * @Route("/transport/edit/{id}", name="transport_edit", methods={"GET","POST"})
      */
-    public function edit($transport_id)
+    public function edit(Transport $transport, Request $request, EntityManagerInterface $em, Security $security):Response
     {
+        /*Création du transport*/
+        // $transport = $transportRepository->find($transport_id);
+
+        /*Si transport Inexistant */
+        if (!$transport) {
+            throw $this->createNotFoundException("le transport demandé n'existe pas!");
+        }
+
+        /*Recuperation de l'utilisateur connecté*/
+        $user = $security->getUser();
+
+        /*Si pas user -> on redirige*/
+        if (!$user) {
+            // rediriger vers la page de connection
+            $this->redirectToRoute('home');
+        }
+
+        $form= $this->createForm(TransportType::class, $transport);
+        $form->handleRequest($request);
+
+        //Soumission du formulaire
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            /*Localisation de départ (aller) */
+            $localisationStart = new Localisation();
+            $cityStart = new City();
+            $idCityStart = $request->request->get('transport')['localisation_start']['city'];
+            $cityStart = $this->getDoctrine()->getRepository(City::class)->find($idCityStart);
+
+            $localisationStart->setCity($cityStart)
+            ->setAdress($request->request->get('transport')['localisation_start']['adress']);
+            $em->persist($localisationStart);
+
+            /*Date et heure de départ (aller) */
+            $gostartedAt = $request->request->get('transport')['goStartedAt'];
+
+            /*Date et heure d'arrivé (aller) */
+            $goEndedAt = $request->request->get('transport')['goEndedAt'];
+
+            /*Localisation de retour (au retour) */
+            $localisationReturn = new Localisation();
+            $cityReturn = new City();
+            $idCityReturn = $request->request->get('transport')['localisation_return']['city'];
+            $cityReturn = $this->getDoctrine()->getRepository(City::class)->find($idCityReturn);
+
+            $localisationReturn->setCity($cityReturn)
+            ->setAdress($request->request->get('transport')['localisation_return']['adress']);
+            $em->persist($localisationReturn);
+
+            /*Date et heure de départ (au retour) */
+            $returnStartedAt = $request->request->get('transport')['returnStartedAt'];
+
+            /*Date et heure d'arrivé (au retour ) */
+            $returnEndedAt = $request->request->get('transport')['returnEndedAt'];
+
+            /*Prix des places */
+            $placePrice = $request->request->get('transport')['placePrice'];
+
+            /*Nombre de places */
+            $totalPlace = $request->request->get('transport')['totalPlace'];
+
+            /*Commentaire du createur */
+            $commentary = $request->request->get('transport')['commentary'];
+
+            /*Creation du transport*/
+            $transport->setUser($user)
+                ->setEvent($transport->getEvent())
+                ->setLocalisationStart($localisationStart)
+                ->setLocalisationReturn($localisationReturn)
+                ->setGoStartedAt(new \DateTime($gostartedAt['date'] . ' ' . $gostartedAt['time']))
+                ->setGoEndedAt(new \DateTime($goEndedAt['date'] . ' ' . $goEndedAt['time']))
+                ->setReturnStartedAt(new \DateTime($returnStartedAt['date'] . ' ' . $returnStartedAt['time']))
+                ->setReturnEndedAt(new \DateTime($returnEndedAt['date'] . ' ' . $returnEndedAt['time']))
+                ->setPlacePrice($placePrice)
+                ->setTotalPlace($totalPlace)
+                ->setCommentary($commentary)
+                ->setRemainingPlace($totalPlace)
+                ->setCreatedAt(new \DateTime());
+            $em->persist($transport);
+            $em->flush();
+
+            return $this->redirectToRoute('transport', ['event_id' => $transport->getEvent()->getId()]);
+        }
+
+
+
         return $this->render('transport/edit.html.twig', [
-            'transportId' => $transport_id,
+            'transport'=>$transport,
+            'event'=>$transport->getEvent(),
+            'user'=>$user,
+            'form'=>$form->createView(),
+
         ]);
     }
 

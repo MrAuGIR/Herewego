@@ -4,11 +4,10 @@
 
 {% block body %}
 <p>modifier un transport</p>
-<p>id du transport : {{ transportId }}</p>
+<p>id du transport : {{ transport.id }}</p>
 
 ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
-<div class="row">
-		<div class="col-2">
+	<div class="col-2">
 			<div class="absolute-navbar">
 				<nav id="navbar" class="navbar navbar-light bg-light">
 					<nav class="nav nav-pills flex-column">
@@ -29,6 +28,7 @@ ATTENTION a la modification d'un transport ! si des personnes ont fait des deman
 			</div>
 		</div>
 		<div class="col-10">
+			{{form_start(form)}}
 			<div data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="0" tabindex="0">
 				<div id="item-1" class="row">
 					<h3>Aller</h3>
@@ -39,70 +39,101 @@ ATTENTION a la modification d'un transport ! si des personnes ont fait des deman
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input type="text" class="form-control" id="floatingInput" placeholder="Lieu de départ">
-							<label for="floatingInput">Lieu de départ</label>
+							{{form_row(form.localisation_start, {'class':'form-control'})}}
 						</div>
 					</div>
 				</div>
 				<div class="row make-transport">
 					<div class="col-6">
-						<h5 id="item-1-2">Quand ?</h5>
+						<h5 id="item-1-1">Quand ?</h5>
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input type="date" class="form-control" id="floatingInput" placeholder="date de départ">
-							<label for="floatingInput">Date de départ</label>
+							{{form_row(form.goStartedAt, {'class':'form-control'})}}
 						</div>
 					</div>
 				</div>
 				<div class="row make-transport">
 					<div class="col-6">
-						<h5 id="item-1-3">Jusqu'où ?</h5>
+						<h5 id="item-1-1">Jusqu'a ?</h5>
+						<span>Ville de l'event : {{event.localisation.city.cityName}}</span></br>
+						<span>adresse de l'event : {{event.localisation.adress}}</span>
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input type="text" class="form-control" id="floatingInput" placeholder="Lieu d'arrivée">
-							<label for="floatingInput">Lieu de l'event (ou proche)</label>
+							{{form_row(form.goEndedAt, {'class':'form-control'})}}
 						</div>
 					</div>
 				</div>
-				<div id="item-2" class="row">
+				<div id="item-1" class="row">
 					<h3>Retour</h3>
 				</div>
 				<div class="row make-transport">
 					<div class="col-6">
-						<h5 id="item-2-1">Retour à partir de l'evenement ?</h5>
+						<h5 id="item-1-1">Adresse de retour?</h5>
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input type="text" class="form-control" id="floatingInput" placeholder="Lieu de départ du retour">
-							<label for="floatingInput">Lieu de l'event (ou proche)</label>
+							{{form_row(form.localisation_return, {'class':'form-control'})}}
 						</div>
 					</div>
 				</div>
 				<div class="row make-transport">
 					<div class="col-6">
-						<h5 id="item-2-2">Quand ?</h5>
+						<h5 id="item-1-1">Quand ?</h5>
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input type="text" class="form-control" id="floatingInput" placeholder="A partir de quand ?">
-							<label for="floatingInput">Date du retour</label>
+							{{form_row(form.returnStartedAt, {'class':'form-control'})}}
 						</div>
 					</div>
 				</div>
 				<div class="row make-transport">
 					<div class="col-6">
-						<h5 id="item-2-3">Jusqu'ou ?</h5>
+						<h5 id="item-1-1">heure d'arrivé ?</h5>
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input type="text" class="form-control" id="floatingInput" placeholder="Jusqu'où ?">
-							<label for="floatingInput">Lieu de retour</label>
+							{{form_row(form.returnEndedAt, {'class':'form-control'})}}
+						</div>
+					</div>
+				</div>
+				<div id="item-1" class="row">
+					<h3>Détails</h3>
+				</div>
+				<div class="row make-transport">
+					<div class="col-6">
+						<h5 id="item-1-1">Prix des places</h5>
+					</div>
+					<div class="col-6">
+						<div class="form-floating mb-3">
+							{{form_row(form.placePrice, {'class':'form-control'})}}
+						</div>
+					</div>
+				</div>
+				<div class="row make-transport">
+					<div class="col-6">
+						<h5 id="item-1-1">Nombre de places</h5>
+					</div>
+					<div class="col-6">
+						<div class="form-floating mb-3">
+							{{form_row(form.totalPlace, {'class':'form-control'})}}
+						</div>
+					</div>
+				</div>
+				<div class="row make-transport">
+					<div class="col-6">
+						<h5 id="item-1-1">Une courte description</h5>
+					</div>
+					<div class="col-6">
+						<div class="form-floating mb-3">
+							{{form_row(form.commentary, {'class':'form-control'})}}
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+			<input type="submit" name="submit" value="Creer">
+			{{form_end(form)}}
+		</div>	
+		
 {% endblock %}
