@@ -132,6 +132,7 @@ class TransportController extends AbstractController
             
             $localisationStart->setCity($cityStart)
                               ->setAdress($request->request->get('transport')['localisation_start']['adress']);
+            $em->persist($localisationStart);
 
             /*Date et heure de départ (aller) */
             $gostartedAt = $request->request->get('transport')['goStartedAt'];
@@ -147,7 +148,7 @@ class TransportController extends AbstractController
 
             $localisationReturn->setCity($cityReturn)
                               ->setAdress($request->request->get('transport')['localisation_return']['adress']);
-
+            $em->persist($localisationReturn);
 
             /*Date et heure de départ (au retour) */
             $returnStartedAt = $request->request->get('transport')['returnStartedAt'];
@@ -169,15 +170,20 @@ class TransportController extends AbstractController
                       ->setEvent($event)
                       ->setLocalisationStart($localisationStart)
                       ->setLocalisationReturn($localisationReturn)
-                      ->setGoStartedAt($gostartedAt)
-                      ->setGoEndedAt($goEndedAt)
-                      ->setReturnStartedAt($returnStartedAt)
-                      ->setReturnEndedAt($returnEndedAt)
+                      ->setGoStartedAt(new \DateTime($gostartedAt['date'].' '.$gostartedAt['time']))
+                      ->setGoEndedAt(new \DateTime($goEndedAt['date'].' '.$goEndedAt['time']))
+                      ->setReturnStartedAt(new \DateTime($returnStartedAt['date'].' '.$returnStartedAt['time']))
+                      ->setReturnEndedAt(new \DateTime($returnEndedAt['date'].' '.$returnEndedAt['time']))
                       ->setPlacePrice($placePrice)
                       ->setTotalPlace($totalPlace)
                       ->setCommentary($commentary)
                       ->setRemainingPlace($totalPlace)
+                      ->setCreatedAt(new \DateTime())
             ;
+            $em->persist($transport);
+            $em->flush();
+
+            return $this->redirectToRoute('transport',['event_id'=>$event_id]);
 
             dump($transport);
 
@@ -186,6 +192,7 @@ class TransportController extends AbstractController
 
         return $this->render('transport/create.html.twig', [
             'eventId' => $event_id,
+            'event' => $event,
             'form'=>$form->createView(),
         ]);
     }
