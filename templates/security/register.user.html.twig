@@ -23,3 +23,8 @@
     </div>  
     
 {% endblock %}
+{% block javascripts %}
+	{{parent()}}
+    <script src="/script/apiAdress.js"></script>
+	<script src="/script/ajaxUser.js"></script>
+{% endblock %}

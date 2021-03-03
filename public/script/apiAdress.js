@@ -1,8 +1,6 @@
 //AJAX
 var xmlhttp = new XMLHttpRequest();
 
-envoieAjax('adressStart','Start');
-envoieAjax('adressEnd','End');
 
 // direction -> start (ville de depart) , end (ville d'arrive)
 function envoieAjax(id, direction){

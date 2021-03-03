@@ -30,19 +30,40 @@
                     {{form_row(form.phone)}}
                 </div>
             </div>
+            <div class="col-12">
+                <div class="form-group mb-3">
+                    <label>Renseigner votre adresse</label>
+                    <input class="form-control" type="text" id="adressUser" name="adressUser" placeholder="saisissez votre adresse">
+                </div>
+                <div>
+                    <nav id="resultatApiUser">
+
+                    </nav>
+                </div>
+			</div>
             <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(form.cityName)}}
+                <div class="form-floating mb-3">
+                    {{form_row(form.localisation.cityName,{'id':'cityUser'})}}
                 </div>
             </div>
             <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(form.cityCp)}}
+                <div class="form-floating mb-3">
+                    {{form_row(form.localisation.cityCp,{'id':'postcodeUser'})}}
                 </div>
             </div>
             <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(form.adress)}}
+                <div class="form-floating mb-3">
+                    {{form_row(form.localisation.adress,{'id':'nameAddUser'})}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-floating mb-3">
+                {{form_row(form.localisation.coordonneesX,{'id':'xUser'})}}
+            </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-floating mb-3">
+                    {{form_row(form.localisation.coordonneesY,{'id':'yUser'})}}
                 </div>
             </div>
         </div>

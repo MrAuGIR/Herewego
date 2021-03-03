@@ -52,24 +52,25 @@ class RegisterType extends AbstractType
                 'label' => 'votre numéro de téléphone',
                 'attr' => ['placeholder' => 'renseigner votre numéro de téléphone']
             ])
-            ->add('cityName', TextType::class, [
-                'label' => "Ville",
-                'attr' => ['placeholder' => "Ville"],
-                'required' => false,
-                'mapped' => false
-            ])
-            ->add('cityCp', TextType::class, [
-                'label' => "Code postal",
-                'attr' => ['placeholder' => "Code postal"],
-                'required' => false,
-                'mapped' => false
-            ])
-            ->add('adress', TextType::class, [
-                'label' => "Adresse",
-                'attr' => ['placeholder' => "Adresse"],
-                'required' => false,
-                'mapped' => false
-            ]);
+            ->add('localisation', LocalisationType::class);
+            // ->add('cityName', TextType::class, [
+            //     'label' => "Ville",
+            //     'attr' => ['placeholder' => "Ville"],
+            //     'required' => false,
+            //     'mapped' => false
+            // ])
+            // ->add('cityCp', TextType::class, [
+            //     'label' => "Code postal",
+            //     'attr' => ['placeholder' => "Code postal"],
+            //     'required' => false,
+            //     'mapped' => false
+            // ])
+            // ->add('adress', TextType::class, [
+            //     'label' => "Adresse",
+            //     'attr' => ['placeholder' => "Adresse"],
+            //     'required' => false,
+            //     'mapped' => false
+            // ]);
 
         if(in_array('ROLE_ORGANIZER', $options['chosen_role'])){
             $builder->add('companyName', TextType::class, [

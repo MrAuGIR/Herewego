@@ -38,18 +38,12 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             /*Localisation de l'utilisateur*/
-            //Ville
-            $city = new City;
-            $cityName = $request->request->get('register')['cityName'];
-            $cityCp = $request->request->get('register')['cityCp'];
-            $city->setCityName($cityName)->setCityCp($cityCp);
-
-            $manager->persist($city);
-
-            //Localisation
-            $adress = $request->request->get('register')['adress'];
             $localisation = new Localisation();
-            $localisation->setAdress($adress)->setCity($city);
+            $localisation->setAdress($request->request->get('register')['localisation']['adress'])
+                         ->setCityName($request->request->get('register')['localisation']['cityName'])
+                         ->setCityCp($request->request->get('register')['localisation']['cityCp'])
+                         ->setCoordonneesX($request->request->get('register')['localisation']['coordonneesX'])
+                         ->setCoordonneesY($request->request->get('register')['localisation']['coordonneesY']);
 
             $manager->persist($localisation);
 
