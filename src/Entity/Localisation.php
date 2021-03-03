@@ -50,6 +50,16 @@ class Localisation
      */
     private $transports;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $cityName;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $cityCp;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -184,6 +194,30 @@ class Localisation
                 $transport->setLocalisationStart(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCityName(): ?string
+    {
+        return $this->cityName;
+    }
+
+    public function setCityName(?string $cityName): self
+    {
+        $this->cityName = $cityName;
+
+        return $this;
+    }
+
+    public function getCityCp(): ?string
+    {
+        return $this->cityCp;
+    }
+
+    public function setCityCp(?string $cityCp): self
+    {
+        $this->cityCp = $cityCp;
 
         return $this;
     }

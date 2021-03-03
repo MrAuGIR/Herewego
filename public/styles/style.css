@@ -124,3 +124,15 @@ main {
     padding-left: 5px;
     padding-right: 5px;
 }
+
+
+/* transport */
+.contentResult{
+    z-index: 100;
+}
+
+#resultatApi{
+    background-color: rgb(248, 248, 237);
+    z-index: 100;
+    min-width: 33vw;
+}

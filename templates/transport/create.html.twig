@@ -29,13 +29,37 @@
 	<div class="col-12 col-md-8 col-lg-9">
 		<div id="fullpage" data-bs-spy="scroll" data-bs-target="#myMenu">
 			{{form_start(form)}}
-			<div id="p1" class="section">
-				<div class="col-6">
-					<h5 id="item-1-1">A partir d'où ?</h5>
-				</div>
-				<div class="col-6">
-					<div class="form-floating mb-3">
-						{{form_row(form.localisation_start, {'class':'form-control'})}}
+			<div class="section">
+				<div class="row">
+					<div class="col-12">
+						<h5 id="item-1-1">A partir d'où ?</h5>
+					</div>
+					<div class="col-6 position-relative">
+						<div class="form-floating mb-3">
+							<input class="form-control" type="text" id="adressInput" name="adressInput" placeholder="saisissez l'adresse de départ">
+						</div>
+						<div class="position-absolute top-50 start-50 contentResult">
+							<nav id="resultatApi">
+
+							</nav>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_start.city,{'id':'city'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_start.cp,{'id':'postcode'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_start.adresse,{'id':'nameAdd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_start.coordonneeX,{'id':'x'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_start.coordonneeY,{'id':'y'})}}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -131,6 +155,7 @@
 {% endblock %}
 {% block javascripts %}
 	{{parent()}}
+	<script src="/script/AjaxAdress.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.min.js"></script>
 	<script>
 		new fullpage('#fullpage', {
