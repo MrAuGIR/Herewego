@@ -25,13 +25,8 @@ class Localisation
     private $adress;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $coordonnees;
-
-    /**
      * @ORM\ManyToOne(targetEntity=City::class, inversedBy="localisations")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $city;
 
@@ -60,6 +55,17 @@ class Localisation
      */
     private $cityCp;
 
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $coordonneesX;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $coordonneesY;
+
+   
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -84,17 +90,6 @@ class Localisation
         return $this;
     }
 
-    public function getCoordonnees(): ?string
-    {
-        return $this->coordonnees;
-    }
-
-    public function setCoordonnees(?string $coordonnees): self
-    {
-        $this->coordonnees = $coordonnees;
-
-        return $this;
-    }
 
     public function getCity(): ?City
     {
@@ -221,4 +216,29 @@ class Localisation
 
         return $this;
     }
+
+    public function getCoordonneesX(): ?string
+    {
+        return $this->coordonneesX;
+    }
+
+    public function setCoordonneesX(?string $coordonneesX): self
+    {
+        $this->coordonneesX = $coordonneesX;
+
+        return $this;
+    }
+
+    public function getCoordonneesY(): ?string
+    {
+        return $this->coordonneesY;
+    }
+
+    public function setCoordonneesY(?string $coordonneesY): self
+    {
+        $this->coordonneesY = $coordonneesY;
+
+        return $this;
+    }
+
 }

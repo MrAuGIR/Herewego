@@ -44,14 +44,17 @@ class AppFixtures extends Fixture
         $faker->addProvider(new \Bluemmb\Faker\PicsumPhotosProvider($faker));
 
         function makeLocalisation($faker, $manager) {
-            $city = new City();
-            $city->setCityName($faker->city())
-            ->setCityCp($faker->numberBetween(10000, 90000));
-            $manager->persist($city);
+            // $city = new City();
+            // $city->setCityName($faker->city())
+            // ->setCityCp($faker->numberBetween(10000, 90000));
+            // $manager->persist($city);
             
             $localisation = new Localisation();
             $localisation->setAdress($faker->address())
-                ->setCity($city);
+                        ->setCityName($faker->city())
+                        ->setCityCp($faker->numberBetween(1000, 90000))
+                        ->setCoordonneesX($faker->numberBetween(0, 100))
+                        ->setCoordonneesY($faker->numberBetween(0, 100));
             $manager->persist($localisation);
             return $localisation;
         }

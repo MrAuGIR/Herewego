@@ -19,7 +19,7 @@
 				<h2 class="accordion-header" id="heading{{ transport.id }}">
 					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ transport.id }}" aria-expanded="true" aria-controls="collapse{{ transport.id }}">
 						<div class="row w-100">
-							<div class="col-3">{{ transport.localisationStart.city.cityName }}</div>
+							<div class="col-3">{{ transport.localisationStart.cityName }}</div>
 							<div class="col-3">Départ à
 								<strong>{{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</strong>
 							</div>
@@ -37,18 +37,18 @@
 						<p>manager : {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
 						<p>Infos Aller : </p>
 						<ul>
-							<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.city.cityCp }}, {{ transport.localisationStart.city.cityName }}</li>
+							<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
 							<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
 							<hr>
-							<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.city.cityCp }}, {{ transport.localisationReturn.city.cityName }}</li>
+							<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
 							<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
 						</ul>
 						<p>infos Retour : </p>
 						<ul>
-							<li>Départ : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.city.cityCp }}, {{ transport.localisationReturn.city.cityName }}</li>
+							<li>Départ : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
 							<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
 							<hr>
-							<li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.city.cityCp }}, {{ transport.localisationStart.city.cityName }}</li>
+							<li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
 							<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
 						</ul>
 						<p>commentaires : {{ transport.commentary }}</p>

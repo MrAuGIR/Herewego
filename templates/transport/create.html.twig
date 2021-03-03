@@ -34,31 +34,31 @@
 					<div class="col-12">
 						<h5 id="item-1-1">A partir d'où ?</h5>
 					</div>
-					<div class="col-6 position-relative">
+					<div class="col-6">
 						<div class="form-floating mb-3">
-							<input class="form-control" type="text" id="adressInput" name="adressInput" placeholder="saisissez l'adresse de départ">
+							<input class="form-control" type="text" id="adressStart" name="adressStart" placeholder="saisissez l'adresse de départ">
 						</div>
-						<div class="position-absolute top-50 start-50 contentResult">
-							<nav id="resultatApi">
+						<div class="contentResult">
+							<nav id="resultatApiStart">
 
 							</nav>
 						</div>
 					</div>
 					<div class="col-12">
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_start.city,{'id':'city'})}}
+							{{form_row(form.localisation_start.cityName,{'id':'cityStart'})}}
 						</div>
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_start.cp,{'id':'postcode'})}}
+							{{form_row(form.localisation_start.cityCp,{'id':'postcodeStart'})}}
 						</div>
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_start.adresse,{'id':'nameAdd'})}}
+							{{form_row(form.localisation_start.adress,{'id':'nameAddStart'})}}
 						</div>
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_start.coordonneeX,{'id':'x'})}}
+							{{form_row(form.localisation_start.coordonneesX,{'id':'xStart'})}}
 						</div>
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_start.coordonneeY,{'id':'y'})}}
+							{{form_row(form.localisation_start.coordonneesY,{'id':'yStart'})}}
 						</div>
 					</div>
 				</div>
@@ -86,12 +86,36 @@
 				</div>
 			</div>
 			<div  class="section">
-				<div class="col-6">
-					<h5 id="item-1-1">Adresse de retour?</h5>
-				</div>
-				<div class="col-6">
-					<div class="form-floating mb-3">
-						{{form_row(form.localisation_return, {'class':'form-control'})}}
+				<div class="row">
+					<div class="col-12">
+						<h5>Adresse de retour?</h5>
+					</div>
+					<div class="col-6">
+						<div class="form-floating mb-3">
+							<input class="form-control" type="text" id="adressEnd" name="adressEnd" placeholder="saisissez l'adresse de départ">
+						</div>
+						<div>
+							<nav id="resultatApiEnd">
+
+							</nav>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.cityName,{'id':'cityEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.cityCp,{'id':'postcodeEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.adress,{'id':'nameAddEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.coordonneesX,{'id':'xEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.coordonneesY,{'id':'yEnd'})}}
+						</div>
 					</div>
 				</div>
 			</div>

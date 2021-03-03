@@ -15,24 +15,20 @@ class LocalisationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            // ->add('city', EntityType::class, [
-            //     'help' => 'nom ville',
-            //     'class' => City::class,
-            //     'choice_label' => function (City $city) {
-            //         return ucfirst($city->getCityName());
-            //     },
-            // ])
-            ->add('city', TextType::class)
-            ->add('cp', TextType::class,[
+            
+            ->add('cityName', TextType::class,[
+                'attr' => ['placeholder' => 'Saisissez le nom de la ville']
+            ])
+            ->add('cityCp', TextType::class,[
                 'attr' => ['placeholder' => 'Saisissez le code postal']
             ])
-            ->add('adresse',TextType::class,[
+            ->add('adress',TextType::class,[
                 'attr'=>['placeholder'=>'Saisissez l\'adresse']
             ])
-            ->add('coordonneeX', TextType::class, [
+            ->add('coordonneesX', TextType::class, [
                 'attr'=>['hidden'=>true]
             ])
-            ->add('coordonneeY', TextType::class, [
+            ->add('coordonneesY', TextType::class, [
                 'attr' => ['hidden' => true]
             ])
         ;

@@ -107,7 +107,9 @@ class TransportController extends AbstractController
         //Recuperation de l'event concerné par le transport
         $event = $eventRepository->find($event_id);
 
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         //Recuperation de l'utilisateur connecté
+        /** @var \App\Entity\User $user */
         $user = $security->getUser();
 
         if (!$user) {
@@ -128,12 +130,14 @@ class TransportController extends AbstractController
             dump($request);
             /*Localisation de départ (aller) */
             $localisationStart = new Localisation();
-            $cityStart = new City();
-            $idCityStart = $request->request->get('transport')['localisation_start']['city'];
-            $cityStart = $this->getDoctrine()->getRepository(City::class)->find($idCityStart);
+            dump($request);
             
-            $localisationStart->setCity($cityStart)
-                              ->setAdress($request->request->get('transport')['localisation_start']['adress']);
+            //$cityStart = $this->getDoctrine()->getRepository(City::class)->find($idCityStart);
+            $localisationStart->setAdress($request->request->get('transport')['localisation_start']['adress'])
+                              ->setCityCp($request->request->get('transport')['localisation_start']['cityCp'])
+                              ->setCityName($request->request->get('transport')['localisation_start']['cityName'])
+                              ->setCoordonneesX($request->request->get('transport')['localisation_start']['coordonneesX'])
+                              ->setCoordonneesY($request->request->get('transport')['localisation_start']['coordonneesY']);
             $em->persist($localisationStart);
 
             /*Date et heure de départ (aller) */
@@ -144,12 +148,12 @@ class TransportController extends AbstractController
 
             /*Localisation de retour (au retour) */
             $localisationReturn = new Localisation();
-            $cityReturn= new City();
-            $idCityReturn = $request->request->get('transport')['localisation_return']['city'];
-            $cityReturn = $this->getDoctrine()->getRepository(City::class)->find($idCityReturn);
 
-            $localisationReturn->setCity($cityReturn)
-                              ->setAdress($request->request->get('transport')['localisation_return']['adress']);
+            $localisationReturn->setAdress($request->request->get('transport')['localisation_return']['adress'])
+                              ->setCityCp($request->request->get('transport')['localisation_return']['cityCp'])
+                              ->setCityName($request->request->get('transport')['localisation_return']['cityName'])
+                              ->setCoordonneesX($request->request->get('transport')['localisation_return']['coordonneesX'])
+                              ->setCoordonneesY($request->request->get('transport')['localisation_return']['coordonneesY']);
             $em->persist($localisationReturn);
 
             /*Date et heure de départ (au retour) */
