@@ -1,139 +1,203 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}modifier un transport{% endblock %}
+{% block stylesheets %}
+	{{parent()}}
+	https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.css
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
 
 {% block body %}
 <p>modifier un transport</p>
 <p>id du transport : {{ transport.id }}</p>
-
-ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
-	<div class="col-2">
-			<div class="absolute-navbar">
-				<nav id="navbar" class="navbar navbar-light bg-light">
-					<nav class="nav nav-pills flex-column">
-						<a class="nav-link" href="#item-1">Aller</a>
-						<nav class="nav nav-pills flex-column">
-							<a class="nav-link ms-3 my-1" href="#item-1-1">Où ?</a>
-							<a class="nav-link ms-3 my-1" href="#item-1-2">Quand ?</a>
-							<a class="nav-link ms-3 my-1" href="#item-1-3">Jusqu'où ?</a>
-						</nav>
-						<a class="nav-link" href="#item-2">Retour</a>
-						<nav class="nav nav-pills flex-column">
-							<a class="nav-link ms-3 my-1" href="#item-2-1">Où ?</a>
-							<a class="nav-link ms-3 my-1" href="#item-2-2">Quand ?</a>
-							<a class="nav-link ms-3 my-1" href="#item-2-3">Jusqu'où ?</a>
-						</nav>
-					</nav>
-				</nav>
-			</div>
-		</div>
-		<div class="col-10">
+<div class="row">
+	<div class="col-12 col-md-4 col-lg-3">
+		<p>proposer un transport sur l'event : {{ event.title }}</p>
+		<nav id="myMenu"  class="navbar nav nav-pills flex-column navbar-light bg-light">
+			<a class="nav-link active" data-menuanchor="p1" class="active"href="#p1">Aller - Lieu de départ</a>
+			<a class="nav-link" data-menuanchor="p2" href="#p2">Aller - Date de départ</a>
+			<a class="nav-link" data-menuanchor="p3" href="#p3">Aller - Date d'arrivé</a>
+			<a class="nav-link" data-menuanchor="p4" href="#p4">Retour - Lieu de retour</a>
+			<a class="nav-link" data-menuanchor="p5" href="#p5">Retour - Date de départ</a>
+			<a class="nav-link" data-menuanchor="p6" href="#p6">Retour - Date d'arrivé</a>
+			<a class="nav-link" data-menuanchor="p7" href="#p7">Détails - prix des places</a>
+			<a class="nav-link" data-menuanchor="p8" href="#p8">Détails - Nombre de places</a>
+			<a class="nav-link" data-menuanchor="p9" href="#p9">Détails - Commentaires</a>
+			<a class="nav-link" data-menuanchor="p10" href="#p10">Valider</a>
+		</nav>
+	</div>
+	<div class="col-12 col-md-8 col-lg-9">
+		<div id="fullpage" data-bs-spy="scroll" data-bs-target="#myMenu">
 			{{form_start(form)}}
-			<div data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="0" tabindex="0">
-				<div id="item-1" class="row">
-					<h3>Aller</h3>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
+			<div class="section">
+				<div class="row">
+					<div class="col-12">
 						<h5 id="item-1-1">A partir d'où ?</h5>
 					</div>
 					<div class="col-6">
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_start, {'class':'form-control'})}}
+							<input class="form-control" type="text" id="adressStart" name="adressStart" placeholder="saisissez l'adresse de départ">
+						</div>
+						<div class="contentResult">
+							<nav id="resultatApiStart">
+
+							</nav>
 						</div>
 					</div>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Quand ?</h5>
-					</div>
-					<div class="col-6">
+					<div class="col-12">
 						<div class="form-floating mb-3">
-							{{form_row(form.goStartedAt, {'class':'form-control'})}}
+							{{form_row(form.localisation_start.cityName,{'id':'cityStart'})}}
 						</div>
-					</div>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Jusqu'a ?</h5>
-						<span>Ville de l'event : {{event.localisation.city.cityName}}</span></br>
-						<span>adresse de l'event : {{event.localisation.adress}}</span>
-					</div>
-					<div class="col-6">
 						<div class="form-floating mb-3">
-							{{form_row(form.goEndedAt, {'class':'form-control'})}}
+							{{form_row(form.localisation_start.cityCp,{'id':'postcodeStart'})}}
 						</div>
-					</div>
-				</div>
-				<div id="item-1" class="row">
-					<h3>Retour</h3>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Adresse de retour?</h5>
-					</div>
-					<div class="col-6">
 						<div class="form-floating mb-3">
-							{{form_row(form.localisation_return, {'class':'form-control'})}}
+							{{form_row(form.localisation_start.adress,{'id':'nameAddStart'})}}
 						</div>
-					</div>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Quand ?</h5>
-					</div>
-					<div class="col-6">
 						<div class="form-floating mb-3">
-							{{form_row(form.returnStartedAt, {'class':'form-control'})}}
+							{{form_row(form.localisation_start.coordonneesX,{'id':'xStart'})}}
 						</div>
-					</div>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">heure d'arrivé ?</h5>
-					</div>
-					<div class="col-6">
 						<div class="form-floating mb-3">
-							{{form_row(form.returnEndedAt, {'class':'form-control'})}}
-						</div>
-					</div>
-				</div>
-				<div id="item-1" class="row">
-					<h3>Détails</h3>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Prix des places</h5>
-					</div>
-					<div class="col-6">
-						<div class="form-floating mb-3">
-							{{form_row(form.placePrice, {'class':'form-control'})}}
-						</div>
-					</div>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Nombre de places</h5>
-					</div>
-					<div class="col-6">
-						<div class="form-floating mb-3">
-							{{form_row(form.totalPlace, {'class':'form-control'})}}
-						</div>
-					</div>
-				</div>
-				<div class="row make-transport">
-					<div class="col-6">
-						<h5 id="item-1-1">Une courte description</h5>
-					</div>
-					<div class="col-6">
-						<div class="form-floating mb-3">
-							{{form_row(form.commentary, {'class':'form-control'})}}
+							{{form_row(form.localisation_start.coordonneesY,{'id':'yStart'})}}
 						</div>
 					</div>
 				</div>
 			</div>
-			<input type="submit" name="submit" value="Creer">
+			<div class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">Quand ?</h5>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.goStartedAt, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div  class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">arrivé le ?</h5>
+					<span>Ville de l'event : {{event.localisation.cityName}}</span></br>
+					<span>adresse de l'event : {{event.localisation.adress}}</span>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.goEndedAt, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div  class="section">
+				<div class="row">
+					<div class="col-12">
+						<h5>Adresse de retour?</h5>
+					</div>
+					<div class="col-6">
+						<div class="form-floating mb-3">
+							<input class="form-control" type="text" id="adressEnd" name="adressEnd" placeholder="saisissez l'adresse de départ">
+						</div>
+						<div>
+							<nav id="resultatApiEnd">
+
+							</nav>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.cityName,{'id':'cityEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.cityCp,{'id':'postcodeEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.adress,{'id':'nameAddEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.coordonneesX,{'id':'xEnd'})}}
+						</div>
+						<div class="form-floating mb-3">
+							{{form_row(form.localisation_return.coordonneesY,{'id':'yEnd'})}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">Quand ?</h5>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.returnStartedAt, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">heure d'arrivé ?</h5>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.returnEndedAt, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">Prix des places</h5>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.placePrice, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">Nombre de places</h5>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.totalPlace, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<div class="col-6">
+					<h5 id="item-1-1">Une courte description</h5>
+				</div>
+				<div class="col-6">
+					<div class="form-floating mb-3">
+						{{form_row(form.commentary, {'class':'form-control'})}}
+					</div>
+				</div>
+			</div>
+			<div class="section">
+				<input class="btn btn-primary" type="submit" name="submit" value="Creer">
+			</div>
 			{{form_end(form)}}
-		</div>	
-		
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block javascripts %}
+	{{parent()}}
+	<script src="/script/AjaxAdress.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.min.js"></script>
+	<script>
+		new fullpage('#fullpage', {
+			//options here
+			anchors: ['p1', 'p2', 'p3', 'p4', 'p5','p6','p7','p8','p9','p10'],
+			sectionsCouleur : ['#f2f2f2f2','#4BBFC3','#7BAABE','whitesmoke','#000','#f2f2f2f2','#4BBFC3','#7BAABE','whitesmoke'],
+			menu: '#myMenu',
+			navigation: true,
+			navigationPosition: "right",
+			autoScrolling:true,
+			scrollHorizontally: false,
+			paddingTop: '5rem',
+			verticalCentered: false,
+		});
+
+		//methods
+		fullpage_api.setAllowScrolling(true);
+	</script>
 {% endblock %}
