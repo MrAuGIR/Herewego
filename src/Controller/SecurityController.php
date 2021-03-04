@@ -82,19 +82,15 @@ class SecurityController extends AbstractController
         //soumission du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /*Localisation de l'organisateur*/
-            //Ville
-            $city = new City;
-            $cityName = $request->request->get('register')['cityName'];
-            $cityCp = $request->request->get('register')['cityCp'];
-            $city->setCityName($cityName)->setCityCp($cityCp);
 
-            $manager->persist($city);
-
-            //Localisation
-            $adress = $request->request->get('register')['adress'];
+            /*Localisation de l'organisateur */
             $localisation = new Localisation();
-            $localisation->setAdress($adress)->setCity($city);
+            $localisation->setAdress($request->request->get('register')['localisation']['adress'])
+                        ->setCityName($request->request->get('register')['localisation']['cityName'])
+                        ->setCityCp($request->request->get('register')['localisation']['cityCp'])
+                        ->setCoordonneesX($request->request->get('register')['localisation']['coordonneesX'])
+                        ->setCoordonneesY($request->request->get('register')['localisation']['coordonneesY']);
+            
 
             $manager->persist($localisation);
 
@@ -105,7 +101,13 @@ class SecurityController extends AbstractController
                  ->setIsPremium(False)
                  ->setRoles(['ROLE_ORGANIZER'])
                  ->setRegisterAt(new \DateTime())
-                 ->setLocalisation($localisation);
+                 ->setLocalisation($localisation)
+                 ->setCompanyName($request->request->get('register')['companyName'])
+                 ->setSiret($request->request->get('register')['siret']);
+
+            if(!empty($request->request->get('regsiter')['webSite'])){
+                $user->setWebSite($request->request->get('regsiter')['webSite']);
+            }
 
             $manager->persist($user);
 
