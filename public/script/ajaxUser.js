@@ -1,2 +1,0 @@
-
-envoieAjax('adressUser','User');

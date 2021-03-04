@@ -26,5 +26,7 @@
 {% block javascripts %}
 	{{parent()}}
     <script src="/script/apiAdress.js"></script>
-	<script src="/script/ajaxUser.js"></script>
+	<script>
+        envoieAjax('adressUser','User');
+    </script>
 {% endblock %}

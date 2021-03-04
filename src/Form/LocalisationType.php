@@ -26,9 +26,11 @@ class LocalisationType extends AbstractType
                 'attr'=>['placeholder'=>'Saisissez l\'adresse']
             ])
             ->add('coordonneesX', TextType::class, [
+                'label'=>false,
                 'attr'=>['hidden'=>true]
             ])
             ->add('coordonneesY', TextType::class, [
+                'label' => false,
                 'attr' => ['hidden' => true]
             ])
         ;

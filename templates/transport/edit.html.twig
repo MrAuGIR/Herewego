@@ -182,9 +182,13 @@ ATTENTION a la modification d'un transport ! si des personnes ont fait des deman
 {% block javascripts %}
 	{{parent()}}
 	<script src="/script/apiAdress.js"></script>
-	<script src="/script/ajaxTransport.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.min.js"></script>
 	<script>
+		//pour l'affichage des adresses
+		envoieAjax('adressStart','Start');
+		envoieAjax('adressEnd','End');
+
+		//pour le model OnePage
 		new fullpage('#fullpage', {
 			//options here
 			anchors: ['p1', 'p2', 'p3', 'p4', 'p5','p6','p7','p8','p9','p10'],
