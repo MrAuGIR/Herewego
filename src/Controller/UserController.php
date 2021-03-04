@@ -72,6 +72,7 @@ class UserController extends AbstractController
 
         $formView = $form->createView();
 
+        // dd($formView);
 
         return $this->render('user/edit.html.twig', [
             'formView' => $formView,
