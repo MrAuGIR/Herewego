@@ -42,7 +42,7 @@ class AdminController extends AbstractDashboardController
             MenuItem::linkToCrud('Villes','fa fa-city', City::class),
             MenuItem::section('Event'),
             MenuItem::linkToCrud('Event', 'fas fa-calendar-week', Event::class),
-            MenuItem::linkToCrud('Catégorie', 'fas fa-layer-group', Category::class),
+            MenuItem::linkToCrud('Catégorie', 'fas fa-layer-group', Category::class),   
             MenuItem::linkToCrud('Groupe event', 'fas fa-object-group', EventGroup::class),
             MenuItem::section('FAQ'),
             MenuItem::linkToCrud('Question utilisateurs', 'fa fa-question', QuestionUser::class),
