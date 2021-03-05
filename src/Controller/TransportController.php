@@ -30,12 +30,16 @@ class TransportController extends AbstractController
     /**
      * @Route("/transport/event/{event_id}", name="transport")
      */
-    public function index($event_id, EventRepository $eventRepository)
+    public function index($event_id, EventRepository $eventRepository, Security $security)
     {
         $event = $eventRepository->find($event_id);
 
+        /** @var \App\Entity\User $user */
+        $user = $security->getUser();
+
 
         return $this->render('transport/index.html.twig', [
+            'user' => $user,
             'event' => $event
         ]);
     }
@@ -56,11 +60,9 @@ class TransportController extends AbstractController
         /* Verification si l'utilisateur a déjà un ticket sur ce transport*/
         $ticket = $ticketRepository->findOneByUserAndTransport($user,$transport);
         if(!$ticket){
-            $alreadyAsk = false;
             $ticket = new Ticket();
         }
 
-        
         /*Creation du formulaire */
         $form = $this->createForm(TicketType::class, $ticket);
 

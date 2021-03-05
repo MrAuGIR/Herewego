@@ -19,6 +19,12 @@
 				<h2 class="accordion-header" id="heading{{ transport.id }}">
 					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ transport.id }}" aria-expanded="true" aria-controls="collapse{{ transport.id }}">
 						<div class="row w-100">
+							{% if transport.user.id == user.id %}
+								<div class="col-1"><i class="fas fa-user-shield fa-w"></i></div>
+								<div class="col-2">{{ transport.localisationStart.cityName }}</div>
+							{% else %}
+								<div class="col-3">{{ transport.localisationStart.cityName }}</div>
+							{% endif %}
 							<div class="col-3">{{ transport.localisationStart.cityName }}</div>
 							<div class="col-3">Départ à
 								<strong>{{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</strong>
@@ -54,7 +60,10 @@
 						<p>commentaires : {{ transport.commentary }}</p>
 						<p>Places disponibles : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
 						<p>Prix du billet : {{ transport.placePrice }} €</p>
-						<a href="{{ path('transport_show', {transport_id: transport.id }) }}">vers la page du transport</a>
+						<a href="{{ path('transport_show', {transport_id: transport.id }) }}">vers la page détail du transport</a>
+						{% if user.id == transport.user.id %}
+						<a href="{{ path('transport_manage',{transport_id:transport.id}) }}">Gérer votre transport</a>
+						{% endif %}
 					</div>
 				</div>
 			</div>

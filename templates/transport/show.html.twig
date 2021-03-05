@@ -30,15 +30,20 @@
 
 <hr>
 <h3>Demander à rejoindre le transport</h3>
-{% if ticket.id == null %}
-<!-- FORM -->
-{{form_start(form)}}
-{{form_widget(form.countPlaces, {'attr':{'min':0,'max':transport.remainingPlace}})}}
-{{form_widget(form.commentary)}}
-<input class="btn btn-primary" type="submit" name="submit">
-{{form_end(form)}}
-{% else %}
-<p>Vous avez déjà réaliser un demande pour se transport</p>
-<a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
-{% endif %}
+    {# Si l'utilisateur n'est pas le manager du transport et si il n'a pas déjà créé un ticket pour celui-ci #}
+    {% if transport.user.id == user.id %}
+        <p>Vous êtes le manager de ce Transport pour cet événement</p>
+        <a href="{{path('transport_manage',{transport_id:transport.id})}}">Gérer votre transport</a>
+    {% else %}
+        {% if ticket.id == null %}
+            {{form_start(form)}}
+            {{form_widget(form.countPlaces, {'attr':{'min':0,'max':transport.remainingPlace}})}}
+            {{form_widget(form.commentary)}}
+            <input class="btn btn-primary" type="submit" name="submit">
+            {{form_end(form)}}
+        {% else %}
+            <p>Vous avez déjà réaliser un demande pour se transport</p>
+            <a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
+        {% endif %}
+    {% endif %}
 {% endblock %}
