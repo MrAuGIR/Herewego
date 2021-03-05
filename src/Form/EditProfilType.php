@@ -31,7 +31,9 @@ class EditProfilType extends AbstractType
                 'label' => 'votre numéro de téléphone',
                 'attr' => ['placeholder' => 'renseigner votre numéro de téléphone']
             ])
-            ->add('localisation', LocalisationType::class);
+            ->add('localisation', LocalisationType::class,[
+                'label'=> false //fait disparaitre le 'localisation' dans le formulaire
+            ]);
 
         if (in_array('ROLE_ORGANIZER', $options['chosen_role'])) {
             $builder->add('companyName', TextType::class, [

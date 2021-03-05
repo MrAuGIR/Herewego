@@ -40,15 +40,15 @@
 							<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
 							<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
 							<hr>
-							<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
+							<li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
 							<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
 						</ul>
 						<p>infos Retour : </p>
 						<ul>
-							<li>Départ : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
+							<li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
 							<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
 							<hr>
-							<li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+							<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
 							<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
 						</ul>
 						<p>commentaires : {{ transport.commentary }}</p>
