@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Ticket;
+use App\Entity\User;
+use App\Entity\Transport;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,17 @@ class TicketRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ticket::class);
+    }
+
+    public function findOneByUserAndTransport(User $user, Transport $transport): ?Ticket
+    {
+        return $this->createQueryBuilder('ticket')
+            ->where('ticket.user = :user')
+            ->andWhere('ticket.transport = :transport')
+            ->setParameter('user', $user)
+            ->setParameter('transport',$transport)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     // /**

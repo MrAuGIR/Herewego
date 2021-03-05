@@ -30,18 +30,15 @@
 
 <hr>
 <h3>Demander à rejoindre le transport</h3>
-
+{% if ticket.id == null %}
 <!-- FORM -->
-<form>
-    <div class="mb-3">
-        <label for="exampleInputNumber" class="form-label">Nombre de places à reserver</label>
-        <input type="number" class="form-control" id="exampleInputNumber">
-    </div>
-    <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-        <label for="floatingTextarea">commentaires / questions a destination du responsable</label>
-    </div>
-    <br>
-    <button type="submit" class="btn btn-primary">Faire une demande pour rejoindre le transport</button>
-</form>
+{{form_start(form)}}
+{{form_widget(form.countPlaces, {'attr':{'min':0,'max':transport.remainingPlace}})}}
+{{form_widget(form.commentary)}}
+<input class="btn btn-primary" type="submit" name="submit">
+{{form_end(form)}}
+{% else %}
+<p>Vous avez déjà réaliser un demande pour se transport</p>
+<a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
+{% endif %}
 {% endblock %}

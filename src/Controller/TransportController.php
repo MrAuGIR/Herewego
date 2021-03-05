@@ -5,10 +5,13 @@ namespace App\Controller;
 
 use DateTime;
 
-use App\Form\TransportType;
+
 use App\Entity\City;
 use App\Entity\Transport;
 use App\Entity\Localisation;
+use App\Entity\Ticket;
+use App\Form\TransportType;
+use App\Form\TicketType;
 use App\Repository\CityRepository;
 use App\Repository\EventRepository;
 use App\Repository\TicketRepository;
@@ -41,16 +44,80 @@ class TransportController extends AbstractController
     /**
      * @Route("/transport/show/{transport_id}", name="transport_show")
      */
-    public function show($transport_id, TransportRepository $transportRepository)
+    public function show($transport_id, TransportRepository $transportRepository,Security $security, Request $request, TicketRepository $ticketRepository, EntityManagerInterface $em):Response
     {
         //le user doit participer à l'event pour voir cette page
+        /** @var \App\Entity\User $user */
+        $user = $security->getUser();
+        $alreadyAsk = true;
 
         $transport = $transportRepository->find($transport_id);
 
+        /* Verification si l'utilisateur a déjà un ticket sur ce transport*/
+        $ticket = $ticketRepository->findOneByUserAndTransport($user,$transport);
+        if(!$ticket){
+            $alreadyAsk = false;
+            $ticket = new Ticket();
+        }
+
+        
+        /*Creation du formulaire */
+        $form = $this->createForm(TicketType::class, $ticket);
+
+        $form->handleRequest($request);
+
+        /* Soumission du formulaire demande de ticket */
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ticket->setAskedAt(new \DateTime('now'))
+                ->setTransport($transport)
+                ->setUser($user)
+                ->setCountPlaces($request->request->get('ticket')['countPlaces'])
+                ->setCommentary($request->request->get('ticket')['commentary'])
+                ->setIsValidate(false);
+
+            $em->persist($ticket);
+            $em->flush();
+
+            // rediriger vers la page du transport (avec message success)
+            return $this->redirectToRoute('transport_show', [
+                'transport_id' => $transport_id
+            ]);
+        }
+
+
         return $this->render('transport/show.html.twig', [
-            'transport' => $transport
+            'user' => $user,
+            'ticket' => $ticket,
+            'transport' => $transport,
+            'form'=>$form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/transport/{transport_id}/cancelTicket/{id}", name="cancel_ticket")
+     */
+    public function cancelTicket(Ticket $ticket, Security $security, $transport_id){
+
+        /** @var \App\Entity\User $user */
+        $user = $security->getUser();
+
+
+        if (!$user) {
+            // rediriger vers la page de connection
+            $this->redirectToRoute('app_login');
+        }
+
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($ticket);
+        $manager->flush();
+
+        
+         // rediriger vers la page du transport (avec message success)
+        return $this->redirectToRoute('transport_show', [
+            'transport_id' => $transport_id
+        ]);
+    }
+
     /**
      * @Route("/transport/manage/{transport_id}", name="transport_manage")
      */
@@ -314,4 +381,9 @@ class TransportController extends AbstractController
 
         // return $this->render('transport/delete.html.twig');
     }
+
+
+    /**
+     * @Route("/transport/{id}/ticket", name="ask_ticket")
+     */
 }
