@@ -43,6 +43,14 @@
             {{form_end(form)}}
         {% else %}
             <p>Vous avez déjà réaliser un demande pour se transport</p>
+            <p> Statut de votre demande : </p>
+            {% if ticket.isValidate is null %}
+                <span> Votre demande est en cours de validation</span><br>
+            {% elseif ticket.isValidate == true %}
+                <span>Votre demande à été accepté</span><br>
+            {% else %}
+                <span> Votre demande n'a pas été accepté</span><br>
+            {% endif %}
             <a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
         {% endif %}
     {% endif %}

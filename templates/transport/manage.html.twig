@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
-
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
+{% endblock %}
 {% block title %}Transport : {{ transport.id }}{% endblock %}
 
 {% block body %}
@@ -33,9 +36,14 @@
 		</div>
 	</div>
 	<h2>Les demandes de tickets</h2>
+	<div class="row">
+		<div class="col-12">
+			<p>Nombre de place restantes :<strong> {{transport.remainingPlace}}</strong></p>
+		</div>
+	</div>
 	<div class="row mt-3">
 		<div class="col-12 col-lg-8 border-end">
-			<table class="table">
+			<table id="exemple" class="display" style="width:100%">
 				<thead>
 					<tr>
 						<th scope="col">Numéro</th>
@@ -66,10 +74,18 @@
 							<td>{{ ticket.askedAt | date('Y-m-d') }}</td>
 							<td>{{ ticket.commentary }}</td>
 							<td>
+								{% if transport.remainingPlace > 0 and ticket.isValidate != true %}
 								<a href="{{ path('transport_accept_ticket', {ticket_id: ticket.id }) }}">Valider</a>
+								{% else %}
+								<span style="color:grey">valider</span>
+								{% endif %}
 							</td>
 							<td>
+								{% if ticket.isValidate is null or ticket.isValidate == true %}
 								<a href="{{ path('transport_decline_ticket', {ticket_id: ticket.id }) }}">Annuler</a>
+								{% else %}
+								<span style="color:grey">annuler</span>
+								{% endif %}
 							</td>
 						</tr>
 					{% endfor %}			
@@ -77,4 +93,14 @@
 			</table>
 		</div>
 	</div>
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<script>
+	$(document).ready(function() {
+    	$('#example').DataTable();
+	} );
+</script>
 {% endblock %}

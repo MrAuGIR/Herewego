@@ -17,17 +17,20 @@ class LocalisationType extends AbstractType
         $builder
             
             ->add('cityName', TextType::class,[
-                'attr' => ['placeholder' => 'Saisissez le nom de la ville']
+                'attr' => ['placeholder' => 'Saisissez le nom de la ville',
+                            'readonly'=> true]
             ])
             ->add('cityCp', TextType::class,[
-                'attr' => ['placeholder' => 'Saisissez le code postal']
+                'attr' => ['placeholder' => 'Saisissez le code postal',
+                            'readonly'=> true]
             ])
             ->add('adress',TextType::class,[
-                'attr'=>['placeholder'=>'Saisissez l\'adresse']
+                'attr'=>['placeholder'=>'Saisissez l\'adresse',
+                         'readonly'=> true]
             ])
             ->add('coordonneesX', TextType::class, [
                 'label'=>false,
-                'attr'=>['hidden'=>true]
+                'attr'=>['hidden'=> true]
             ])
             ->add('coordonneesY', TextType::class, [
                 'label' => false,

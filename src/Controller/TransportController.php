@@ -7,9 +7,11 @@ use DateTime;
 
 
 use App\Entity\City;
+use App\Entity\Event;
 use App\Entity\Transport;
 use App\Entity\Localisation;
 use App\Entity\Ticket;
+use App\Entity\User;
 use App\Form\TransportType;
 use App\Form\TicketType;
 use App\Repository\CityRepository;
@@ -28,14 +30,38 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class TransportController extends AbstractController
 {
     /**
+     * Affiche les transport de l'event
      * @Route("/transport/event/{event_id}", name="transport")
+     * 
      */
     public function index($event_id, EventRepository $eventRepository, Security $security)
     {
         $event = $eventRepository->find($event_id);
 
+        /*Accès refusé si utilisateur non connecté*/
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         /** @var \App\Entity\User $user */
         $user = $security->getUser();
+
+        /*On verifie que l'utilisateur participe a l'event lié à ces transport */
+        $participationsUser = $user->getParticipations();
+        $participating = false;
+        foreach ($participationsUser as $participation) {
+            /** @var \App\Entity\Event $eventUser */
+            $eventUser = $participation->getEvent();
+            if($eventUser->getId() == $event_id){
+                $participating = true;
+                break;
+            }
+        }
+       
+        //si l'utilisateur ne participe pas on redirige vers la page de l'event
+        if(!$participating){
+            return $this->redirectToRoute('event_show', [
+                'event_id' => $event_id
+            ]);
+        }
 
 
         return $this->render('transport/index.html.twig', [
@@ -53,7 +79,6 @@ class TransportController extends AbstractController
         //le user doit participer à l'event pour voir cette page
         /** @var \App\Entity\User $user */
         $user = $security->getUser();
-        $alreadyAsk = true;
 
         $transport = $transportRepository->find($transport_id);
 
@@ -74,8 +99,8 @@ class TransportController extends AbstractController
                 ->setTransport($transport)
                 ->setUser($user)
                 ->setCountPlaces($request->request->get('ticket')['countPlaces'])
-                ->setCommentary($request->request->get('ticket')['commentary'])
-                ->setIsValidate(false);
+                ->setCommentary($request->request->get('ticket')['commentary']);
+                
 
             $em->persist($ticket);
             $em->flush();
@@ -96,6 +121,7 @@ class TransportController extends AbstractController
     }
 
     /**
+     * annulation du ticket par son émetteur
      * @Route("/transport/{transport_id}/cancelTicket/{id}", name="cancel_ticket")
      */
     public function cancelTicket(Ticket $ticket, Security $security, $transport_id){
@@ -103,13 +129,22 @@ class TransportController extends AbstractController
         /** @var \App\Entity\User $user */
         $user = $security->getUser();
 
+        /** @var Transport $transport */
+        $transport = $ticket->getTransport();
 
         if (!$user) {
             // rediriger vers la page de connection
             $this->redirectToRoute('app_login');
         }
-
+        /* on met a jour le nombre de place restante du transport*/
         $manager = $this->getDoctrine()->getManager();
+        /* on met a jour le nombre de place uniquement si le ticket avait un status validé*/
+        if($ticket->getIsValidate() == true){
+            $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
+        }
+        
+        $manager->persist($transport);
+        
         $manager->remove($ticket);
         $manager->flush();
 
@@ -139,15 +174,32 @@ class TransportController extends AbstractController
     {
         $ticket = $ticketRepository->find($ticket_id);
 
-        $ticket->setIsValidate(true);
-        $ticket->setValidateAt(new DateTime());
-        $em->flush();
-        
-        // dd($ticket);
+        /*on verifie le nombre de places restantes */
+        /** @var Transport $transport */
+        $transport = $ticket->getTransport();
+
+        /* si le nombre de place est suffisant on met a jour (et si le ticket n'est pas déjà validé)*/
+        if(($transport->getRemainingPlace()>= $ticket->getCountPlaces()) && ($ticket->getIsValidate()!= true)){
+
+            $ticket->setIsValidate(true);
+            $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
+            $ticket->setValidateAt(new DateTime());
+            $em->persist($transport);
+            $em->persist($ticket);
+            $em->flush();
+
+            // rediriger vers la page du transport (avec message success)
+            return $this->redirectToRoute('transport_manage', [
+                'transport_id' => $ticket->getTransport()->getId()
+            ]);
+        }
+
         // rediriger vers la page du transport (avec message success)
         return $this->redirectToRoute('transport_manage', [
             'transport_id' => $ticket->getTransport()->getId()
         ]);
+        
+        
     }
 
     /**
@@ -157,8 +209,20 @@ class TransportController extends AbstractController
     {
         $ticket = $ticketRepository->find($ticket_id);
 
+        /* on recupère le transport lié au ticket */
+        /** @var Transport $transport */
+        $transport = $ticket->getTransport();
+
+        /* si le ticket a precedement été validé alors dans ce cas la on remet a jour le nombre de place*/
+        if($ticket->getIsValidate()!=false){
+            $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
+            $em->persist($transport);
+        }
+
         $ticket->setIsValidate(false);
+        $em->persist($ticket);
         $em->flush();
+        
         
         // dd($ticket);
         // rediriger vers la page du transport (avec message success)
@@ -173,6 +237,12 @@ class TransportController extends AbstractController
      */
     public function create(Request $request, $event_id,EventRepository $eventRepository, Security $security, EntityManagerInterface $em)
     {
+        /* CONDITION pour créer un nouveau transport
+        * - Etre connecté
+        * - Participer a l'evenement
+        * - Ne pas déjà avoir créé un transport pour cet évent
+        */
+        
         //Recuperation de l'event concerné par le transport
         $event = $eventRepository->find($event_id);
 
@@ -184,6 +254,13 @@ class TransportController extends AbstractController
         if (!$user) {
             // rediriger vers la page de connection
             $this->redirectToRoute('app_login');
+        }
+
+        $allow = $this->allowCreateTransport($user,$event);
+        
+        /* redirection si l'utilisateur n'est pas autorisé à créer */
+        if (!$allow) {
+            return $this->redirectToRoute('event_show', ['event_id' => $event_id]);
         }
 
         //Instanciation d'un nouvel objet transport
@@ -384,8 +461,59 @@ class TransportController extends AbstractController
         // return $this->render('transport/delete.html.twig');
     }
 
+    /**
+     * allowCreateTransport
+     * Autorise ou non l'utilisateur a créé un transport
+     * @param  mixed $user
+     * @param  mixed $event
+     * @return bool
+     */
+    public function allowCreateTransport(User $user, Event $event):bool{
+        $participating = $this->isParticipating($user,$event);
+        /*L'utilisateur participe a l'event */
+        if($participating){
+           if(!$this->alreadyManageTransport($user, $event)){
+               return True;
+           }
+        }
+        return False;
+
+    }
 
     /**
-     * @Route("/transport/{id}/ticket", name="ask_ticket")
+     * isParticipating
+     * Verifie que l'utilisateur participe a l'event
+     * @param  mixed $user
+     * @param  mixed $event
+     * @return bool renvoie true si est bien inscrit a l'event false sinon
      */
+    public function isParticipating(User $user, Event $event):bool{
+        $participations = $user->getParticipations();
+
+        foreach($participations as $participation){
+            if($participation->getEvent()->getId() == $event->getId()){
+                return True;
+            }
+        }
+        return False;
+    }
+    
+    /**
+     * alreadyManageTransport
+     * Verifiy si l'utilisateur n'a pas déjà un transport (en tant que manager)
+     * sur cet event
+     * @param  mixed $user
+     * @param  mixed $event
+     * @return bool  renvoie true si deja manager, false sinon
+     */
+    public function alreadyManageTransport(User $user, Event $event):bool{
+        $transports = $event->getTransports();
+
+        foreach($transports as $transport){
+            if($transport->getUser()->getId() == $user->getId() ){
+                return True;
+            }
+        }
+        return False;
+    }
 }

@@ -178,6 +178,9 @@ class Transport
 
     public function setRemainingPlace(int $remainingPlace): self
     {
+        // securité sur le nombre de place 
+        $remainingPlace = ($remainingPlace > $this->getTotalPlace())? $this->getTotalPlace() : $remainingPlace;
+        $remainingPlace = ($remainingPlace<0)? 0 : $remainingPlace;
         $this->remainingPlace = $remainingPlace;
 
         return $this;
