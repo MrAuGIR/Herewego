@@ -43,7 +43,7 @@
 	</div>
 	<div class="row mt-3">
 		<div class="col-12 col-lg-8 border-end">
-			<table id="exemple" class="display">
+			<table id="exemple" class="display" style="width:100%">
 				<thead>
 					<tr>
 						<th scope="col">Numéro</th>
@@ -74,10 +74,10 @@
 							<td>{{ ticket.askedAt | date('Y-m-d') }}</td>
 							<td>{{ ticket.commentary }}</td>
 							<td>
-								{% if transport.remainingPlace > 0 %}
+								{% if transport.remainingPlace > 0 and ticket.isValidate != true %}
 								<a href="{{ path('transport_accept_ticket', {ticket_id: ticket.id }) }}">Valider</a>
 								{% else %}
-								<span>Plus de place disponibles</span>
+								<span style="color:grey">valider</span>
 								{% endif %}
 							</td>
 							<td>
