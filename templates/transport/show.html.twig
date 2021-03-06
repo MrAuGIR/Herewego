@@ -37,7 +37,7 @@
     {% else %}
         {% if ticket.id == null %}
             {{form_start(form)}}
-            {{form_widget(form.countPlaces, {'attr':{'min':0,'max':transport.remainingPlace}})}}
+            {{form_widget(form.countPlaces, {'attr':{'min':1,'max':transport.remainingPlace}})}}
             {{form_widget(form.commentary)}}
             <input class="btn btn-primary" type="submit" name="submit">
             {{form_end(form)}}
