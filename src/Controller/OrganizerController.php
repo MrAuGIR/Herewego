@@ -2,33 +2,47 @@
 
 namespace App\Controller;
 
+use App\Files\CsvService;
 use App\Form\EditPassType;
 use App\Form\EditProfilType;
 use App\Repository\EventRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+/**
+ * @Route("/organizer")
+ * @IsGranted("ROLE_ORGANIZER", message="Vous devez être organisateur pour accéder à cette partie du site.")
+ */
 class OrganizerController extends AbstractController
 {
 
     protected $encoder;
+    protected $em;
+    protected $csvService;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, CsvService $csvService)
     {
         $this->encoder = $encoder;
+        $this->em = $em;
+        $this->csvService = $csvService;
     }
     
     /**
-     * @Route("/organizer/profil", name="organizer_profil")
+     * @Route("/profil", name="organizer_profil")
      */
-    public function profil(Security $security)
+    public function profil()
     {
 
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         return $this->render('organizer/profil.html.twig', [
             'user' => $user
@@ -36,11 +50,17 @@ class OrganizerController extends AbstractController
     }
     
     /**
-     * @Route("/organizer/profil/edit", name="organizer_edit")
+     * @Route("/profil/edit", name="organizer_edit")
      */
-    public function edit(Security $security, Request $request, EntityManagerInterface $em)
+    public function edit(Request $request)
     {
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
+
+        
 
         $form = $this->createForm(EditProfilType::class, $user, ['chosen_role' => ['ROLE_ORGANIZER']]);
 
@@ -48,11 +68,8 @@ class OrganizerController extends AbstractController
 
         if($form->isSubmitted()) {
 
-            // Changer le code postal ici en fonction de la ville ??
-            // je ne sais pas si tu souhaites changer le cp dynamiquement vu qu'il n'apparait pas dans ton LocalisationType
-
-            $em->flush();
-
+            $this->em->flush();
+            //! message flash
             return $this->redirectToRoute('organizer_profil');
         }
 
@@ -65,16 +82,21 @@ class OrganizerController extends AbstractController
     }
 
     /**
-     * @Route("/organizer/profil/password", name="organizer_edit_password")
+     * @Route("/profil/password", name="organizer_edit_password")
      */
-    public function password(Security $security, Request $request, EntityManagerInterface $em)
+    public function password(Request $request)
     {
         /**
          * @var User
          */
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         $form = $this->createForm(EditPassType::class);
+
         $form->handleRequest($request);
 
         if($form->isSubmitted()) {
@@ -82,13 +104,14 @@ class OrganizerController extends AbstractController
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
+                //! message flash
                 return $this->redirectToRoute('organizer_edit_password');
             }
 
             $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
 
-            $em->flush();
-
+            $this->em->flush();
+            //! message flash
             return $this->redirectToRoute('organizer_profil');
         }
 
@@ -101,17 +124,23 @@ class OrganizerController extends AbstractController
     }
 
     /**
-     * @Route("/organizer/profil/delete", name="organizer_delete")
+     * @Route("/profil/delete", name="organizer_delete")
      */
-    public function delete(Security $security, EntityManagerInterface $em)
+    public function delete()
     {
         /**
          * @var User
          */
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
-        $em->remove($user);
-        $em->flush();
+        dd("traitement du delete d'un organizer OK");
+
+        $this->em->remove($user);
+        $this->em->flush();
 
        // Le delete d'un User est très complexe :
         // Il impacte :
@@ -121,12 +150,11 @@ class OrganizerController extends AbstractController
         //      Participation
         //      Question_user (à rendre NULL dans la bdd)
 
-        dd("traitement du delete d'un organizer OK");
         // return $this->render('organizer/profil.html.twig');
     }
     
     /**
-     * @Route("/organizer/events", name="organizer_events")
+     * @Route("/events", name="organizer_events")
      */
     public function events(EventRepository $eventRepository)
     {
@@ -134,18 +162,27 @@ class OrganizerController extends AbstractController
          * @var User;
          */
         $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         //recupère les events à venir
         $events = $eventRepository->findByDateAfterNow($user->getId());
+        //! verifier si events ? ou bien dans le twig afficher : "aucun event" si vide ?
+
+        //gestion CSV
+        $fileName = $this->csvService->createEventCsv($events);
 
         return $this->render('organizer/events.html.twig', [
             'user' => $user,
-            'events' => $events
+            'events' => $events, 
+            'fileName' => $fileName
         ]);
     }
 
     /**
-     * @Route("/organizer/history", name="organizer_history")
+     * @Route("/history", name="organizer_history")
      */
     public function history(EventRepository $eventRepository)
     {
@@ -153,26 +190,45 @@ class OrganizerController extends AbstractController
          * @var User;
          */
         $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         //recupère les events passés
         $events = $eventRepository->findByDateBeforeNow($user->getId());
+        //! verifier si events ? ou bien dans le twig afficher : "aucun event" si vide ?
+
+        //gestion CSV
+        $fileName = $this->csvService->createEventCsv($events);
 
         return $this->render('organizer/history.html.twig', [
             'user' => $user,
-            'events' => $events
+            'events' => $events, 
+            'fileName' => $fileName
         ]);
     }
 
     /**
-     * @Route("/organizer/stats", name="organizer_stats")
+     * @Route("/stats", name="organizer_stats")
      */
     public function stats()
     {
 
         $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
+
+        // gestion CSV
+        $datas = $user->getEvents();
+        $fileName = $this->csvService->createEventCsv($datas);
+
 
         return $this->render('organizer/stats.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'fileName' => $fileName
         ]);
     }
 

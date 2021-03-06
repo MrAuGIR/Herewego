@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -26,41 +27,47 @@ class EventType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => "Titre de l'évênement",
                 'attr' => [
-                    'placeholder' => "Tapez le titre de l'évênement"
+                    'placeholder' => "Le titre de l'évênement"
                 ],
                 'required' => false
             ])
             ->add('description', CKEditorType::class, [
                 'label' => "Description de l'évênement",
                 'attr' => [
-                    'placeholder' => "Tapez une description de l'évênement"
+                    'placeholder' => "Une description de l'évênement"
                 ],
                 'required' => false
             ])
             ->add('startedAt', DateTimeType::class, [
-                'label' => "Début de l'évênement"
+                'label' => "Début de l'évênement",
+                'date_widget'=> 'single_text',
+                'time_widget'=> 'single_text',
+                'required' => false
             ])
             ->add('endedAt', DateTimeType::class, [
-                'label' => "Fin de l'évênement"
+                'label' => "Fin de l'évênement",
+                'date_widget'=> 'single_text',
+                'time_widget'=> 'single_text',
+                'required' => false
             ])
             ->add('email', EmailType::class, [
                 'label' => "Email lié à l'évênement",
                 'attr' => [
-                    'placeholder' => "Tapez un email lié à l'évênement"
+                    'placeholder' => "Email lié à l'évênement"
                 ],
                 'required' => false
             ])
             ->add('website', UrlType::class, [
                 'label' => "Site web de l'évênement",
                 'attr' => [
-                    'placeholder' => "Tapez l'url du site web de l'évênement"
+                    'placeholder' => "L'url du site web de l'évênement"
                 ],
                 'required' => false
             ])
             ->add('phone', TelType::class, [
                 'label' => "Numéro de téléphone lié à l'évênement",
                 'attr' => [
-                    'placeholder' => "Tapez le numéro de téléphone lié à l'évênement"
+                    'placeholder' => "Le numéro de téléphone lié à l'évênement"
                 ],
                 'required' => false
             ])
@@ -103,46 +110,33 @@ class EventType extends AbstractType
                 ],
                 'required' => false
             ])
-            ->add('cityName', TextType::class, [
-                'label' => "Ville",
-                'attr' => [
-                    'placeholder' => "Ville"
-                ],
-                'required' => false,
-                'mapped' => false
+            ->add('localisation', LocalisationType::class,[
+                'label'=> false,
+                'required' => false
             ])
-            ->add('cityCp', TextType::class, [
-                'label' => "Cp",
-                'attr' => [
-                    'placeholder' => "Cp"
-                ],
-                'required' => false,
-                'mapped' => false
-            ])
-            ->add('adress', TextType::class, [
-                'label' => "Adresse",
-                'attr' => [
-                    'placeholder' => "Adresse"
-                ],
-                'required' => false,
-                'mapped' => false
-            ])
-            ->add('picturePath', TextType::class, [
-                'label' => "Chemin de l'image de l'event",
-                'attr' => [
-                    'placeholder' => "Chemin de l'image de l'event"
-                ],
-                'required' => false,
-                'mapped' => false
-            ])
-            ->add('pictureTitle', TextType::class, [
-                'label' => "Titre de l'image de l'event",
-                'attr' => [
-                    'placeholder' => "Titre de l'image de l'event"
-                ],
-                'required' => false,
-                'mapped' => false
-            ])
+            ->add('pictures', FileType::class, [
+                'label' => false,
+                'multiple' => true,
+                'mapped' => false,
+                'required' => false
+            ]);
+            
+            // ->add('picturePath', TextType::class, [
+            //     'label' => "Chemin de l'image de l'event",
+            //     'attr' => [
+            //         'placeholder' => "Chemin de l'image de l'event"
+            //     ],
+            //     'required' => false,
+            //     'mapped' => false
+            // ])
+            // ->add('pictureTitle', TextType::class, [
+            //     'label' => "Titre de l'image de l'event",
+            //     'attr' => [
+            //         'placeholder' => "Titre de l'image de l'event"
+            //     ],
+            //     'required' => false,
+            //     'mapped' => false
+            // ])
             ;
     }
 

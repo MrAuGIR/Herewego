@@ -17,6 +17,7 @@ use App\Repository\ParticipationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -132,31 +133,50 @@ class EventController extends AbstractController
     /**
      * @Route("/event/create", name="event_create")
      */
-    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, Security $security)
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {
         
         // verifier si c'est un ORGANIZER
+        $user = $this->getUser();
+        if (!$user) {
+            // rediriger vers la page de connection
+        }
         $event = new Event;
-
-        $user = $security->getUser();
 
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // creation de la ville
-            $cityName = $request->request->get('event')['cityName'];
-            $cityCp = $request->request->get('event')['cityCp'];
-            $city = new City();
-            $city->setCityName($cityName)
-                ->setCityCp($cityCp);
-            $em->persist($city);
-            
-            //creation de la localisation (grace a city)
-            $adress = $request->request->get('event')['adress'];
+            // GESTION DES IMAGES
+            //on recupere les images transmise
+            $pictures = $form->get('pictures')->getData();
+            //on boucle sur les images
+            foreach ($pictures as $picture) {
+                //on genere un nouveau nom de fichier (codé) et on rajoute son extension
+                $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+
+                // on copie le fichier dans le dossier uploads
+                // 2 params (destination, fichier)
+                $picture->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+                // on stock l'image dans la bdd (son nom)
+                $img = new Picture();
+                $img->setPath($fichier)
+                    ->setTitle($event->getTitle())
+                    ->setOrderPriority(1);
+                $event->addPicture($img);
+            }
+            //FIN GESTION DES IMAGES
+
+            /*Localisation de l'event*/
             $localisation = new Localisation();
-            $localisation->setAdress($adress)
-                ->setCity($city);
+            $localisation->setAdress($request->request->get('event')['localisation']['adress'])
+                         ->setCityName($request->request->get('event')['localisation']['cityName'])
+                         ->setCityCp($request->request->get('event')['localisation']['cityCp'])
+                         ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
+                         ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
             $em->persist($localisation);
 
             //creation de l'event (grace a localisation)
@@ -166,16 +186,6 @@ class EventController extends AbstractController
                 ->setUser($user)
                 ->setLocalisation($localisation);
             $em->persist($event);
-
-            //creation de la picture (grace à l'event)
-            $path = $request->request->get('event')['picturePath'];
-            $title = $request->request->get('event')['pictureTitle'];
-            $picture = new Picture();
-            $picture->setPath($path)
-                ->setTitle($title)
-                ->setEvent($event)
-                ->setOrderPriority(1);
-            $em->persist($picture);
 
             $em->flush();
             return $this->redirectToRoute('home');
@@ -207,11 +217,45 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $event->setSlug(strtolower($slugger->slug($event->getTitle())));
-            $event->setTag(strtoupper($slugger->slug($event->getTitle())));
+            // GESTION DES IMAGES
+            //on recupere les images transmise
+            $pictures = $form->get('pictures')->getData();
+            //on boucle sur les images
+            foreach ($pictures as $picture) {
+                //on genere un nouveau nom de fichier (codé) et on rajoute son extension
+                $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+
+                // on copie le fichier dans le dossier uploads
+                // 2 params (destination, fichier)
+                $picture->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+                // on stock l'image dans la bdd (son nom)
+                $img = new Picture();
+                $img->setPath($fichier)
+                    ->setTitle($event->getTitle())
+                    ->setOrderPriority(1);
+                $event->addPicture($img);
+            }
+            //FIN GESTION DES IMAGES
+
+            /*Localisation de l'event*/
+            $localisation = new Localisation();
+            $localisation->setAdress($request->request->get('event')['localisation']['adress'])
+                         ->setCityName($request->request->get('event')['localisation']['cityName'])
+                         ->setCityCp($request->request->get('event')['localisation']['cityCp'])
+                         ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
+                         ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
+            $em->persist($localisation);
+
+            //creation de l'event (grace a localisation)
+            $event->setSlug(strtolower($slugger->slug($event->getTitle())))
+                ->setTag(strtoupper($slugger->slug($event->getTitle())))
+                ->setLocalisation($localisation);
+            $em->persist($event);
 
             $em->flush();
-
             return $this->redirectToRoute('home');
         }
 
@@ -245,5 +289,36 @@ class EventController extends AbstractController
         // redirection vers le dash organizer / events (avec message)
         return $this->redirectToRoute('event');
     }
+
+    // !---------------------------------------------
+    // ! on va envoyer en AJAX avec la methode DELETE, l'image et un token
+
+    /**
+     * @Route("/event/picture/delete/{id}", name="event_picture_delete", methods={"DELETE"})
+     */
+    public function deleteImage(Picture $picture, Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        // on verifie si le token est valid
+        if($this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'])) {
+            // on recupere le nom de l'image
+            $path = $picture->getPath();
+            // on supprime le fichier
+            unlink($this->getParameter('images_directory').'/'.$path);
+
+            // on supprime l'entré de la base
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($picture);
+            $em->flush();
+
+            // on repond en json
+            return new JsonResponse(['success' => 1]);
+
+        } else {
+            return new JsonResponse(['error' => 'Token Invalide'], 400);
+        }
+    }
+    // !---------------------------------------------
 
 }
