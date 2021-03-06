@@ -164,15 +164,30 @@ class TransportController extends AbstractController
     {
         $ticket = $ticketRepository->find($ticket_id);
 
-        $ticket->setIsValidate(true);
-        $ticket->setValidateAt(new DateTime());
-        $em->flush();
-        
-        // dd($ticket);
+        /*on verifie le nombre de places restantes */
+        /** @var Transport $transport */
+        $transport = $ticket->getTransport();
+
+        /* si le nombre de place est suffisant on met a jour */
+        if($transport->getRemainingPlace()>= $ticket->getCountPlaces()){
+
+            $ticket->setIsValidate(true);
+            $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
+            $ticket->setValidateAt(new DateTime());
+            $em->flush();
+
+            // rediriger vers la page du transport (avec message success)
+            return $this->redirectToRoute('transport_manage', [
+                'transport_id' => $ticket->getTransport()->getId()
+            ]);
+        }
+
         // rediriger vers la page du transport (avec message success)
         return $this->redirectToRoute('transport_manage', [
             'transport_id' => $ticket->getTransport()->getId()
         ]);
+        
+        
     }
 
     /**
@@ -181,6 +196,12 @@ class TransportController extends AbstractController
     public function decline($ticket_id, TicketRepository $ticketRepository, EntityManagerInterface $em)
     {
         $ticket = $ticketRepository->find($ticket_id);
+
+        /* on recupère le transport lié au ticket */
+        /** @var Transport $transport */
+        $transport = $ticket->getTransport();
+
+        $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
 
         $ticket->setIsValidate(false);
         $em->flush();
