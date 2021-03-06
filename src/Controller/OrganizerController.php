@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\EditPassType;
 use App\Form\EditProfilType;
+use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
@@ -127,25 +128,38 @@ class OrganizerController extends AbstractController
     /**
      * @Route("/organizer/events", name="organizer_events")
      */
-    public function events()
+    public function events(EventRepository $eventRepository)
     {
+        /**
+         * @var User;
+         */
         $user = $this->getUser();
 
+        //recupère les events à venir
+        $events = $eventRepository->findByDateAfterNow($user->getId());
+
         return $this->render('organizer/events.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'events' => $events
         ]);
     }
 
     /**
      * @Route("/organizer/history", name="organizer_history")
      */
-    public function history()
+    public function history(EventRepository $eventRepository)
     {
-
+        /**
+         * @var User;
+         */
         $user = $this->getUser();
 
+        //recupère les events passés
+        $events = $eventRepository->findByDateBeforeNow($user->getId());
+
         return $this->render('organizer/history.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'events' => $events
         ]);
     }
 

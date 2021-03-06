@@ -26,10 +26,9 @@
 		<div class="card-body">
 			<h2 class="mb-5 text-center">Liste de mes events passés</h2>
 			
-			<em>filtrer par date avant NOW</em>
 			<div class="accordion" id="accordionExample">
 				<div class="accordion" id="accordionExample">
-					{% for event in user.events %}
+					{% for event in events %}
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="heading{{ event.id }}">
 								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ event.id }}" aria-expanded="false" aria-controls="collapse{{ event.id }}">

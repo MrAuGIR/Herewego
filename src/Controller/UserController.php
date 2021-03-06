@@ -8,6 +8,7 @@ use App\Form\RegisterType;
 use App\Form\EditProfilType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ParticipationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
@@ -144,25 +145,38 @@ class UserController extends AbstractController
     /**
      * @Route("/user/events", name="user_events")
      */
-    public function events(Security $security)
+    public function events(ParticipationRepository $participationRepository)
     {
-        $user = $security->getUser();
+        /**
+         * @var User;
+         */
+        $user = $this->getUser();
 
-
+        //recupère les participations à venir
+        $participations = $participationRepository->findByDateAfterNow($user->getId());
+        
         return $this->render('user/events.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'participations' => $participations
         ]);
     }
 
     /**
      * @Route("/user/history", name="user_history")
      */
-    public function history(Security $security)
+    public function history(ParticipationRepository $participationRepository)
     {
-        $user = $security->getUser();
+        /**
+         * @var User;
+         */
+        $user = $this->getUser();
+
+        //recupère les participations passées
+        $participations = $participationRepository->findByDateBeforeNow($user->getId());
 
         return $this->render('user/history.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'participations' => $participations
         ]);
     }
 

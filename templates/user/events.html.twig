@@ -19,11 +19,11 @@
 		</div>
 		<div class="card-body">
 			<h2 class="mb-5 text-center">Mes participations aux Êvenements à venir</h2>
-			{% if user.participations | length == 0 %}
+			{% if participations | length == 0 %}
 				<h4>aucune participations à ce jour</h4>
 			{% else %}		
 				<div class="accordion" id="accordionExample">
-					{% for p in user.participations %}		
+					{% for p in participations %}		
 						{% set break = false %}
 						{% for transport in p.event.transports %}
 							{% if not break %}											

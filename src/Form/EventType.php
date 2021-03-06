@@ -6,9 +6,9 @@ use App\Entity\Event;
 use App\Entity\Category;
 use App\Entity\EventGroup;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 
 class EventType extends AbstractType
 {
@@ -29,7 +30,7 @@ class EventType extends AbstractType
                 ],
                 'required' => false
             ])
-            ->add('description', TextareaType::class, [
+            ->add('description', CKEditorType::class, [
                 'label' => "Description de l'évênement",
                 'attr' => [
                     'placeholder' => "Tapez une description de l'évênement"

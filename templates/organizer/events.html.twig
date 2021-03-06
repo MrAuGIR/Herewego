@@ -27,10 +27,9 @@
 			<a class="btn btn-success d-block w-50 m-auto mb-5" href="{{ path('event_create') }}" role="button">Créer un event</a>
 
 			<h2 class="mb-5 text-center">Liste de mes events à venir</h2>
-			<em>filtrer par date après NOW</em>
 			<div class="accordion" id="accordionExample">
 				<div class="accordion" id="accordionExample">
-					{% for event in user.events %}
+					{% for event in events %}
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="heading{{ event.id }}">
 								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ event.id }}" aria-expanded="false" aria-controls="collapse{{ event.id }}">

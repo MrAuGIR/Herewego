@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use DateTime;
 use App\Entity\Event;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Event|null find($id, $lockMode = null, $lockVersion = null)
@@ -83,4 +84,32 @@ class EventRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findByDateAfterNow($organizerId)
+    {
+        $date = new DateTime;
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.user = :organizerId')
+            ->andWhere('e.endedAt > :date')
+            ->setParameter('date', $date)
+            ->setParameter('organizerId', $organizerId)
+            // ->orderBy('e.startedAt', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByDateBeforeNow($organizerId)
+    {
+        $date = new DateTime;
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.user = :organizerId')
+            ->andWhere('e.endedAt < :date')
+            ->setParameter('date', $date)
+            ->setParameter('organizerId', $organizerId)
+            // ->orderBy('e.startedAt', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
