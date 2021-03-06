@@ -99,8 +99,8 @@ class TransportController extends AbstractController
                 ->setTransport($transport)
                 ->setUser($user)
                 ->setCountPlaces($request->request->get('ticket')['countPlaces'])
-                ->setCommentary($request->request->get('ticket')['commentary'])
-                ->setIsValidate(false);
+                ->setCommentary($request->request->get('ticket')['commentary']);
+                
 
             $em->persist($ticket);
             $em->flush();
@@ -121,6 +121,7 @@ class TransportController extends AbstractController
     }
 
     /**
+     * annulation du ticket par son émetteur
      * @Route("/transport/{transport_id}/cancelTicket/{id}", name="cancel_ticket")
      */
     public function cancelTicket(Ticket $ticket, Security $security, $transport_id){
@@ -128,13 +129,22 @@ class TransportController extends AbstractController
         /** @var \App\Entity\User $user */
         $user = $security->getUser();
 
+        /** @var Transport $transport */
+        $transport = $ticket->getTransport();
 
         if (!$user) {
             // rediriger vers la page de connection
             $this->redirectToRoute('app_login');
         }
-
+        /* on met a jour le nombre de place restante du transport*/
         $manager = $this->getDoctrine()->getManager();
+        /* on met a jour le nombre de place uniquement si le ticket avait un status validé*/
+        if($ticket->getIsValidate() == true){
+            $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
+        }
+        
+        $manager->persist($transport);
+        
         $manager->remove($ticket);
         $manager->flush();
 
@@ -168,12 +178,14 @@ class TransportController extends AbstractController
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
-        /* si le nombre de place est suffisant on met a jour */
-        if($transport->getRemainingPlace()>= $ticket->getCountPlaces()){
+        /* si le nombre de place est suffisant on met a jour (et si le ticket n'est pas déjà validé)*/
+        if(($transport->getRemainingPlace()>= $ticket->getCountPlaces()) && ($ticket->getIsValidate()!= true)){
 
             $ticket->setIsValidate(true);
             $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
             $ticket->setValidateAt(new DateTime());
+            $em->persist($transport);
+            $em->persist($ticket);
             $em->flush();
 
             // rediriger vers la page du transport (avec message success)
@@ -201,10 +213,16 @@ class TransportController extends AbstractController
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
-        $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
+        /* si le ticket a precedement été validé alors dans ce cas la on remet a jour le nombre de place*/
+        if($ticket->getIsValidate()!=false){
+            $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
+            $em->persist($transport);
+        }
 
         $ticket->setIsValidate(false);
+        $em->persist($ticket);
         $em->flush();
+        
         
         // dd($ticket);
         // rediriger vers la page du transport (avec message success)
