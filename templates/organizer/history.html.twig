@@ -25,7 +25,7 @@
 		</div>
 		<div class="card-body">
 			<h2 class="mb-5 text-center">Liste de mes events passés</h2>
-			
+			<a href="{{ asset('csv/' ~ fileName) }}" download="{{ fileName }}">Exporter tous les events passés en fichier csv</a>
 			<div class="accordion" id="accordionExample">
 				<div class="accordion" id="accordionExample">
 					{% for event in events %}

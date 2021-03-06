@@ -85,7 +85,7 @@ class Event
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="event")
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="event", cascade={"persist"})
      */
     private $pictures;
 

@@ -12,28 +12,40 @@ use App\Repository\ParticipationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+/**
+ * @Route("/user")
+ * @IsGranted("ROLE_USER", message="Vous devez être utilisateur classique pour accéder à cette partie du site.")
+ */
 class UserController extends AbstractController
 {
     protected $encoder;
+    protected $em;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
     {
+        $this->em = $em;
         $this->encoder = $encoder;
     }
 
     /**
-     * @Route("/user/profil", name="user_profil")
+     * @Route("/profil", name="user_profil")
      */
-    public function profil(Security $security)
+    public function profil()
     {
         /**
          * @var User
          */
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
+        // ! creer un Service pour gerer les stats utilisateur
         // calcul du nombre de ticket validé = donc du nombre de transport effectué : perfectible (possible par findBy() surement)
         $tickets = $user->getTickets();
         $validatedTickets = 0;
@@ -50,12 +62,18 @@ class UserController extends AbstractController
     }
     
     /**
-     * @Route("/user/profil/edit", name="user_edit")
+     * @Route("/profil/edit", name="user_edit")
      */
-    public function edit(Security $security, Request $request, EntityManagerInterface $em)
+    public function edit(Request $request)
     {
-
-        $user = $security->getUser();
+        /**
+         * @var User
+         */
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         $form = $this->createForm(EditProfilType::class, $user, ['chosen_role' => ['ROLE_USER']]);
 
@@ -63,17 +81,12 @@ class UserController extends AbstractController
 
         if($form->isSubmitted()) {
 
-            // Changer le code postal ici en fonction de la ville ??
-            // je ne sais pas si tu souhaites changer le cp dynamiquement vu qu'il n'apparait pas dans ton LocalisationType
-
-            $em->flush();
-
+            $this->em->flush();
+            //! message flash
             return $this->redirectToRoute('user_profil');
         }
 
         $formView = $form->createView();
-
-        // dd($formView);
 
         return $this->render('user/edit.html.twig', [
             'formView' => $formView,
@@ -82,14 +95,18 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/profil/password", name="user_edit_password")
+     * @Route("/profil/password", name="user_edit_password")
      */
-    public function password(Security $security, Request $request, EntityManagerInterface $em)
+    public function password(Request $request)
     {
         /**
          * @var User
          */
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         $form = $this->createForm(EditPassType::class);
         $form->handleRequest($request);
@@ -99,13 +116,14 @@ class UserController extends AbstractController
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
+                //! message flash
                 return $this->redirectToRoute('user_edit_password');
             }
 
             $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
 
-            $em->flush();
-
+            $this->em->flush();
+            //! message flash
             return $this->redirectToRoute('user_profil');
         }
 
@@ -118,17 +136,26 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/profil/delete", name="user_delete")
+     * @Route("/profil/delete", name="user_delete")
      */
-    public function delete(Security $security, EntityManagerInterface $em)
+    public function delete()
     {
         /**
          * @var User
          */
-        $user = $security->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
-        $em->remove($user);
-        $em->flush();
+        dd("traitement du delete d'un user OK"); 
+
+        $this->em->remove($user);
+        $this->em->flush();
+
+        //! message flash
+        // return $this->redirectToRoute('home');
 
         // Le delete d'un User est très complexe :
         // Il impacte :
@@ -138,12 +165,10 @@ class UserController extends AbstractController
         //      Participation
         //      Question_user (à rendre NULL dans la bdd)
 
-        dd("traitement du delete d'un user OK");
-        // return $this->redirectToRoute('home');
     }
     
     /**
-     * @Route("/user/events", name="user_events")
+     * @Route("/events", name="user_events")
      */
     public function events(ParticipationRepository $participationRepository)
     {
@@ -151,6 +176,10 @@ class UserController extends AbstractController
          * @var User;
          */
         $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         //recupère les participations à venir
         $participations = $participationRepository->findByDateAfterNow($user->getId());
@@ -162,7 +191,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/history", name="user_history")
+     * @Route("/history", name="user_history")
      */
     public function history(ParticipationRepository $participationRepository)
     {
@@ -170,6 +199,10 @@ class UserController extends AbstractController
          * @var User;
          */
         $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
 
         //recupère les participations passées
         $participations = $participationRepository->findByDateBeforeNow($user->getId());
@@ -179,6 +212,4 @@ class UserController extends AbstractController
             'participations' => $participations
         ]);
     }
-
-
 }

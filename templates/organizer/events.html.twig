@@ -27,6 +27,7 @@
 			<a class="btn btn-success d-block w-50 m-auto mb-5" href="{{ path('event_create') }}" role="button">Créer un event</a>
 
 			<h2 class="mb-5 text-center">Liste de mes events à venir</h2>
+			<a href="{{ asset('csv/' ~ fileName) }}" download="{{ fileName }}">Exporter tous les events à venir en fichier csv</a>
 			<div class="accordion" id="accordionExample">
 				<div class="accordion" id="accordionExample">
 					{% for event in events %}
@@ -49,7 +50,7 @@
 									<p>nombre de vue sur le site : {{ event.countViews }}</p>
 									<p>nombre de transports organisés : {{ event.transports | length }}</p>
 									<p>nombre de paticipants sur le site : {{ event.participations | length }}</p>
-									<a href="#">Exporter l'event en fichier csv</a>
+									
 								</div>
 							</div>
 						</div>

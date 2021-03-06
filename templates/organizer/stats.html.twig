@@ -26,9 +26,9 @@
 		<div class="card-body">
 			<h2 class="mb-5 text-center">Statistiques</h2>
 			<em>Les stats pourrait aparaitrent dans Events, sauf si stats plus global et alors dans Profil ?</em>
-			<p><a href="#">Exporter tous les events en fichier csv</a></p>
-			<p><a href="#">Exporter tous les events passés en fichier csv</a></p>
-			<p><a href="#">Exporter tous les events à venir en fichier csv</a></p>
+			<p>
+				<a href="{{ asset('csv/' ~ fileName) }}" download="{{ fileName }}">Exporter tous les events en fichier csv</a>
+			</p>
 		</div>
 	</div>
 {% endblock %}
