@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use DateTime;
+use App\Entity\User;
 use App\Files\CsvService;
 use App\Form\EditPassType;
 use App\Form\EditProfilType;
 use App\Repository\EventRepository;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
