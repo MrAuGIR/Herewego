@@ -74,7 +74,7 @@ class User implements UserInterface
     private $phone;
 
     /**
-     * @ORM\Column(type="boolean", options={"default":0})
+     * @ORM\Column(type="boolean", options={"default":null}, nullable=true)
      */
     private $isValidate;
 
