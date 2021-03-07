@@ -19,19 +19,31 @@
 				<div class="col-12">
 					<p>Description : {{ event.description }}</p>
 				</div>
-				<div class="col-12 col-md-6 mt-4 mb-4">
-					<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-info">Les transports</a>
-				</div>
-				<div class="col-12 col-md-6 mt-4 mb-4">
-					<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-info">Proposer un transport</a>
-				</div>
+				{% if isOnEvent %}				
+					<div class="col-12 col-md-6 mt-4 mb-4">
+						<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-info">Les transports</a>
+					</div>
+					<div class="col-12 col-md-6 mt-4 mb-4">
+						<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-info">Proposer un transport</a>
+					</div>
+				{% endif %}
 			</div>
 		</div>
 		<div class="col-12 col-lg-4">
 			<div class="row">
-				<div class="col-12 py-2">
-					<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Je participe</a>
-				</div>
+				{% if user %}		
+					{% if isOnEvent %}
+						<div class="col-12 py-2">
+							<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
+						</div>
+					{% else %}	
+						<div class="col-12 py-2">
+							<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Participer</a>
+						</div>
+					{% endif %}		
+				{% else %}
+					<a class="btn btn-primary" href="{{ path('app_login') }}">Connectez vous pour participer à cet évênement</a>
+				{% endif %}
 			</div>
 			<div class="row">
 				<div class="col-12">

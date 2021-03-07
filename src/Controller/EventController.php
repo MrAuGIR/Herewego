@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use DateTime;
-use App\Entity\City;
 use App\Entity\Event;
 use App\Entity\Picture;
 use App\Form\EventType;
@@ -15,7 +14,6 @@ use App\Repository\EventGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipationRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -32,8 +30,6 @@ class EventController extends AbstractController
     {
         $events = $eventRepository->findAll();
 
-        dump($events);
-
         return $this->render('event/index.html.twig', [
             'events' => $events
         ]);
@@ -42,24 +38,40 @@ class EventController extends AbstractController
     /**
      * @Route("/event/show/{event_id}", name="event_show")
      */
-    public function show($event_id, EventRepository $eventRepository, EntityManagerInterface $em)
+    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, EntityManagerInterface $em)
     {
         $event = $eventRepository->findOneBy([
             'id' => $event_id
         ]);
-        
         if (!$event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
-        //faire countViews++ OK
+        // recuperer l'id du user connecté // si pas connecté $user = Null
+        $user = $this->getUser();
+
+        // si user connecté, on regarde si il participe à l'event en cours
+        $isOnEvent = false;
+        if ($user) {
+            $participations = $participationRepository->findBy([
+                'user' => $user->getId(),
+                'event' => $event->getId()
+            ]);
+            if (!empty($participations)) {
+                $isOnEvent = true;
+            }
+        }        
+
+        dump($isOnEvent, $user, $event);
+
+        //faire countViews++
         $event->setCountViews($event->getCountViews()+1);
         $em->flush();
 
-        dump($event);
-
         return $this->render('event/show.html.twig', [
-            'event' => $event
+            'event' => $event,
+            'user' => $user,
+            'isOnEvent' => $isOnEvent
         ]);
     }
 
@@ -73,8 +85,6 @@ class EventController extends AbstractController
         if (!$category) {
             throw $this->createNotFoundException("la catégorie demandée n'existe pas!");
         }
-
-        dump($category);
 
         return $this->render('event/category.html.twig', [
             'category' => $category
@@ -92,8 +102,6 @@ class EventController extends AbstractController
             throw $this->createNotFoundException("le groupe demandé n'existe pas!");
         }
 
-        dump($eventGroup);
-
         return $this->render('event/group.html.twig', [
             'eventGroup' => $eventGroup
         ]);
@@ -102,16 +110,32 @@ class EventController extends AbstractController
     /**
      * @Route("/event/participate/{event_id}", name="event_participate")
      */
-    public function participate($event_id, EventRepository $eventRepository, Security $security, EntityManagerInterface $em)
+    public function participate($event_id, EventRepository $eventRepository, EntityManagerInterface $em, ParticipationRepository $participationRepository)
     {
         // recuperer l'event
         $event = $eventRepository->find($event_id);
+        if (!$event) {
+            //! message flash
+            return $this->redirectToRoute('event');
+        }
 
         // recuperer l'id du user connecté
-        $user = $security->getUser();
-
+        $user = $this->getUser();
         if (!$user) {
-           // rediriger vers la page de connection
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Verifie si le user participe déjà à cet event
+        $participations = $participationRepository->findBy([
+            'user' => $user->getId(),
+            'event' => $event->getId()
+        ]);
+        if (!empty($participations)) {
+            //! message flash : participe deja
+            return $this->redirectToRoute('event_show', [
+                'event_id' => $event_id
+            ]);
         }
 
         // rajouter une ligne dans la table participation        
@@ -120,10 +144,48 @@ class EventController extends AbstractController
             ->setUser($user)
             ->setAddedAt(new DateTime());
 
-        // AVANT CA VERIFIER SI PARTICIPE PAS DEJA 
-        // pour l'instant possible de s'inscrire plusieur fois au meme event
         
         $em->persist($participation);
+        $em->flush();
+
+        // rediriger vers la page de l'event (avec message success)
+        return $this->redirectToRoute('event_show', [
+            'event_id' => $event_id
+        ]);
+    }
+    /**
+     * @Route("/event/cancel/{event_id}", name="event_cancel")
+     */
+    public function cancel($event_id, EventRepository $eventRepository, EntityManagerInterface $em, ParticipationRepository $participationRepository)
+    {
+        // recuperer l'event
+        $event = $eventRepository->find($event_id);
+        if (!$event) {
+            //! message flash
+            return $this->redirectToRoute('event');
+        }
+
+        // recuperer l'id du user connecté
+        $user = $this->getUser();
+        if (!$user) {
+            //! message flash
+            return $this->redirectToRoute('app_login');
+        }
+
+        // si le user participe pas on le redirige
+        $participation = $participationRepository->findOneBy([
+            'user' => $user->getId(),
+            'event' => $event->getId()
+        ]);
+        if (empty($participation)) {
+            //! message flash : participe pas a cet event
+            return $this->redirectToRoute('event_show', [
+                'event_id' => $event_id
+            ]);
+        }
+
+        // on supprime la participation     
+        $em->remove($participation);
         $em->flush();
 
         // rediriger vers la page de l'event (avec message success)
@@ -141,8 +203,10 @@ class EventController extends AbstractController
         // verifier si c'est un ORGANIZER
         $user = $this->getUser();
         if (!$user) {
-            // rediriger vers la page de connection
+            //! message flash
+            return $this->redirectToRoute('app_login');
         }
+
         $event = new Event;
 
         $form = $this->createForm(EventType::class, $event);
@@ -299,9 +363,6 @@ class EventController extends AbstractController
         return $this->redirectToRoute('event');
     }
 
-    // !---------------------------------------------
-    // ! on va envoyer en AJAX avec la methode DELETE, l'image et un token
-
     /**
      * @Route("/event/picture/delete/{id}", name="event_picture_delete", methods={"DELETE"})
      */
@@ -328,6 +389,4 @@ class EventController extends AbstractController
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
     }
-    // !---------------------------------------------
-
 }
