@@ -41,7 +41,7 @@ class OrganizerController extends AbstractController
 
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour accéder à votre profil.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -57,7 +57,7 @@ class OrganizerController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour modifier votre profil.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -70,7 +70,7 @@ class OrganizerController extends AbstractController
         if($form->isSubmitted()) {
 
             $this->em->flush();
-            //! message flash
+            $this->addFlash('success', "La modification du profil est un succés.");
             return $this->redirectToRoute('organizer_profil');
         }
 
@@ -92,7 +92,7 @@ class OrganizerController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour modifier votre mot de passe.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -105,14 +105,14 @@ class OrganizerController extends AbstractController
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
-                //! message flash
+                $this->addFlash('warning', "Les mots de passe doivent correspondre.");
                 return $this->redirectToRoute('organizer_edit_password');
             }
 
             $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
 
             $this->em->flush();
-            //! message flash
+            $this->addFlash('success', "La modification du mot de passe est un succés.");
             return $this->redirectToRoute('organizer_profil');
         }
 
@@ -134,11 +134,12 @@ class OrganizerController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('success', "Connectez-vous pour pouvoir supprimer votre compte");
             return $this->redirectToRoute('app_login');
         }
 
         dd("traitement du delete d'un organizer OK");
+
 
         $this->em->remove($user);
         $this->em->flush();
@@ -151,7 +152,8 @@ class OrganizerController extends AbstractController
         //      Participation
         //      Question_user (à rendre NULL dans la bdd)
 
-        // return $this->render('organizer/profil.html.twig');
+        $this->addFlash('success', "Votre compte a bien été supprimé");
+        return $this->redirectToRoute('homepage');
     }
     
     /**
@@ -164,13 +166,12 @@ class OrganizerController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('success', "Connectez-vous pour voir vos évênements");
             return $this->redirectToRoute('app_login');
         }
 
         //recupère les events à venir
         $events = $eventRepository->findByDateAfterNow($user->getId());
-        //! verifier si events ? ou bien dans le twig afficher : "aucun event" si vide ?
 
         //gestion CSV
         $fileName = $this->csvService->createEventCsv($events);
@@ -192,13 +193,12 @@ class OrganizerController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('success', "Connectez-vous pour voir vos évênements passés");
             return $this->redirectToRoute('app_login');
         }
 
         //recupère les events passés
         $events = $eventRepository->findByDateBeforeNow($user->getId());
-        //! verifier si events ? ou bien dans le twig afficher : "aucun event" si vide ?
 
         //gestion CSV
         $fileName = $this->csvService->createEventCsv($events);
@@ -218,7 +218,7 @@ class OrganizerController extends AbstractController
 
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('success', "Connectez-vous pour voir vos statistiques");
             return $this->redirectToRoute('app_login');
         }
 

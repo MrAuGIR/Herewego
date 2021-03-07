@@ -41,7 +41,7 @@ class UserController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour accéder à votre profil.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -71,7 +71,7 @@ class UserController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour modifier votre profil.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -82,7 +82,7 @@ class UserController extends AbstractController
         if($form->isSubmitted()) {
 
             $this->em->flush();
-            //! message flash
+            $this->addFlash('success', "Profil modifié avec succés.");
             return $this->redirectToRoute('user_profil');
         }
 
@@ -104,7 +104,7 @@ class UserController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour modifier votre mot de passe.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -116,14 +116,15 @@ class UserController extends AbstractController
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
-                //! message flash
+                $this->addFlash('warning', "Les mots de passe doivent correspondre.");
                 return $this->redirectToRoute('user_edit_password');
             }
 
             $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
 
             $this->em->flush();
-            //! message flash
+            
+            $this->addFlash('success', "La modification du mot de passe est un succés.");
             return $this->redirectToRoute('user_profil');
         }
 
@@ -145,17 +146,17 @@ class UserController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('success', "Connectez-vous pour pouvoir supprimer votre compte");
             return $this->redirectToRoute('app_login');
         }
 
-        dd("traitement du delete d'un user OK"); 
+        dd("traitement du delete d'un user"); 
 
         $this->em->remove($user);
         $this->em->flush();
 
-        //! message flash
-        // return $this->redirectToRoute('home');
+        $this->addFlash('success', "Votre compte a bien été supprimé");
+        return $this->redirectToRoute('homepage');
 
         // Le delete d'un User est très complexe :
         // Il impacte :
@@ -177,7 +178,7 @@ class UserController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour voir vos participations aux évênements");
             return $this->redirectToRoute('app_login');
         }
 
@@ -200,7 +201,7 @@ class UserController extends AbstractController
          */
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour voir vos participations passées");
             return $this->redirectToRoute('app_login');
         }
 

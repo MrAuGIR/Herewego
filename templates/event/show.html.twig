@@ -4,20 +4,20 @@
 
 
 {% block body %}
-	<h1>Event : {{ event.title }}</h1>
+	<h1>Event : {{ event.title }} (event vu : {{ countView }} fois)</h1>
 	<div class="row d-flex justify-content-center my-5">
 		<div class="col-12 col-lg-8 border-end">
 			<div class="row px-2 py-2">
 				{% if event.pictures is not empty %}
 						<div class="picture">
-							<img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
+							<img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
 						</div>
 					{% endif %}
 				<div class="col-12">
 					<p>{{ event.category.name }}</p>
 				</div>
 				<div class="col-12">
-					<p>Description : {{ event.description }}</p>
+					<p>Description : {{ event.description | raw }}</p>
 				</div>
 				{% if isOnEvent %}				
 					<div class="col-12 col-md-6 mt-4 mb-4">
@@ -34,6 +34,7 @@
 				{% if user %}		
 					{% if isOnEvent %}
 						<div class="col-12 py-2">
+							<p>Vous participez à cet évênement</p>
 							<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
 						</div>
 					{% else %}	

@@ -20,11 +20,22 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-
+/**
+ * @Route("/event")
+ */
 class EventController extends AbstractController
 {
+    protected $em;
+    protected $slugger;
+
+    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger)
+    {
+        $this->em = $em;
+        $this->slugger = $slugger;
+    }
+
     /**
-     * @Route("/event", name="event")
+     * @Route("/", name="event")
      */
     public function index(EventRepository $eventRepository)
     {
@@ -36,15 +47,16 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/event/show/{event_id}", name="event_show")
+     * @Route("/show/{event_id}", name="event_show")
      */
-    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, EntityManagerInterface $em)
+    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository)
     {
         $event = $eventRepository->findOneBy([
             'id' => $event_id
         ]);
         if (!$event) {
-            throw $this->createNotFoundException("l'event demandé n'existe pas!");
+            $this->addFlash('warning', "L'évênement demandé n'existe pas");
+            return $this->redirectToRoute('event');
         }
 
         // recuperer l'id du user connecté // si pas connecté $user = Null
@@ -62,28 +74,27 @@ class EventController extends AbstractController
             }
         }        
 
-        dump($isOnEvent, $user, $event);
-
-        //faire countViews++
+        // incrémente le nombre de vues
         $event->setCountViews($event->getCountViews()+1);
-        $em->flush();
+        $this->em->flush();
 
         return $this->render('event/show.html.twig', [
             'event' => $event,
             'user' => $user,
-            'isOnEvent' => $isOnEvent
+            'isOnEvent' => $isOnEvent,
+            'countView' => $event->getCountViews()
         ]);
     }
 
     /**
-     * @Route("/event/category/{category_id}", name="event_category")
+     * @Route("/category/{category_id}", name="event_category")
      */
     public function category($category_id, CategoryRepository $categoryRepository)
     {
         $category = $categoryRepository->find($category_id);
-
         if (!$category) {
-            throw $this->createNotFoundException("la catégorie demandée n'existe pas!");
+            $this->addFlash('warning', "La Catégorie demandée n'existe pas");
+            return $this->redirectToRoute('event');
         }
 
         return $this->render('event/category.html.twig', [
@@ -92,14 +103,14 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/event/group/{group_id}", name="event_group")
+     * @Route("/group/{group_id}", name="event_group")
      */
     public function group($group_id, EventGroupRepository $eventGroupRepository)
     {
         $eventGroup = $eventGroupRepository->find($group_id);
-
         if (!$eventGroup) {
-            throw $this->createNotFoundException("le groupe demandé n'existe pas!");
+            $this->addFlash('warning', "Le groupe demandé n'existe pas");
+            return $this->redirectToRoute('event');
         }
 
         return $this->render('event/group.html.twig', [
@@ -108,9 +119,9 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/event/participate/{event_id}", name="event_participate")
+     * @Route("/participate/{event_id}", name="event_participate")
      */
-    public function participate($event_id, EventRepository $eventRepository, EntityManagerInterface $em, ParticipationRepository $participationRepository)
+    public function participate($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository)
     {
         // recuperer l'event
         $event = $eventRepository->find($event_id);
@@ -142,34 +153,33 @@ class EventController extends AbstractController
         $participation = new Participation;
         $participation->setEvent($event)
             ->setUser($user)
-            ->setAddedAt(new DateTime());
+            ->setAddedAt(new DateTime());        
+        $this->em->persist($participation);
+        $this->em->flush();
 
-        
-        $em->persist($participation);
-        $em->flush();
-
-        // rediriger vers la page de l'event (avec message success)
+        // redirige avec message
         $this->addFlash('success', "Vous participez desormais à cet évênement");
         return $this->redirectToRoute('event_show', [
             'event_id' => $event_id
         ]);
     }
+
     /**
-     * @Route("/event/cancel/{event_id}", name="event_cancel")
+     * @Route("/cancel/{event_id}", name="event_cancel")
      */
-    public function cancel($event_id, EventRepository $eventRepository, EntityManagerInterface $em, ParticipationRepository $participationRepository)
+    public function cancel($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository)
     {
         // recuperer l'event
         $event = $eventRepository->find($event_id);
         if (!$event) {
-            //! message flash
+            $this->addFlash('warning', "L'évênement demandé n'existe pas");
             return $this->redirectToRoute('event');
         }
 
         // recuperer l'id du user connecté
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour annuler votre participation à cet évênement.");
             return $this->redirectToRoute('app_login');
         }
 
@@ -179,17 +189,17 @@ class EventController extends AbstractController
             'event' => $event->getId()
         ]);
         if (empty($participation)) {
-            //! message flash : participe pas a cet event
+            $this->addFlash('warning', "Vous ne participez pas encore à cet évênement.");
             return $this->redirectToRoute('event_show', [
                 'event_id' => $event_id
             ]);
         }
 
         // on supprime la participation     
-        $em->remove($participation);
-        $em->flush();
+        $this->em->remove($participation);
+        $this->em->flush();
 
-        // rediriger vers la page de l'event (avec message success)
+        // redirige vers la page de l'event (avec message success)
         $this->addFlash('success', "Vous avez annulé votre participation à cet évênement");
         return $this->redirectToRoute('event_show', [
             'event_id' => $event_id
@@ -197,24 +207,24 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/event/create", name="event_create")
+     * @Route("/create", name="event_create")
      */
-    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
+    public function create(Request $request)
     {
         
         // verifier si c'est un ORGANIZER
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour creer un évênement.");
             return $this->redirectToRoute('app_login');
         }
 
         $event = new Event;
-
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+
             // GESTION DES IMAGES
             //on recupere les images transmise
             $pictures = $form->get('pictures')->getData();
@@ -241,22 +251,25 @@ class EventController extends AbstractController
             /*Localisation de l'event*/
             $localisation = new Localisation();
             $localisation->setAdress($request->request->get('event')['localisation']['adress'])
-                         ->setCityName($request->request->get('event')['localisation']['cityName'])
-                         ->setCityCp($request->request->get('event')['localisation']['cityCp'])
-                         ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
-                         ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
-            $em->persist($localisation);
+                ->setCityName($request->request->get('event')['localisation']['cityName'])
+                ->setCityCp($request->request->get('event')['localisation']['cityCp'])
+                ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
+                ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
+            $this->em->persist($localisation);
 
             //creation de l'event (grace a localisation)
-            $event->setSlug(strtolower($slugger->slug($event->getTitle())))
-                ->setTag(strtoupper($slugger->slug($event->getTitle())))
+            $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
+                ->setTag(strtoupper($this->slugger->slug($event->getTitle())))
                 ->setCreatedAt(new DateTime())
                 ->setUser($user)
                 ->setLocalisation($localisation);
-            $em->persist($event);
+            $this->em->persist($event);
+            $this->em->flush();
 
-            $em->flush();
-            return $this->redirectToRoute('home');
+            $this->addFlash('success', "Vous avez créé un nouvel évênement");
+            return $this->redirectToRoute('event_show', [
+                'event_id' => $event->getId()
+            ]);
         }
 
         $formView = $form->createView();
@@ -266,12 +279,10 @@ class EventController extends AbstractController
         ]);
     }
 
-
-
     /**
-     * @Route("/event/edit/{event_id}", name="event_edit")
+     * @Route("/edit/{event_id}", name="event_edit")
      */
-    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request, EntityManagerInterface $em)
+    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request)
     {
 
         $event = $eventRepository->find($event_id);
@@ -280,11 +291,11 @@ class EventController extends AbstractController
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
         
+        //! GERER les droits par un return et un message
         $this->denyAccessUnlessGranted('CAN_EDIT', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas l'éditer");
         
 
         $form = $this->createForm(EventType::class, $event);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -318,16 +329,19 @@ class EventController extends AbstractController
                          ->setCityCp($request->request->get('event')['localisation']['cityCp'])
                          ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
                          ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
-            $em->persist($localisation);
+            $this->em->persist($localisation);
 
             //creation de l'event (grace a localisation)
             $event->setSlug(strtolower($slugger->slug($event->getTitle())))
                 ->setTag(strtoupper($slugger->slug($event->getTitle())))
                 ->setLocalisation($localisation);
-            $em->persist($event);
+            $this->em->persist($event);
 
-            $em->flush();
-            return $this->redirectToRoute('home');
+            $this->em->flush();
+            $this->addFlash('success', "Vous avez modifié votre évênement avec succés");
+            return $this->redirectToRoute('event_show', [
+                'event_id' => $event->getId()
+            ]);
         }
 
         $formView = $form->createView();
@@ -340,9 +354,9 @@ class EventController extends AbstractController
     }
 
     /**
-     * @Route("/event/delete/{event_id}", name="event_delete")
+     * @Route("/delete/{event_id}", name="event_delete")
      */
-    public function delete($event_id, EventRepository $eventRepository, EntityManagerInterface $em)
+    public function delete($event_id, EventRepository $eventRepository)
     {
         // recuperer l'event_id passé en param
         $event = $eventRepository->find($event_id);
@@ -351,22 +365,25 @@ class EventController extends AbstractController
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
+        //! GERER les droits par un return et un message
         $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
 
+        dd("traitement de la suppression de l'évent");
 
         // traitement de la suppression
-        $em->remove($event);
-        $em->flush();
+        $this->em->remove($event);
+        $this->em->flush();
         // CA MARCHE MAIS J'AI PASSER EN CASCADE AU DELETE POUR TRANSPORT ET PICTURE
         // JE PENSE QUE C'EST LE COMPORTEMENT A FAIRE MAIS IL FAUT PREVENIR LES USERS QUE C'EST FAIT
         // MAIL A FAIRE JUSTE AVANT LE DELETE (MEME CHOSE POUR UPDATE)
         
         // redirection vers le dash organizer / events (avec message)
+        $this->addFlash('success', "La suppression de l'évênement a réussie");
         return $this->redirectToRoute('event');
     }
 
     /**
-     * @Route("/event/picture/delete/{id}", name="event_picture_delete", methods={"DELETE"})
+     * @Route("/picture/delete/{id}", name="event_picture_delete", methods={"DELETE"})
      */
     public function deleteImage(Picture $picture, Request $request)
     {
@@ -380,9 +397,9 @@ class EventController extends AbstractController
             unlink($this->getParameter('images_directory').'/'.$path);
 
             // on supprime l'entré de la base
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($picture);
-            $em->flush();
+            $this->em = $this->getDoctrine()->getManager();
+            $this->em->remove($picture);
+            $this->em->flush();
 
             // on repond en json
             return new JsonResponse(['success' => 1]);
