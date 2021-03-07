@@ -1,0 +1,22 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+    <h3>Modifier utilisateur : {{user.firstname}} - {{user.lastname}}</h3>
+    <div class="row">
+        {{form_start(form)}}
+        {% include "shared/_form.register.html.twig" %}
+        <div class="row my-2">
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Inscription</button>
+            </div>
+        </div>
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+    <script src="/script/apiAdress.js"></script>
+    <script>
+        envoieAjax('adressUser','User');
+    </script>
+{% endblock %}
