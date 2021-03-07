@@ -28,29 +28,29 @@
             </ul>
         </header>
         <main class="py-4">
-            {% block messages %}
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        {% for label,messages in app.flashes %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{label}}">
-                                    {{message}}
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endblock %}
             <div class="container-fluid">
                 <div class="row">
-                {% block navbarAdmin %}
-                    {% include "shared/_navbar.admin.html.twig" %}
-                {% endblock %} 
-                {% block body %}
+                    {% block navbarAdmin %}
+                        {% include "shared/_navbar.admin.html.twig" %}
+                    {% endblock %} 
+                    <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                        {% block messages %}
+                        <div class="row">
+                            <div class="col-12">
+                                {% for label,messages in app.flashes %}
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{label}}">
+                                            {{message}}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endblock %}
+                        {% block body %}
 
-                {% endblock %}
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
         </main>
