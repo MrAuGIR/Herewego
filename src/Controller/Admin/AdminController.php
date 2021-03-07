@@ -7,13 +7,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 /**
  * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
+ * @Route("/admin")
  */
 class AdminController extends AbstractController
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/", name="admin")
      */
     public function index(): Response
     {
@@ -21,4 +23,5 @@ class AdminController extends AbstractController
             'controller_name' => 'AdminController',
         ]);
     }
+ 
 }
