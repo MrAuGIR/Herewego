@@ -60,6 +60,7 @@ class SecurityController extends AbstractController
 
             $manager->flush();
 
+            $this->addFlash('success','Utilisateur créé, en attente de validation par l\'administration');
             return $this->redirectToRoute('app_login');
 
         }
@@ -113,6 +114,7 @@ class SecurityController extends AbstractController
 
             $manager->flush();
 
+            $this->addFlash('success', 'Compte organisateur créé, en attente de validation par l\'administration');
             return $this->redirectToRoute('app_login');
         }
 
