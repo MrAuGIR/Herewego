@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+
+
 class EventController extends AbstractController
 {
     /**
@@ -211,6 +213,9 @@ class EventController extends AbstractController
         if (!$event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
+        
+        $this->denyAccessUnlessGranted('CAN_EDIT', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas l'éditer");
+        
 
         $form = $this->createForm(EventType::class, $event);
 
@@ -279,6 +284,10 @@ class EventController extends AbstractController
         if (!$event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
+
+        $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
+
+
         // traitement de la suppression
         $em->remove($event);
         $em->flush();
