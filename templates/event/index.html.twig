@@ -12,13 +12,13 @@
 					
 					{% if event.pictures is not empty %}
 						<div class="picture">
-							<img src="uploads/{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
+							<img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
 						</div>
 					{% endif %}
 					
 					<div class="card-img-overlay">
 						<h5 class="card-title">{{ event.title }}</h5>
-						<p class="card-text">{{ event.description }}</p>
+						<p class="card-text">{{ event.description | raw }}</p>
                         <p>{{ event.category.name }}</p>
                         <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
 						<p class="card-text bg-text-card">
