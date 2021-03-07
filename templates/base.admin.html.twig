@@ -11,40 +11,49 @@
             <link rel="stylesheet" href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css">
             <link rel="stylesheet" href="{{ asset('styles/dashboardAdmin.css')}}">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
-            <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
-            <link rel="stylesheet" href="{{ asset('styles/style_jd.css') }}">
+            <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
         {% endblock %}
     </head>
     <body>
-        <header>
+        <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Herewego</a>
+            <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <ul class="navbar-nav px-3">
+                <li class="nav-item text-nowrap">
+                <a class="nav-link" href="{{path('app_logout')}}">Sign out</a>
+                </li>
+            </ul>
         </header>
-            <main>
-                {% block messages %}
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12">
-                            {% for label,messages in app.flashes %}
-                                {% for message in messages %}
-                                    <div class="alert alert-{{label}}">
-                                        {{message}}
-                                    </div>
-                                {% endfor %}
+        <main class="py-4">
+            {% block messages %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        {% for label,messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{label}}">
+                                    {{message}}
+                                </div>
                             {% endfor %}
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-                {% endblock %}
-                <div class="container-fluid">
-                    <div class="row">
-                    {% block navbarAdmin %}
-                        {% include "shared/_navbar.admin.html.twig" %}
-                    {% endblock %} 
-                    {% block body %}
+            </div>
+            {% endblock %}
+            <div class="container-fluid">
+                <div class="row">
+                {% block navbarAdmin %}
+                    {% include "shared/_navbar.admin.html.twig" %}
+                {% endblock %} 
+                {% block body %}
 
-                    {% endblock %}
-                    </div>
+                {% endblock %}
                 </div>
-            </main>
+            </div>
+        </main>
         {% block javascripts %}
             <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
