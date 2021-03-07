@@ -1,0 +1,51 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <h3>Utilisateurs du site</h3>
+    <div class="table-responsive">
+        <table id="dataTable" class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Est validé</th>
+                    <th>Inscription le </th>
+                    <th>Détail</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <th>{{user.id}}</th>
+                    <th>{{user.email}}</th>
+                    <th>{% for role in user.getRoles %}
+                            {{role}}
+                    {% endfor %}</th>
+                    <th>{{user.lastname}}</th>
+                    <th>{{user.firstname}}</th>
+                    <th>{{user.isValidate}}</th>
+                    <th>{{user.registerAt | date('Y-m-d H:i') }}</th>
+                    <th>quelque chose</th>
+                    <th>
+                        <a href="">Editer</a>
+                        <a href="">Supprimer</a>
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+    
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+<script type="text/javascript" src="/script/renderTable.js"></script>
+{% endblock %}

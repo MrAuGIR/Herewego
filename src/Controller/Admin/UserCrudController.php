@@ -2,36 +2,44 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
-class UserCrudController extends AbstractCrudController
+
+/**
+ * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
+ * @Route("/admin/user")
+ */
+class UserCrudController extends AbstractController
 {
-    public static function getEntityFqcn(): string
+    /**
+     * @Route("/", name="usercrud")
+     */
+    public function index(UserRepository $userRepository): Response
     {
-        return User::class;
+
+        $users = $userRepository->findAll();
+
+
+        return $this->render('admin/user/users.html.twig', [
+            'users'=>$users,
+        ]);
     }
 
-    
-    public function configureFields(string $pageName): iterable
+    /**
+     * @Route("/create", name="usercrud_create")
+     */
+    public function create(): Response
     {
-        return [
-            IdField::new('id'),
-            TextField::new('email'),
-            TextField::new('lastname','Nom'),
-            TextField::new('firstname','Prénom'),
-            ArrayField::new('roles'),
-            BooleanField::new('isValidate','Est Validé'),
-            DateTimeField::new('createdAt')->onlyOnDetail()
-            // TextEditorField::new('description'),
-        ];
+
+        return $this->render('admin/user.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
     }
-    
+
 }
