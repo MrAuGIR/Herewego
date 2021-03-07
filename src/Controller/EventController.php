@@ -115,14 +115,14 @@ class EventController extends AbstractController
         // recuperer l'event
         $event = $eventRepository->find($event_id);
         if (!$event) {
-            //! message flash
+            $this->addFlash('warning', "L'évênement demandé n'existe pas");
             return $this->redirectToRoute('event');
         }
 
         // recuperer l'id du user connecté
         $user = $this->getUser();
         if (!$user) {
-            //! message flash
+            $this->addFlash('warning', "Connectez-vous pour participer à cet évênement");
             return $this->redirectToRoute('app_login');
         }
 
@@ -132,7 +132,7 @@ class EventController extends AbstractController
             'event' => $event->getId()
         ]);
         if (!empty($participations)) {
-            //! message flash : participe deja
+            $this->addFlash('warning', "Vous participez déjà à cet évênement");
             return $this->redirectToRoute('event_show', [
                 'event_id' => $event_id
             ]);
@@ -149,6 +149,7 @@ class EventController extends AbstractController
         $em->flush();
 
         // rediriger vers la page de l'event (avec message success)
+        $this->addFlash('success', "Vous participez desormais à cet évênement");
         return $this->redirectToRoute('event_show', [
             'event_id' => $event_id
         ]);
@@ -189,6 +190,7 @@ class EventController extends AbstractController
         $em->flush();
 
         // rediriger vers la page de l'event (avec message success)
+        $this->addFlash('success', "Vous avez annulé votre participation à cet évênement");
         return $this->redirectToRoute('event_show', [
             'event_id' => $event_id
         ]);
