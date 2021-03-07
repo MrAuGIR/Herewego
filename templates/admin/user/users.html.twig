@@ -2,8 +2,10 @@
 
 {% block body %}
 
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <h3>Utilisateurs du site</h3>
+    <div class="col-12 d-flex justify-content-center">
+        <a class="btn btn-primary" href="{{ path('usercrud_create')}}">Ajouter un utilisateur</a>
+    </div>
     <div class="table-responsive">
         <table id="dataTable" class="table table-striped table-sm">
             <thead>
@@ -33,16 +35,14 @@
                     <th>{{user.registerAt | date('Y-m-d H:i') }}</th>
                     <th>quelque chose</th>
                     <th>
-                        <a href="">Editer</a>
-                        <a href="">Supprimer</a>
+                        <a href="{{path('usercrud_edit',{id:user.id})}}">Editer</a>
+                        <a href="{{path('usercrud_delete',{id:user.id})}}">Supprimer</a>
                     </th>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</main>
-    
 {% endblock %}
 {% block javascripts %}
 {{parent()}}
