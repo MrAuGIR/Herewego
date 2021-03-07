@@ -6,7 +6,6 @@ namespace App\Controller;
 use DateTime;
 
 
-use App\Entity\City;
 use App\Entity\Event;
 use App\Entity\Transport;
 use App\Entity\Localisation;
@@ -14,7 +13,6 @@ use App\Entity\Ticket;
 use App\Entity\User;
 use App\Form\TransportType;
 use App\Form\TicketType;
-use App\Repository\CityRepository;
 use App\Repository\EventRepository;
 use App\Repository\TicketRepository;
 use App\Repository\TransportRepository;
@@ -58,6 +56,7 @@ class TransportController extends AbstractController
        
         //si l'utilisateur ne participe pas on redirige vers la page de l'event
         if(!$participating){
+            $this->addFlash('warning','Vous devez participer a l\'event pour voir ses transports');
             return $this->redirectToRoute('event_show', [
                 'event_id' => $event_id
             ]);
@@ -106,6 +105,7 @@ class TransportController extends AbstractController
             $em->flush();
 
             // rediriger vers la page du transport (avec message success)
+            $this->addFlash('success','Demande de transport effectué');
             return $this->redirectToRoute('transport_show', [
                 'transport_id' => $transport_id
             ]);
@@ -136,6 +136,13 @@ class TransportController extends AbstractController
             // rediriger vers la page de connection
             $this->redirectToRoute('app_login');
         }
+
+        /*on verifie que l'utilisateur connecté est le 'proprietaire' du ticket*/
+        if(!$this->isGranted('delete',$ticket)){
+            $this->addFlash('danger','action non autorisé');
+            return $this->redirectToRoute('transport_show',['transport_id'=> $transport_id]);
+        }
+
         /* on met a jour le nombre de place restante du transport*/
         $manager = $this->getDoctrine()->getManager();
         /* on met a jour le nombre de place uniquement si le ticket avait un status validé*/
@@ -149,7 +156,8 @@ class TransportController extends AbstractController
         $manager->flush();
 
         
-         // rediriger vers la page du transport (avec message success)
+        // rediriger vers la page du transport (avec message success)
+        $this->addFlash('info','votre ticket est annulé');
         return $this->redirectToRoute('transport_show', [
             'transport_id' => $transport_id
         ]);
@@ -161,6 +169,11 @@ class TransportController extends AbstractController
     public function manage($transport_id, TransportRepository $transportRepository)
     {
         $transport = $transportRepository->find($transport_id);
+        /*On verifie que l'utilisateur connecté est le proprietaire du transport */
+        if(!$this->isGranted('manage',$transport)){
+            $this->addFlash('danger','Vous ne pouvez pas gérer ce transport');
+            return $this->redirectToRoute('transport_show', ['transport_id' => $transport_id]);
+        }
 
         return $this->render('transport/manage.html.twig', [
             'transport' => $transport
@@ -189,6 +202,7 @@ class TransportController extends AbstractController
             $em->flush();
 
             // rediriger vers la page du transport (avec message success)
+            $this->addFlash('success','ticket validé');
             return $this->redirectToRoute('transport_manage', [
                 'transport_id' => $ticket->getTransport()->getId()
             ]);
@@ -213,6 +227,11 @@ class TransportController extends AbstractController
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
+        /*si le proprietaire du transport n'est pas l'utilisateur connecté on redirige*/
+        if(!$this->isGranted('manage',$transport)){
+            return $this->redirectToRoute('transport_show',['transport_id'=> $transport->getId()]);
+        }
+
         /* si le ticket a precedement été validé alors dans ce cas la on remet a jour le nombre de place*/
         if($ticket->getIsValidate()!=false){
             $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
@@ -222,10 +241,11 @@ class TransportController extends AbstractController
         $ticket->setIsValidate(false);
         $em->persist($ticket);
         $em->flush();
-        
-        
+
+
         // dd($ticket);
         // rediriger vers la page du transport (avec message success)
+        $this->addFlash('success', 'ticket annulé');
         return $this->redirectToRoute('transport_manage', [
             'transport_id' => $ticket->getTransport()->getId()
         ]);
@@ -260,6 +280,7 @@ class TransportController extends AbstractController
         
         /* redirection si l'utilisateur n'est pas autorisé à créer */
         if (!$allow) {
+            $this->addFlash('warning', 'Pour créer un transport vous devez être participant et ne pas avoir déjà créé de  précédent transport sur cet event');
             return $this->redirectToRoute('event_show', ['event_id' => $event_id]);
         }
 
@@ -333,6 +354,7 @@ class TransportController extends AbstractController
             $em->persist($transport);
             $em->flush();
 
+            $this->addFlash('success','Transport créé');
             return $this->redirectToRoute('transport',['event_id'=>$event_id]);
 
         }
@@ -350,15 +372,19 @@ class TransportController extends AbstractController
      */
     public function edit(Transport $transport, Request $request, EntityManagerInterface $em, Security $security):Response
     {
-        /*Création du transport*/
-        // $transport = $transportRepository->find($transport_id);
-
+        
         /*Si transport Inexistant */
         if (!$transport) {
             throw $this->createNotFoundException("le transport demandé n'existe pas!");
         }
 
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        /*On verifie que l'utilisateur connecté est le 'proprietaire' du transport*/
+        if(!$this->isGranted('edit',$transport)){
+            $this->addFlash('danger','action non autorisé');
+            return $this->redirectToRoute('transport_show',['transport_id'=>$transport->getId()]);
+        }
+
+
         //Recuperation de l'utilisateur connecté
         /** @var \App\Entity\User $user */
         $user = $security->getUser();
@@ -432,6 +458,7 @@ class TransportController extends AbstractController
             $em->persist($transport);
             $em->flush();
 
+            $this->addFlash('success','Transport modifié');
             return $this->redirectToRoute('transport', ['event_id' => $transport->getEvent()->getId()]);
         }
 
@@ -447,18 +474,21 @@ class TransportController extends AbstractController
     }
 
     /**
-     * @Route("/transport/delete/{transport_id}", name="transport_delete")
+     * @Route("/transport/delete/{id}", name="transport_delete")
      */
-    public function delete($transport_id)
+    public function delete(Transport $transport, EntityManagerInterface $em)
     {
+        /*Verification utilisateur connecté et propriétaire du transport */
+        if(!$this->isGranted('delete',$transport)){
+            $this->addFlash('danger', 'Action non autorisé');
+            return $this->redirectToRoute('home');
+        }
 
-        // gestion de la suppression d'un transport
+        $em->remove($transport);
+        $em->flush();
 
-        // redirection 
-
-        dd($transport_id);
-
-        // return $this->render('transport/delete.html.twig');
+        
+        $this->redirectToRoute('transport',['event_id'=>$transport->getEvent()->getId()]);
     }
 
     /**
