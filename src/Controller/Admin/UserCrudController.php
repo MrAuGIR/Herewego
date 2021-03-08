@@ -160,7 +160,7 @@ class UserCrudController extends AbstractController
         $this->em->flush();
 
         $this->addFlash('success',"Utilisateur supprimé");
-        $this->redirectToRoute('usercrud');
+        return $this->redirectToRoute('usercrud');
     }
 
 }
