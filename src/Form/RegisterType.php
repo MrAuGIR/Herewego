@@ -53,43 +53,26 @@ class RegisterType extends AbstractType
                 'attr' => ['placeholder' => 'renseigner votre numéro de téléphone']
             ])
             ->add('localisation', LocalisationType::class);
-            // ->add('cityName', TextType::class, [
-            //     'label' => "Ville",
-            //     'attr' => ['placeholder' => "Ville"],
-            //     'required' => false,
-            //     'mapped' => false
-            // ])
-            // ->add('cityCp', TextType::class, [
-            //     'label' => "Code postal",
-            //     'attr' => ['placeholder' => "Code postal"],
-            //     'required' => false,
-            //     'mapped' => false
-            // ])
-            // ->add('adress', TextType::class, [
-            //     'label' => "Adresse",
-            //     'attr' => ['placeholder' => "Adresse"],
-            //     'required' => false,
-            //     'mapped' => false
-            // ]);
+            
 
         if(in_array('ROLE_ORGANIZER', $options['chosen_role'])){
             $builder->add('companyName', TextType::class, [
                 'label' => 'votre raison social',
                 'attr' => ['placeholder' => 'renseigner votre raison social'],
                 'required' => false,
-                'mapped' => false
+                'mapped' => true
 
             ])
             ->add('siret', TextType::class, [
                 'label' => 'votre numéro de siret',
                 'attr' => ['placeholder' => 'renseigner le numéro de siret de votre société'],
                 'required' => false,
-                'mapped' => false
+                'mapped' => true
             ])
             ->add('webSite', TextType::class, [
                 'label' => 'Site web',
                 'required'=>false,
-                'mapped'=>false
+                'mapped'=> true
             ]);
         }
             
