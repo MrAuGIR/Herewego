@@ -1,0 +1,37 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+    <h3>Creation d'un nouvel organisateur</h3>
+    <div class="row">
+        {{form_start(form)}}
+        {% include "shared/_form.register.html.twig" %}
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.companyName)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.siret)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.webSite)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Inscription</button>
+            </div>
+        </div>
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+    <script src="/script/apiAdress.js"></script>
+    <script>
+        envoieAjax('adressUser','User');
+    </script>
+{% endblock %}

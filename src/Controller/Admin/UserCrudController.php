@@ -42,7 +42,7 @@ class UserCrudController extends AbstractController
         $users = $userRepository->findByRole('ROLE_USER');
 
 
-        return $this->render('admin/user/users.html.twig', [
+        return $this->render('admin/user/index.html.twig', [
             'users'=>$users,
         ]);
     }
@@ -151,6 +151,11 @@ class UserCrudController extends AbstractController
      */
     public function delete(User $user, Request $request)
     {
+
+        //gerer les exceptions si utilisateur inexistant
+        //gerer la suppression en cascade transport, ticket et participation de l'utilisateur
+
+
         $this->em->remove($user);
         $this->em->flush();
 
