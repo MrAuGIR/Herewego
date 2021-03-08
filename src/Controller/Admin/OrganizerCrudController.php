@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use GuzzleHttp\Client;
 use App\Entity\Localisation;
 use App\Entity\User;
 use App\Form\RegisterType;
@@ -13,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Flex\Path;
 
 /**
  * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
@@ -167,6 +169,48 @@ class OrganizerCrudController extends AbstractController
         $this->em->flush();
 
         $this->addFlash('success', "Organisateur supprimé");
-        $this->redirectToRoute('organizercrud');
+        return $this->redirectToRoute('organizercrud');
     }
+
+
+    /**
+     * @Route("/verifySiret/{id}", name="verifySiret")
+     */
+    public function verifySiret(User $user)
+    {
+        if(!empty($user->getSiret())){
+
+            $client = new Client(['base_uri' => 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/']);
+            $response = $client->request('GET', '49098556100011',[
+                'curl'=>[
+                    CURLOPT_CAINFO => dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'certificat64.cer',
+                ]
+            ]);
+                    // le chemin du certificat fonctionne pour moi, mais j'ai un doute pour les autres utilisateurs
+            $code =  $response->getStatusCode();
+            
+            if($code == 200){
+                //le siret a été trouvé
+                //echo $response->getBody();
+                $this->addFlash('success', 'Siret trouvé dans la base de donnée externe');
+                return $this->redirectToRoute('organizercrud');
+            }
+            
+            if($code == 500){
+
+                $this->addFlash('warning', 'Base de donnée externe en maintenance');
+                return $this->redirectToRoute('organizercrud');
+            }
+
+            $this->addFlash('danger', 'Siret invalide');
+            return $this->redirectToRoute('organizercrud');
+
+        }
+
+        $this->addFlash('danger','Siret null ou vide');
+        return $this->redirectToRoute('organizercrud');
+    }
+
+    
+
 }
