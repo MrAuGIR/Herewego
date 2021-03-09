@@ -1,0 +1,33 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+    <h3>Creation d'une nouvelle categorie</h3>
+    <div class="row">
+        {{form_start(form)}}
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.name)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.pathLogo)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.color)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Ajouter</button>
+            </div>
+        </div>
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+
+{% endblock %}
