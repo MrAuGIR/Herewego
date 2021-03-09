@@ -21,10 +21,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Flex\Path;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 7c864d5 (crud category (manque le edit))
 /**
  * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
  * @Route("/admin/category")
@@ -84,7 +80,6 @@ class CategoryCrudController extends AbstractController
             /*gestion du logo */
             $logo = $form->get('pathLogo')->getData();
 
-<<<<<<< HEAD
             if($logo != null){
                 //on genere un nouveau nom de fichier (codé) et on rajoute son extension
                 $fichier = md5(uniqid()) . '.' . $logo->guessExtension();
@@ -95,20 +90,6 @@ class CategoryCrudController extends AbstractController
                 // on stock l'image dans la bdd (son nom)
                 $category->setPathLogo($fichier);
             }
-=======
-            //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-            $fichier = md5(uniqid()) . '.' . $logo->guessExtension();
-
-            // on copie le fichier dans le dossier uploads
-            // 2 params (destination, fichier)
-            $logo->move(
-                $this->getParameter('logo_directory'),
-                $fichier
-            );
-            // on stock l'image dans la bdd (son nom)
-            $category->setPathLogo($fichier);
-
->>>>>>> 7c864d5 (crud category (manque le edit))
 
             $category->setName($request->request->get('category')['name'])
                 ->setSlug(strtolower($this->slugger->slug($category->getName())))
@@ -116,17 +97,9 @@ class CategoryCrudController extends AbstractController
 
 
             $this->em->persist($category);
-<<<<<<< HEAD
             $this->em->flush();
 
             $this->addFlash('success', 'categorie ajouté');
-=======
-
-
-            $this->em->flush();
-
-            $this->addFlash('success', 'categorie modifié');
->>>>>>> 7c864d5 (crud category (manque le edit))
             return $this->redirectToRoute('categorycrud');
         }
 
@@ -147,21 +120,13 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-<<<<<<< HEAD
             $logo = $form->get('pathLogo')->getData();
 
-=======
-            
-            /*gestion du logo */
-            $logo = $form->get('logo')->getData();
-            
->>>>>>> 7c864d5 (crud category (manque le edit))
             //on genere un nouveau nom de fichier (codé) et on rajoute son extension
             $fichier = md5(uniqid()) . '.' . $logo->guessExtension();
 
             // on copie le fichier dans le dossier uploads
             // 2 params (destination, fichier)
-<<<<<<< HEAD
             $logo->move( $this->getParameter('logo_directory'),$fichier );
 
             /* Penser a supprimer les ancien fichiers  */
@@ -177,24 +142,6 @@ class CategoryCrudController extends AbstractController
                 ->setColor($request->request->get('category')['color']);
             
             $this->em->persist($category);
-=======
-            $logo->move(
-                $this->getParameter('logo_directory'),
-                $fichier
-            );
-            // on stock l'image dans la bdd (son nom)
-            $category->setPathLogo($fichier);
-            
-            
-            $category->setName($request->request->get('category')['name'])
-                ->setSlug(strtolower($this->slugger->slug($category->getName())))
-                ->setColor($request->request->get('category')['color']);
-                
-
-            $this->em->persist($category);
-
-        
->>>>>>> 7c864d5 (crud category (manque le edit))
             $this->em->flush();
 
             $this->addFlash('success', 'categorie modifié');
