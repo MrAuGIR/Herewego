@@ -20,8 +20,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Flex\Path;
+<<<<<<< HEAD
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
+=======
+>>>>>>> bdf4fe1 (crud category (manque le edit))
 
 /**
  * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
