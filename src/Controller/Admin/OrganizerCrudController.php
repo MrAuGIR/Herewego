@@ -90,8 +90,8 @@ class OrganizerCrudController extends AbstractController
                 ->setCompanyName($request->request->get('register')['companyName'])
                 ->setSiret($request->request->get('register')['siret']);
 
-            if (!empty($request->request->get('regsiter')['webSite'])) {
-                $user->setWebSite($request->request->get('regsiter')['webSite']);
+            if (!empty($request->request->get('register')['webSite'])) {
+                $user->setWebSite($request->request->get('register')['webSite']);
             };
 
             $this->em->persist($user);
@@ -137,8 +137,8 @@ class OrganizerCrudController extends AbstractController
                 ->setCompanyName($request->request->get('register')['companyName'])
                 ->setSiret($request->request->get('register')['siret']);
 
-            if (!empty($request->request->get('regsiter')['webSite'])) {
-                $user->setWebSite($request->request->get('regsiter')['webSite']);
+            if (!empty($request->request->get('register')['webSite'])) {
+                $user->setWebSite($request->request->get('register')['webSite']);
             };
 
             $this->em->persist($user);
@@ -186,7 +186,7 @@ class OrganizerCrudController extends AbstractController
                     CURLOPT_CAINFO => dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'certificat64.cer',
                 ]
             ]);
-                    // le chemin du certificat fonctionne pour moi, mais j'ai un doute pour les autres utilisateurs
+            
             $code =  $response->getStatusCode();
             
             if($code == 200){
