@@ -27,28 +27,28 @@ class TransportType extends AbstractType
             ->add('localisation_start',LocalisationType::class)
             ->add('goStartedAt',DateTimeType::class, [
                 'label'=> 'Quand ?',
-                'date_widget'=> 'single_text',
-                'time_widget'=> 'single_text',
+                'widget'=> 'single_text',
+                'html5'=> true,
                 'attr'=> ['placeholder'=> 'Date de départ']
             ])
             ->add('goEndedAt',DateTimeType::class, [
                 'label'=> 'Arrivé ? (heure approximative)',
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
+                'widget' => 'single_text',
+                'html5' => true,
                 'attr'=>['placeholder'=> 'Date et heure d\'arrivé']
             ])
             //Localisation de retour
             ->add('localisation_return', LocalisationType::class)
             ->add('returnStartedAt', DateTimeType::class, [
                 'label' => 'Quand ?',
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
+                'widget' => 'single_text',
+                'html5' => true,
                 'attr' => ['placeholder' => 'Date de retour']
             ])
             ->add('returnEndedAt', DateTimeType::class, [
                 'label' => 'Arrivé ? (heure approximative)',
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
+                'widget' => 'single_text',
+                'html5' => true,
                 'attr' => ['placeholder' => 'Date et heure d\'arrivé au retour']
             ])
             ->add('placePrice', MoneyType::class, [
