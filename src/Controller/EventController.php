@@ -6,6 +6,7 @@ use DateTime;
 use App\Entity\Event;
 use App\Entity\Picture;
 use App\Form\EventType;
+use App\Tools\TagService;
 use App\Entity\Localisation;
 use App\Entity\Participation;
 use App\Repository\EventRepository;
@@ -27,11 +28,13 @@ class EventController extends AbstractController
 {
     protected $em;
     protected $slugger;
+    protected $tag;
 
-    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger)
+    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger, TagService $tag)
     {
         $this->em = $em;
         $this->slugger = $slugger;
+        $this->tag = $tag;
     }
 
     /**
@@ -225,7 +228,7 @@ class EventController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
+                
                 // GESTION DES IMAGES
                 //on recupere les images transmise
                 $pictures = $form->get('pictures')->getData();
@@ -260,12 +263,19 @@ class EventController extends AbstractController
     
                 //creation de l'event (grace a localisation)
                 $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
-                    ->setTag(strtoupper($this->slugger->slug($event->getTitle())))
+                    ->setTag('pro')
                     ->setCreatedAt(new DateTime())
                     ->setUser($user)
                     ->setLocalisation($localisation);
-                $this->em->persist($event);
+                 
+                $tagCode = $this->tag->code().'-'.$this->tag->year($event->getStartedAt()).$this->tag->department($localisation->getCityCp());
+                
+                $this->em->persist($event);        
+                $this->em->flush(); // obligé de flush pour avoir l'id (nécessaire pour le tag)
+                
+                $event->setTag($this->tag->createTag($tagCode, $event->getId(), $event->getTitle()));
                 $this->em->flush();
+                
     
                 $this->addFlash('success', "Vous avez créé un nouvel évênement");
                 return $this->redirectToRoute('event_show', [
