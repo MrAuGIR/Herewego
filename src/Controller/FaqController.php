@@ -2,30 +2,60 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use App\Form\FaqType;
+use App\Entity\QuestionUser;
+use App\Repository\QuestionAdminRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ *  @Route("/faq", name="faq_")
+ */
 class FaqController extends AbstractController
 {
     /**
-     * @Route("/faq", name="faq_index")
+     * @Route("/", name="index")
      */
-    public function index(): Response
+    public function index(QuestionAdminRepository $QuestionAdminRepository)
     {
+
+        $questions = $QuestionAdminRepository->findBy([], ['importance' => 'DESC']);
+
+        dump($questions);
+
         return $this->render('faq/index.html.twig', [
-            'controller_name' => 'FaqController',
+            'questions' => $questions
         ]);
     }
 
 
     /**
-     * @Route("/faq/question", name="faq_question")
+     * @Route("/question", name="question")
      */
-    public function question(): Response
+    public function question(Request $request, EntityManagerInterface $em)
     {
+        $question = new QuestionUser;
+
+        $form = $this->createForm(FaqType::class, $question);
+        
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            if ($this->getUser()) {
+                $question->setUser($this->getUser());
+            }
+            
+            $em->persist($question);
+            $em->flush();
+
+            $this->addFlash('success', "Votre question a bien été envoyé à l'administrateur.");
+            return $this->redirectToRoute('faq_index');
+        }
+
         return $this->render('faq/question.html.twig', [
-            'controller_name' => 'FaqController',
+            'formView' => $form->createView()
         ]);
     }
 }
