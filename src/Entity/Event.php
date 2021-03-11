@@ -6,6 +6,7 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
@@ -21,21 +22,26 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "Le titre est obligatoire.")
+     * @Assert\Length(min=5, max=255, minMessage="La question doit faire au moins 5 caractères", maxMessage="Le titre doit faire moins de 255 caractères")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message = "La description est obligatoire.")
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank(message = "La date de début d'évênement est obligatoire.")
      */
     private $startedAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank(message = "La date de fin d'évênement est obligatoire.")
      */
     private $endedAt;
 
@@ -81,6 +87,7 @@ class Event
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="events")
+     * @Assert\NotBlank(message = "La catégorie est obligatoire.")
      */
     private $category;
 
@@ -142,7 +149,7 @@ class Event
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -154,7 +161,7 @@ class Event
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -166,7 +173,7 @@ class Event
         return $this->startedAt;
     }
 
-    public function setStartedAt(\DateTimeInterface $startedAt): self
+    public function setStartedAt(?\DateTimeInterface $startedAt): self
     {
         $this->startedAt = $startedAt;
 
@@ -178,7 +185,7 @@ class Event
         return $this->endedAt;
     }
 
-    public function setEndedAt(\DateTimeInterface $endedAt): self
+    public function setEndedAt(?\DateTimeInterface $endedAt): self
     {
         $this->endedAt = $endedAt;
 

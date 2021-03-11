@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -112,7 +113,8 @@ class EventType extends AbstractType
             ])
             ->add('localisation', LocalisationType::class,[
                 'label'=> false,
-                'required' => false
+                'required' => false,
+               
             ])
             ->add('pictures', FileType::class, [
                 'label' => false,

@@ -224,52 +224,56 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+            if ($form->isValid()) {
 
-            // GESTION DES IMAGES
-            //on recupere les images transmise
-            $pictures = $form->get('pictures')->getData();
-            //on boucle sur les images
-            foreach ($pictures as $picture) {
-                //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
-
-                // on copie le fichier dans le dossier uploads
-                // 2 params (destination, fichier)
-                $picture->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-                // on stock l'image dans la bdd (son nom)
-                $img = new Picture();
-                $img->setPath($fichier)
-                    ->setTitle($event->getTitle())
-                    ->setOrderPriority(1);
-                $event->addPicture($img);
+                // GESTION DES IMAGES
+                //on recupere les images transmise
+                $pictures = $form->get('pictures')->getData();
+                //on boucle sur les images
+                foreach ($pictures as $picture) {
+                    //on genere un nouveau nom de fichier (codé) et on rajoute son extension
+                    $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+    
+                    // on copie le fichier dans le dossier uploads
+                    // 2 params (destination, fichier)
+                    $picture->move(
+                        $this->getParameter('images_directory'),
+                        $fichier
+                    );
+                    // on stock l'image dans la bdd (son nom)
+                    $img = new Picture();
+                    $img->setPath($fichier)
+                        ->setTitle($event->getTitle())
+                        ->setOrderPriority(1);
+                    $event->addPicture($img);
+                }
+                //FIN GESTION DES IMAGES
+    
+                /*Localisation de l'event*/
+                $localisation = new Localisation();
+                $localisation->setAdress($request->request->get('event')['localisation']['adress'])
+                    ->setCityName($request->request->get('event')['localisation']['cityName'])
+                    ->setCityCp($request->request->get('event')['localisation']['cityCp'])
+                    ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
+                    ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
+                $this->em->persist($localisation);
+    
+                //creation de l'event (grace a localisation)
+                $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
+                    ->setTag(strtoupper($this->slugger->slug($event->getTitle())))
+                    ->setCreatedAt(new DateTime())
+                    ->setUser($user)
+                    ->setLocalisation($localisation);
+                $this->em->persist($event);
+                $this->em->flush();
+    
+                $this->addFlash('success', "Vous avez créé un nouvel évênement");
+                return $this->redirectToRoute('event_show', [
+                    'event_id' => $event->getId()
+                ]);
+            } else {
+                $this->addFlash('danger', "Veuillez remplir tous les champs obligatoires");
             }
-            //FIN GESTION DES IMAGES
-
-            /*Localisation de l'event*/
-            $localisation = new Localisation();
-            $localisation->setAdress($request->request->get('event')['localisation']['adress'])
-                ->setCityName($request->request->get('event')['localisation']['cityName'])
-                ->setCityCp($request->request->get('event')['localisation']['cityCp'])
-                ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
-                ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
-            $this->em->persist($localisation);
-
-            //creation de l'event (grace a localisation)
-            $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
-                ->setTag(strtoupper($this->slugger->slug($event->getTitle())))
-                ->setCreatedAt(new DateTime())
-                ->setUser($user)
-                ->setLocalisation($localisation);
-            $this->em->persist($event);
-            $this->em->flush();
-
-            $this->addFlash('success', "Vous avez créé un nouvel évênement");
-            return $this->redirectToRoute('event_show', [
-                'event_id' => $event->getId()
-            ]);
         }
 
         $formView = $form->createView();
@@ -299,49 +303,54 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // GESTION DES IMAGES
-            //on recupere les images transmise
-            $pictures = $form->get('pictures')->getData();
-            //on boucle sur les images
-            foreach ($pictures as $picture) {
-                //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+            if ($form->isValid()) {
 
-                // on copie le fichier dans le dossier uploads
-                // 2 params (destination, fichier)
-                $picture->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-                // on stock l'image dans la bdd (son nom)
-                $img = new Picture();
-                $img->setPath($fichier)
-                    ->setTitle($event->getTitle())
-                    ->setOrderPriority(1);
-                $event->addPicture($img);
+                // GESTION DES IMAGES
+                //on recupere les images transmise
+                $pictures = $form->get('pictures')->getData();
+                //on boucle sur les images
+                foreach ($pictures as $picture) {
+                    //on genere un nouveau nom de fichier (codé) et on rajoute son extension
+                    $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+    
+                    // on copie le fichier dans le dossier uploads
+                    // 2 params (destination, fichier)
+                    $picture->move(
+                        $this->getParameter('images_directory'),
+                        $fichier
+                    );
+                    // on stock l'image dans la bdd (son nom)
+                    $img = new Picture();
+                    $img->setPath($fichier)
+                        ->setTitle($event->getTitle())
+                        ->setOrderPriority(1);
+                    $event->addPicture($img);
+                }
+                //FIN GESTION DES IMAGES
+    
+                /*Localisation de l'event*/
+                $localisation = new Localisation();
+                $localisation->setAdress($request->request->get('event')['localisation']['adress'])
+                             ->setCityName($request->request->get('event')['localisation']['cityName'])
+                             ->setCityCp($request->request->get('event')['localisation']['cityCp'])
+                             ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
+                             ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
+                $this->em->persist($localisation);
+    
+                //creation de l'event (grace a localisation)
+                $event->setSlug(strtolower($slugger->slug($event->getTitle())))
+                    ->setTag(strtoupper($slugger->slug($event->getTitle())))
+                    ->setLocalisation($localisation);
+                $this->em->persist($event);
+    
+                $this->em->flush();
+                $this->addFlash('success', "Vous avez modifié votre évênement avec succés");
+                return $this->redirectToRoute('event_show', [
+                    'event_id' => $event->getId()
+                ]);
+            } else {
+                $this->addFlash('danger', "Veuillez remplir tous les champs obligatoires");
             }
-            //FIN GESTION DES IMAGES
-
-            /*Localisation de l'event*/
-            $localisation = new Localisation();
-            $localisation->setAdress($request->request->get('event')['localisation']['adress'])
-                         ->setCityName($request->request->get('event')['localisation']['cityName'])
-                         ->setCityCp($request->request->get('event')['localisation']['cityCp'])
-                         ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
-                         ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
-            $this->em->persist($localisation);
-
-            //creation de l'event (grace a localisation)
-            $event->setSlug(strtolower($slugger->slug($event->getTitle())))
-                ->setTag(strtoupper($slugger->slug($event->getTitle())))
-                ->setLocalisation($localisation);
-            $this->em->persist($event);
-
-            $this->em->flush();
-            $this->addFlash('success', "Vous avez modifié votre évênement avec succés");
-            return $this->redirectToRoute('event_show', [
-                'event_id' => $event->getId()
-            ]);
         }
 
         $formView = $form->createView();
