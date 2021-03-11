@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\QuestionUserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=QuestionUserRepository::class)
@@ -19,17 +20,21 @@ class QuestionUser
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "La question est obligatoire.")
+     * @Assert\Length(min=20, max=255, minMessage="La question doit faire au moins 20 caractères", maxMessage="La question doit faire moins de 255 caractères")
      */
     private $question;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
+     * @Assert\NotBlank(message = "Le sujet est obligatoire.")
+     * @Assert\Length(min=5, max=100, minMessage="Le sujet doit faire au moins 5 caractères", maxMessage="Le sujet doit faire moins de 100 caractères")
      */
     private $subject;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="questionUsers")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 
@@ -43,7 +48,7 @@ class QuestionUser
         return $this->question;
     }
 
-    public function setQuestion(string $question): self
+    public function setQuestion(?string $question): self
     {
         $this->question = $question;
 
