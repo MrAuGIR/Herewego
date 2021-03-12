@@ -22,7 +22,7 @@
                 <div class="card bg-dark text-dark">
                     {% if event.pictures is not empty %}
                         <div class="picture">
-                            <img src="{{ event.pictures[0].path }}"  alt="{{ event.title }}">
+                            <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}"  alt="{{ event.title }}">
                         </div>
                     {% endif %}
                     <div class="card-img-overlay">
@@ -48,7 +48,7 @@
             <div class="card bg-dark text-white">
                 {% if event.pictures is not empty %}
                 <div class="picture">
-                    <img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
+                    <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
                 </div>
                 {% endif %}
                 <div class="card-img-overlay">
