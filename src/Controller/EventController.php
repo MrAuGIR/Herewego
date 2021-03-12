@@ -47,13 +47,40 @@ class EventController extends AbstractController
     /**
      * @Route("/", name="event")
      */
-    public function index(EventRepository $eventRepository)
+    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request)
     {
-        $events = $eventRepository->findAll();
+        /* nombre d'évenements par page */
+        $limit = 12;
 
-        return $this->render('event/index.html.twig', [
-            'events' => $events
-        ]);
+        /*on recupère le numero de la page en cours pour la pagination*/
+        $page = (int)$request->query->get("page", 1);
+
+        /*On recupère l'ordre d'affichage */
+        $order = $request->get('order');
+
+        /*On récupère les filtres catgéories passé dans la requete ajax */
+        $filtersCat = $request->get("categories");
+
+        /*On recupère la localisation */
+        $localisation = $request->get('localisation');
+
+        /*on filtres les events en fonction des filtres*/
+        $events = $eventRepository->findByFilters($page,$limit,$order,$filtersCat,$localisation);
+        
+        /*On recupère le nombre total d'events : nécéssaire pour la pagination en fonction des filtres*/
+        $total = $eventRepository->getCountEvent($filtersCat,$localisation);
+
+        //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
+        if ($request->get('ajax')) {
+            return new JsonResponse([
+                'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page','order'))
+            ]);
+        }
+
+        /* On recupère les catgéories */
+        $categories = $categoryRepository->findAll();
+
+        return $this->render('event/index.html.twig', compact('events','categories','total','limit','page'));
     }
 
     /**

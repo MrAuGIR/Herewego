@@ -1,0 +1,26 @@
+
+<form id="filters">
+    <div class="input-group-text ">
+        <span class="input-group-text" id="basic-addon1"><i class="fas fa-map-marker-alt"></i></span>
+        <input class="form-control pe-3" type="text" id="localisation" name="localisation" placeholder="ville de recherche">
+        {% for category in categories %}
+
+        {# On vérifie si la catégorie est dans les paramètres pour la checker ou non#}
+        {% if queryParams is not empty and queryParams.categories is defined %}
+            {% set checked = (category.id in queryParams.categories) ? "checked" : "" %}
+        {% else %}
+            {% set checked = "" %}
+        {% endif %}
+
+        <div class="form-check px-3">
+            <input class="form-check-input input-check" type="checkbox" name="categories[]" value="{{category.id}}" id="cat{{category.id}}" {{checked}}>
+            <label class="form-check-label" for="cat{{category.id}}">{{category.name}}</label>
+        </div>
+        {% endfor %}
+        <select id="#selectOrder" name="order"class="form-select form-select-sm" aria-label=".form-select-sm example">
+            <option value="ASC" selected>date croissante</option>
+            <option value="DESC">date décroissante</option>
+        </select>
+    </div>
+    <input type="hidden" name="page" value="{{page}}">         
+</form>
