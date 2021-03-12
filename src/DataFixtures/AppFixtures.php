@@ -91,7 +91,7 @@ class AppFixtures extends Fixture
             ->setRegisterAt(new \DateTime())
             ->setValidatedAt(new \DateTime())
             ->setRoles(['ROLE_USER'])
-            ->setPathAvatar('https://i.pravatar.cc/100')
+            ->setPathAvatar('1')
             ->setLocalisation($localisation)
             ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
             $manager->persist($user);
@@ -137,7 +137,7 @@ class AppFixtures extends Fixture
                 ->setRegisterAt(new \DateTime())
                 ->setValidatedAt(new \DateTime())
                 ->setRoles(['ROLE_ORGANIZER'])
-                ->setPathAvatar('https://i.pravatar.cc/100')
+                ->setPathAvatar('2')
                 ->setPassword($this->passwordEncoder->encodePassword($organizer, 'password'))
                 ->setSiret("siret-".$faker->numberBetween(10000, 99999))
                 ->setCompanyName($faker->company())
@@ -188,7 +188,7 @@ class AppFixtures extends Fixture
                         ->setRegisterAt(new \DateTime())
                         ->setValidatedAt(new \DateTime())
                         ->setRoles(['ROLE_USER'])
-                        ->setPathAvatar('https://i.pravatar.cc/100')
+                        ->setPathAvatar('1')
                         ->setLocalisation($localisation)
                         ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
                         $manager->persist($user);
