@@ -32,27 +32,33 @@
             </li>
         </ul>
     </nav>
-
-
-{% for event in events %}		
-    <div class="col-12 col-md-8 col-lg-4 my-1">
-        <div class="card bg-dark text-white">
-            
-            {% if event.pictures is not empty %}
-                <div class="picture">
-                    <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
-                </div>
-            {% endif %}
-            
-            <div class="card-img-overlay">
-                <h5 class="card-title">{{ event.title }}</h5>
-                <p class="card-text">{{ event.description | raw }}</p>
-                <p>{{ event.category.name }}</p>
-                <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
-                <p class="card-text bg-text-card">
-                    <a href="{{ path('event_show', {event_id: event.id }) }}">Voir</a>
-                </p>
-            </div>
+{% if events is empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <p>Votre recherche ne retourne aucun événements</p>
         </div>
     </div>
-{% endfor %}
+{% else %}
+    {% for event in events %}		
+        <div class="col-12 col-md-8 col-lg-4 my-1">
+            <div class="card bg-dark text-white">
+                
+                {% if event.pictures is not empty %}
+                    <div class="picture">
+                        <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
+                    </div>
+                {% endif %}
+                
+                <div class="card-img-overlay">
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description | raw }}</p>
+                    <p>{{ event.category.name }}</p>
+                    <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
+                    <p class="card-text bg-text-card">
+                        <a href="{{ path('event_show', {event_id: event.id }) }}">Voir</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
