@@ -25,8 +25,8 @@
 			<!--  Section profil  -->
 			<div class="row pb-4">
 				<div class="col-12 col-md-4">
-					<div class="picture">
-						<img class="img-thumbnail" src="{{ user.pathAvatar }}" alt="avatar {{ user.firstName }} {{ user.lastName }}">
+					<div class="avatar-profil">
+						<img src="{{ asset('/img/avatar/' ~ user.pathAvatar ~ '.png') }}" alt="avatar {{ user.firstName }} {{ user.lastName }}">
 					</div>
 				</div>
 				<div class="col-12 col-md-8">
