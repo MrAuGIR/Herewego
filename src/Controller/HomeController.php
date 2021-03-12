@@ -4,16 +4,19 @@ namespace App\Controller;
 
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home")
      */
-    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository): Response
+    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
         //derniers evenements créée
         $lastEvents = $eventRepository->findLast();
@@ -23,6 +26,13 @@ class HomeController extends AbstractController
 
         //les catégories d'evenements
         $Categories = $categoryRepository->findAll();
+
+        //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
+        if ($request->get('ajax')) {
+            return new JsonResponse([
+                'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page', 'order'))
+            ]);
+        }
 
 
         return $this->render('home/index.html.twig', [
