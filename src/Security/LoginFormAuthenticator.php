@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,6 +68,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             throw new InvalidCsrfTokenException();
         }
 
+        /**
+         * @var User
+         */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
 
         if (!$user) {
@@ -74,7 +78,35 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
         }
 
-        return $user;
+        if ($user->getIsValidate()) {
+            if ($user->getIsPremium()) {
+                return $user;
+            }
+
+            // on verifie si il est premium
+            $participations = $user->getParticipations();            
+            
+            $now = new DateTime();
+            $count = 0;
+            foreach ($participations as $participation) {
+                if ($participation->getEvent()->getStartedAt() < $now) {
+                    $count++;
+                }
+            }
+            
+            if ($count >= 10) {
+                $user->setIsPremium(true);
+                $this->entityManager->flush();
+            }
+           
+            return $user;
+
+        } elseif ($user->getIsValidate() === null) {
+            dd('vous etes en attente de validation');
+        } else {
+            dd("votre demande d'inscription a été refusé");
+        }
+        
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -92,6 +124,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
+
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
