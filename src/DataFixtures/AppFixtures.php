@@ -152,8 +152,8 @@ class AppFixtures extends Fixture
                     $event = new Event;
                     $event->setTitle("ev ".$faker->words(3, true))
                     ->setDescription($faker->text(50))
-                    ->setStartedAt($faker->dateTime())
-                    ->setEndedAt($faker->dateTime())
+                    ->setStartedAt($faker->dateTimeInInterval($startDate = '-1 years', $interval = '+ 2 years'))
+                    ->setEndedAt($faker->dateTimeInInterval($startDate = '+2 years', $interval = '+ 3 years'))
                     ->setEmail($faker->email())
                     ->setWebsite($faker->url())
                     ->setPhone($faker->phoneNumber())
