@@ -110,8 +110,12 @@
                         <img src="{{ asset('/uploads/' ~ picture.path) }}" alt="Photo de l'event" width="50">
                         {# data-select va servir en js #}
                         {# data-token generé par symfony #}
+
                         
                         <a href="{{ path('event_picture_delete', {id: picture.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ picture.id) }}">Supprimer</a>
+
+
+                        <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-order>
                     </div>
                 {% endfor %}
             <div class="col-12 col-lg-6 my-4">
@@ -132,9 +136,13 @@
 {% block javascripts %}
 	{{parent()}}
     <script src="{{ asset('script/apiAdress.js') }}"></script>
-    <script src="{{ asset('script/images.js') }}"></script>
+    <script src="{{ asset('script/images/deleteImage.js') }}"></script>
+    <script src="{{ asset('script/images/orderImage.js') }}"></script>
 	<script>
 		//pour les formulaires d'adress
 		envoieAjax('adressEvent','Event');
+        
+        
+        
 	</script>
 {% endblock %}

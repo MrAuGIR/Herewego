@@ -23,6 +23,7 @@
         "symfony/form": "5.2.*",
         "symfony/framework-bundle": "5.2.*",
         "symfony/http-client": "5.2.*",
+        "symfony/mailer": "5.2.*",
         "symfony/maker-bundle": "^1.29",
         "symfony/mime": "5.2.*",
         "symfony/proxy-manager-bridge": "5.2.*",

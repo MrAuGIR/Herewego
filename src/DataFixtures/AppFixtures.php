@@ -172,7 +172,7 @@ class AppFixtures extends Fixture
                     $picture = new Picture;
                     $picture->setTitle("ma picture de ".$event->getTitle())
                         ->setOrderPriority(1)
-                        ->setPath($faker->imageUrl(400, 400, true))
+                        ->setPath("image_default.jpg")
                         ->setEvent($event);
                     $manager->persist($picture);
 
