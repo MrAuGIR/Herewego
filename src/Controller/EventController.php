@@ -9,17 +9,22 @@ use App\Form\EventType;
 use App\Tools\TagService;
 use App\Entity\Localisation;
 use App\Entity\Participation;
+use Symfony\Component\Mime\Email;
 use App\Repository\EventRepository;
+use Symfony\Component\Mime\Address;
 use App\Repository\CategoryRepository;
 use App\Repository\EventGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipationRepository;
+use App\Repository\PictureRepository;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 
 /**
  * @Route("/event")
@@ -29,12 +34,14 @@ class EventController extends AbstractController
     protected $em;
     protected $slugger;
     protected $tag;
+    protected $mailer;
 
-    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger, TagService $tag)
+    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger, TagService $tag, MailerInterface $mailer)
     {
         $this->em = $em;
         $this->slugger = $slugger;
         $this->tag = $tag;
+        $this->mailer = $mailer;
     }
 
     /**
@@ -159,6 +166,20 @@ class EventController extends AbstractController
             ->setAddedAt(new DateTime());        
         $this->em->persist($participation);
         $this->em->flush();
+
+
+        $email = new TemplatedEmail();
+        $email->from(new Address("admin@gmail.com", "Admin"))
+            ->subject("Participation à l'évênement : ".$event->getTitle())
+            ->to($user->getEmail())
+            ->htmlTemplate("emails/participation_event.html.twig")
+            ->context([
+                'user' => $user,
+                'event' => $event
+            ]);
+        $this->mailer->send($email);
+
+
 
         // redirige avec message
         $this->addFlash('success', "Vous participez desormais à cet évênement");
@@ -426,5 +447,19 @@ class EventController extends AbstractController
         } else {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
+    }
+
+    /**
+     * @Route("/picture/order/{value}/{id}", name="event_picture_order")
+     */
+    public function changePicturePriority($value, $id, PictureRepository $pictureRepository)
+    {
+
+        $picture = $pictureRepository->find($id);        
+        $picture->setOrderPriority($value);
+
+        $this->em->flush();
+
+        return new Response('true');        
     }
 }
