@@ -1,32 +1,24 @@
 {% extends 'base.html.twig' %}
-{% block title %}Êvenements
-{% endblock %}
+
+{# On crée des variables personnalisées #}
+{% set queryParams = app.request.query.all %}
+
+{% block title %}Êvenements{% endblock %}
 
 
 {% block body %}
 	<h1>Les évênements</h1>
-	<div class="row my-5">
-	{% for event in events %}		
-			<div class="col-12 col-md-8 col-lg-4 my-1">
-				<div class="card bg-dark text-white">
-					
-					{% if event.pictures is not empty %}
-						<div class="picture">
-							<img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
-						</div>
-					{% endif %}
-					
-					<div class="card-img-overlay">
-						<h5 class="card-title">{{ event.title }}</h5>
-						<p class="card-text">{{ event.description | raw }}</p>
-                        <p>{{ event.category.name }}</p>
-                        <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
-						<p class="card-text bg-text-card">
-							<a href="{{ path('event_show', {event_id: event.id }) }}">Voir</a>
-						</p>
-					</div>
-				</div>
-			</div>
-	{% endfor %}
+	<div class="row my-4">
+		<div class="col-12">
+			{% include "event/_search.html.twig" %}
+		</div>
 	</div>
+	<div class="row my-5" id="content">
+		{% include "event/_content.html.twig" %}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+<script src="{{asset('script/filtersEvent.js')}}"></script>
 {% endblock %}

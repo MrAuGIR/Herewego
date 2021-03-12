@@ -1,3 +1,8 @@
-$(document).ready(function() {
+window.onload = () => {
+
+    $(document).ready(function() {
         $('#dataTable').DataTable();
     });
+
+}
+
