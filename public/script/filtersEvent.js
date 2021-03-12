@@ -78,9 +78,6 @@ window.onload = () => {
     });
             
 
-            
-        
-    
 }
 
 function requeteAjax(url, params){
