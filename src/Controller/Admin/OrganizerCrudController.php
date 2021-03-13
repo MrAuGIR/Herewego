@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Flex\Path;
 
 /**
@@ -35,11 +36,28 @@ class OrganizerCrudController extends AbstractController
     /**
      * @Route("/", name="organizercrud")
      */
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, Request $request): Response
     {
+        /*On recupère l'utilisateur*/
+        $user = $userRepository->find((int)$request->query->get('userId'));
 
+        /* si on a recupérer un utilisateur, c'est qu'un action sur les checkbox a été effectué*/
+        if ($user) {
+
+            $user->setIsValidate(($user->getIsValidate()) ? false : true);
+            $this->em->flush();
+        }
+
+        /*On recupère tous les users */
         $users = $userRepository->findByRole('ROLE_ORGANIZER');
 
+        //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
+        if ($request->get('ajax')) {
+
+            return new JsonResponse([
+                'content' => $this->renderView('admin/organizer/_content.html.twig', ['users' => $users])
+            ]);
+        }
 
         return $this->render('admin/organizer/index.html.twig', [
             'users' => $users,
