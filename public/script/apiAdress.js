@@ -7,8 +7,9 @@ function envoieAjax(id, direction){
 
     let input = document.getElementById(id)
 
-    input.addEventListener('input', function(){
+    input.addEventListener('input', function(e){
 
+        e.preventDefault();
         if(input.value.length> 3)
         {
             console.log(`valeur de la saisie ${input.value}`)
@@ -25,7 +26,7 @@ function envoieAjax(id, direction){
                         //let html = miseEnForm(data);
                         let html = '<ul>';
                         for( adresse of data.features){
-                            html += `<a href="#" class="list-result nav-link" onclick="selectR(this,'${direction}')" nameAdd="${adresse.properties.name}" city="${adresse.properties.city}" citycode="${adresse.properties.citycode}" postcode="${adresse.properties.postcode}" x="${adresse.properties.x}" y="${adresse.properties.y}">${adresse.properties.label}</a><br>`
+                            html += `<a href="#resultatApiEvent" class="list-result nav-link" onclick="selectR(this,'${direction}')" nameAdd="${adresse.properties.name}" city="${adresse.properties.city}" citycode="${adresse.properties.citycode}" postcode="${adresse.properties.postcode}" x="${adresse.properties.x}" y="${adresse.properties.y}">${adresse.properties.label}</a><br>`
                         }
                         html += '</ul>'
                         document.getElementById('resultatApi'+direction).innerHTML=html;
@@ -53,6 +54,6 @@ function selectR(e,chaine){
 
     //on vide le champ de resultat
     document.getElementById('resultatApi'+chaine).innerHTML="";
-    document.getElementById('adress'+chaine).value="";
+    //document.getElementById('adress'+chaine).value="";
 }
 

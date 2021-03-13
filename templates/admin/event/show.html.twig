@@ -1,0 +1,145 @@
+{% extends 'base.admin.html.twig' %}
+{% block title %}{{ event.title }}
+{% endblock %}
+
+
+{% block body %}
+	<h1>Event : {{ event.title }} (event vu : {{ countView }} fois)</h1>
+	<div class="row d-flex justify-content-center my-5">
+		<div class="col-12 col-lg-8 border-end">
+			<div class="row px-2 py-2">
+				{% if event.pictures is not empty %}
+						<div class="picture">
+							<img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
+						</div>
+					{% endif %}
+				<div class="col-12">
+					<p>{{ event.category.name }}</p>
+				</div>
+				<div class="col-12">
+					<p>Description : {{ event.description | raw }}</p>
+				</div>
+				{% if isOnEvent %}	
+
+					{% for transport in event.transports %}
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading{{ transport.id }}">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ transport.id }}" aria-expanded="true" aria-controls="collapse{{ transport.id }}">
+									<div class="row w-100">
+										{% if transport.user.id == user.id %}
+											<div class="col-1"><i class="fas fa-user-shield fa-w"></i></div>
+											<div class="col-2">{{ transport.localisationStart.cityName }}</div>
+										{% else %}
+											<div class="col-3">{{ transport.localisationStart.cityName }}</div>
+										{% endif %}
+										<div class="col-3">{{ transport.localisationStart.cityName }}</div>
+										<div class="col-3">Départ à
+											<strong>{{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</strong>
+										</div>
+										<div class="col-3">Retour à
+											<strong>{{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</strong>
+										</div>
+										<div class="col-3">
+											<strong>{{ transport.remainingPlace }} places</strong>
+											restantes</div>
+									</div>
+								</button>
+							</h2>
+							<div id="collapse{{ transport.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ transport.id }}" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<p>manager : {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+									<p>Infos Aller : </p>
+									<ul>
+										<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+										<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+										<hr>
+										<li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+										<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+									</ul>
+									<p>infos Retour : </p>
+									<ul>
+										<li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+										<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+										<hr>
+										<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
+										<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+									</ul>
+									<p>commentaires : {{ transport.commentary }}</p>
+									<p>Places disponibles : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+									<p>Prix du billet : {{ transport.placePrice }} €</p>
+									<a href="{{ path('transport_show', {transport_id: transport.id }) }}">vers la page détail du transport</a>
+									{% if user.id == transport.user.id %}
+									<a href="{{ path('transport_manage',{transport_id:transport.id}) }}">Gérer votre transport</a>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				
+				{% endif %}
+			</div>
+		</div>
+		<div class="col-12 col-lg-4">
+			<div class="row">
+				{% if user %}		
+					{% if isOnEvent %}
+						<div class="col-12 py-2">
+							<p>Vous participez à cet évênement</p>
+							<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
+						</div>
+					{% else %}	
+						<div class="col-12 py-2">
+							<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Participer</a>
+						</div>
+					{% endif %}		
+				{% else %}
+					<a class="btn btn-primary" href="{{ path('app_login') }}">Connectez vous pour participer à cet évênement</a>
+				{% endif %}
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<p class="fs-5 fw-bold">Du {{ event.startedAt | date('Y-m-d') }} au {{ event.endedAt | date('Y-m-d') }}</p>
+				</div>
+				<div class="col-12">
+					<p class="fs-5 fw-bold">Horaire D : {{ event.startedAt | date('H:i')}}</p>
+					<p class="fs-5 fw-bold">Horaire F : {{ event.endedAt | date('H:i')}}</p>
+				</div>
+				{% if event.eventGroup is not same as(null) %}
+					<div class="col-12">
+						<a href="{{ path('event_group', {group_id: event.eventGroup.id }) }}" title="">Voir les autres événement du même Event-group</a>
+					</div>				
+				{% endif %}
+			</div>
+			<div class="row">
+				<div class="col-12 py-2">
+					<div class="border-top">
+						<span class="fs-6  lh-1">{{ event.localisation.adress }}</span><br>
+						<span class="fs-6 lh-1">{{ event.localisation.cityName }}</span><br>
+						<span class="fs-6 lh-1">France</span>
+						<span class="fs-6 lh-1">Tel : {{ event.phone }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 py-2">
+					<div class="border-top">
+						<span class="fs-6  lh-1">Facebook : <a href="{{ event.facebookLink }}">{{ event.facebookLink }}</a></span><br>
+						<span class="fs-6  lh-1">Twitter : <a href="{{ event.twitterLink }}">{{ event.twitterLink }}</a></span><br>
+						<span class="fs-6  lh-1">Instagram : <a href="{{ event.instagramLink }}">{{ event.instagramLink }}</a></span><br>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 py-2">
+					<div class="border-top">
+						<span class="fs-6  lh-1">
+							Site de l'event :<a href="{{ event.website }}">{{ event.website }}</a>
+						</span><br>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	{{ event.tag | raw }}
+{% endblock %}
