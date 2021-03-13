@@ -21,7 +21,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Flex\Path;
 
-
 /**
  * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
  * @Route("/admin/category")
