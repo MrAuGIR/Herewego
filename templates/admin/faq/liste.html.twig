@@ -1,0 +1,54 @@
+{% extends "base.admin.html.twig" %}
+
+
+{% block body %}
+    <div class="row my-5">
+        <nav>
+            <ul class="nav flex-row nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{path('faqcrud')}}" >Questions des visiteurs</a>
+                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{path('faqcrud_qAdmin_liste')}}">Question de la FAQ</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="row py-5">
+            <a href="{{path('faqcrud_qAdmin_create')}}">Créer une question</a>
+    </div>
+    <h3>Question Affiché dans la FAQ du site</h3>
+    <div class="table-responsive">
+        <table id="dataTable" class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>question</th>
+                    <th>Reponse</th>
+                    <th>Importance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in questionsAdmin %}
+                <tr>
+                    <th>{{question.id}}</th>
+                    <th>{{question.question}}</th>
+                    <th>{{question.answer}}</th>
+                    <th>{{question.importance}}</th>
+                    <th>
+                        <a href="{{path('faqcrud_qAdmin_show',{id:question.id})}}">Détail</a>
+                        <a href="{{path('faqcrud_qAdmin_edit',{id:question.id})}}">Editer</a>
+                        <a href="{{path('faqcrud_qAdmin_delete',{id:question.id})}}">Supprimer</a>
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+    <script type="text/javascript" src="/script/renderTable.js"></script>
+{% endblock %}
