@@ -1,33 +1,129 @@
 {% extends "base.admin.html.twig" %}
 
 {% block body %}
-    <h3>Creation d'une nouvelle categorie</h3>
+    <h3>Creation d'un nouveau évenement </h3>
     <div class="row">
-        {{form_start(form)}}
-        <div class="col-12 col-lg-6 my-4">
-            <div class="form-group">
-                {{form_row(form.name)}}
+        {{ form_start(formView) }}
+        {{ form_errors(formView) }}
+        <div class="row">
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.title)}}
+                </div>
             </div>
-        </div>
-        <div class="col-12 col-lg-6 my-4">
-            <div class="form-group">
-                {{form_row(form.pathLogo)}}
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.description)}}
+                </div>
             </div>
-        </div>
-        <div class="col-12 col-lg-6 my-4">
-            <div class="form-group">
-                {{form_row(form.color)}}
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.startedAt)}}
+                </div>
             </div>
-        </div>
-        <div class="col-12 col-lg-6 my-4">
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Ajouter</button>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.endedAt)}}
+                </div>
             </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.email)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.website)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.phone)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.category)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.eventGroup)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.facebookLink)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.instagramLink)}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.twitterLink)}}
+                </div>
+            </div>
+
+            <div class="col-12">
+                <p>Recherchez une adresse <i class="fas fa-search"></i></p>
+                <div class="form-group mb-3">
+                    <input class="form-control" type="text" id="adressEvent" name="adressEvent" placeholder="saisissez l'adresse de l'évênement">
+                </div>
+            </div>
+            <div class="col-12">
+                <nav id="resultatApiEvent"></nav>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.localisation.cityName, {'id':'cityEvent'}) }}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.localisation.cityCp, {'id':'postcodeEvent'})}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.localisation.adress, {'id':'nameAddEvent'})}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.localisation.coordonneesX, {'id':'xEvent'})}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.localisation.coordonneesY, {'id':'yEvent'})}}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 my-4">
+                <div class="form-group">
+                    {{form_row(formView.pictures)}}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Créér l'event
+            </button>
         </div>
-        {{form_end(form)}}
-    </div>
+        {{form_end(formView)}}
+    </div
 {% endblock %}
 {% block javascripts %}
 {{parent()}}
+    <script src="{{ asset('script/apiAdress.js') }}"></script>
+    <script src="{{ asset('script/images/deleteImage.js') }}"></script>
+    <script src="{{ asset('script/images/orderImage.js') }}"></script>
+	<script>
+		//pour les formulaires d'adress
+		envoieAjax('adressEvent','Event');
+        
+	</script>
 
 {% endblock %}
