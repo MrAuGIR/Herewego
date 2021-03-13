@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\QuestionAdminRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=QuestionAdminRepository::class)
@@ -19,16 +20,19 @@ class QuestionAdmin
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message = "La question est obligatoire.")
      */
     private $question;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message = "La reponse est obligatoire.")
      */
     private $answer;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Positive(message="le nombre doit être positif")
      */
     private $importance;
 

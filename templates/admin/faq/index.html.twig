@@ -1,0 +1,56 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+        <div class="row my-5">
+            <nav>
+                <ul class="nav flex-row nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{path('faqcrud')}}" >Questions des visiteurs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('faqcrud_qAdmin_liste')}}">Question de la FAQ</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <h3>Question des visiteurs</h3>
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>sujet</th>
+                        <th>question</th>
+                        <th>Utilisateur</th>
+                        <th>Détail</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question in questionsUser %}
+                    <tr>
+                        <th>{{question.id}}</th>
+                        <th>{{question.subject}}</th>
+                        <th>{{question.question}}</th>
+                        {% if question.user is not null %}
+                            <th>{{question.user.lastName}}</th>
+                        {% else %}
+                            anonyme
+                        {% endif %}
+                        <th>
+                            <a href="{{path('faqcrud_qUser_show',{id:question.id})}}">Détail</a>
+                        </th>
+                        <th>
+                            <a href="{{path('faqcrud_qUser_delete',{id:question.id})}}">Supprimer</a>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{parent()}}
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+        <script type="text/javascript" src="/script/renderTable.js"></script>
+    {% endblock %}
