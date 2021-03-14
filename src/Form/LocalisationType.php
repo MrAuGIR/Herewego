@@ -26,7 +26,8 @@ class LocalisationType extends AbstractType
                     new NotBlank([
                         'message' => 'La ville est obligatoire',
                     ]),
-                ]
+                ],
+                'required' => false
             ])
             ->add('cityCp', TextType::class, [
                 'attr' => [
@@ -37,7 +38,9 @@ class LocalisationType extends AbstractType
                     new NotBlank([
                         'message' => 'Le code postal est obligatoire',
                     ]),
-                ]
+                ],
+                'required' => false
+
             ])
             ->add('adress', TextType::class, [
                 'attr' => [
@@ -48,15 +51,18 @@ class LocalisationType extends AbstractType
                     new NotBlank([
                         'message' => "L'adresse complète est obligatoire",
                     ]),
-                ]
+                ],
+                'required' => false
             ])
             ->add('coordonneesX', TextType::class, [
                 'label' => false,
-                'attr' => ['hidden' => true]
+                'attr' => ['hidden' => true],
+                'required' => false,
             ])
             ->add('coordonneesY', TextType::class, [
                 'label' => false,
-                'attr' => ['hidden' => true]
+                'attr' => ['hidden' => true],
+                'required' => false
             ]);
     }
 

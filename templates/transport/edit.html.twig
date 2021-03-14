@@ -7,6 +7,9 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.0/fullpage.css" type="text/css" rel="stylesheet">
 {% endblock %}
 
+{% set errorStart = (form_errors(form.localisation_start.cityName))? "<i class='fas fa-exclamation-circle'></i>" : "" %}
+{% set errorEnd  = (form_errors(form.localisation_return.cityName))? "<i class='fas fa-exclamation-circle'></i>" : "" %}
+
 {% block body %}
 ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
 <p>modifier un transport</p>
@@ -15,10 +18,10 @@ ATTENTION a la modification d'un transport ! si des personnes ont fait des deman
 	<div class="col-12 col-md-4 col-lg-3">
 		<p>proposer un transport sur l'event : {{ event.title }}</p>
 		<nav id="myMenu"  class="navbar nav nav-pills flex-column navbar-light bg-light">
-			<a class="nav-link active" data-menuanchor="p1" class="active"href="#p1">Aller - Lieu de départ</a>
+			<a class="nav-link active" data-menuanchor="p1" class="active"href="#p1">Aller - Lieu de départ {{errorStart|raw}}</a>
 			<a class="nav-link" data-menuanchor="p2" href="#p2">Aller - Date de départ</a>
 			<a class="nav-link" data-menuanchor="p3" href="#p3">Aller - Date d'arrivé</a>
-			<a class="nav-link" data-menuanchor="p4" href="#p4">Retour - Lieu de retour</a>
+			<a class="nav-link" data-menuanchor="p4" href="#p4">Retour - Lieu de retour {{errorStart|raw}}</a>
 			<a class="nav-link" data-menuanchor="p5" href="#p5">Retour - Date de départ</a>
 			<a class="nav-link" data-menuanchor="p6" href="#p6">Retour - Date d'arrivé</a>
 			<a class="nav-link" data-menuanchor="p7" href="#p7">Détails - prix des places</a>
@@ -171,9 +174,32 @@ ATTENTION a la modification d'un transport ! si des personnes ont fait des deman
 				</div>
 			</div>
 			<div class="section">
-				<input class="btn btn-primary" type="submit" name="submit" value="Creer">
+				<div class="col-12">
+					{{form_row(form.submit)}}
+				</div>
+				{{form_end(form)}}
+				<div class="col-12">
+					{% if not form.vars.valid %}
+					<ul class="alert alert-danger">
+						{# on affiche en premier les erreurs globales (cas classiques) #}
+						{% for error in form.vars.errors %}
+							<li>{{error.message}}</li>
+						{% endfor %}
+						{# ainsi que les erreurs concernant chaque champs #}
+						{% for child in form.children %}
+							{# si le champ à des erreur #}
+							{% if child.vars.errors is defined %}
+								{% for error in child.vars.errors %}
+									<li>"{{child.vars.label}}" : {{error.message}} </li> {# on ajoute le label du champ devant l'erreur pour plus de précisions. #}
+								{% endfor %}
+							{% endif %}
+						{% endfor %}
+						{{form_errors(form.localisation_start.cityName)}}
+						{{form_errors(form.localisation_return.cityName)}}
+					</ul>
+					{% endif %}
+				</div>
 			</div>
-			{{form_end(form)}}
 		</div>
 	</div>
 </div>
