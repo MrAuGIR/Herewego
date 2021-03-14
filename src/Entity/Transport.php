@@ -20,36 +20,45 @@ class Transport
      */
     private $id;
 
+
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotNull(message =" Veuillez saisir la date de départ allé ")
      */
     private $goStartedAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(message="la date d'arriver allé doit etre après la date de départ allé", propertyPath="goStartedAt")
+     * @Assert\NotNull(message =" Veuillez saisir la date d'arrivé' allé ")
      */
     private $goEndedAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(message="la date de départ retour doit être après la date d'arrivé allé", propertyPath="goEndedAt")
+     * @Assert\NotNull(message =" Veuillez saisir la date départ au retour ")
      */
     private $returnStartedAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @Assert\GreaterThan(message="la date de d'arrivé retour doit être après la date de depart retour", propertyPath="returnStartedAt")
+     * @Assert\NotNull(message =" Veuillez saisir la date d'arrivé au retour ")
      */
     private $returnEndedAt;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     * Assert\Positive(message="le prix doit être positif")
      */
     private $placePrice;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Positive(message="nombre doit être positif")
+     * @Assert\GreaterThan( value = 0)
+     * @Assert\NotNull(message="veuillez saisir un nombre de place")
      */
     private $totalPlace;
 
@@ -60,6 +69,7 @@ class Transport
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank(message="Le champs commentaire est obligatoire")
      */
     private $commentary;
 
