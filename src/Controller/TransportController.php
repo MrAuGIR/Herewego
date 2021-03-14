@@ -420,10 +420,13 @@ class TransportController extends AbstractController
 
             /*Date et heure de départ (aller) */
             $gostartedAt = $request->request->get('transport')['goStartedAt'];
+            $gostartedAt = explode('T', $gostartedAt);
 
             /*Date et heure d'arrivé (aller) */
             $goEndedAt = $request->request->get('transport')['goEndedAt'];
+            $goEndedAt = explode('T', $goEndedAt);
 
+            
             /*Localisation de retour (au retour) */
             $localisationReturn = $transport->getLocalisationReturn();
 
@@ -436,9 +439,11 @@ class TransportController extends AbstractController
 
             /*Date et heure de départ (au retour) */
             $returnStartedAt = $request->request->get('transport')['returnStartedAt'];
+            $returnStartedAt = explode('T', $returnStartedAt);
 
             /*Date et heure d'arrivé (au retour ) */
             $returnEndedAt = $request->request->get('transport')['returnEndedAt'];
+            $returnEndedAt = explode('T', $returnEndedAt);
 
             /*Prix des places */
             $placePrice = $request->request->get('transport')['placePrice'];
@@ -453,10 +458,10 @@ class TransportController extends AbstractController
             $transport->setUser($user)
                 ->setLocalisationStart($localisationStart)
                 ->setLocalisationReturn($localisationReturn)
-                ->setGoStartedAt(new \DateTime($gostartedAt['date'] . ' ' . $gostartedAt['time']))
-                ->setGoEndedAt(new \DateTime($goEndedAt['date'] . ' ' . $goEndedAt['time']))
-                ->setReturnStartedAt(new \DateTime($returnStartedAt['date'] . ' ' . $returnStartedAt['time']))
-                ->setReturnEndedAt(new \DateTime($returnEndedAt['date'] . ' ' . $returnEndedAt['time']))
+                ->setGoStartedAt(new \DateTime($gostartedAt[0] . ' ' . $gostartedAt[1]))
+                ->setGoEndedAt(new \DateTime($goEndedAt[0] . ' ' . $goEndedAt[1]))
+                ->setReturnStartedAt(new \DateTime($returnStartedAt[0] . ' ' . $returnStartedAt[1]))
+                ->setReturnEndedAt(new \DateTime($returnEndedAt[0] . ' ' . $returnEndedAt[1]))
                 ->setPlacePrice($placePrice)
                 ->setTotalPlace($totalPlace)
                 ->setCommentary($commentary)
