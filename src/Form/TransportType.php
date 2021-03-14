@@ -22,20 +22,23 @@ class TransportType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $now = (new \DateTime('now'))->format('Y-m-d');
         $builder
             //Localisation de départ
             ->add('localisation_start',LocalisationType::class)
             ->add('goStartedAt',DateTimeType::class, [
                 'label'=> 'Quand ?',
-                'widget'=> 'single_text',
+                'widget' => 'single_text',
                 'html5'=> true,
-                'attr'=> ['placeholder'=> 'Date de départ']
+                'attr'=> ['placeholder'=> 'Date de départ',
+                            'min'=> $now.'T00:00'] //$now->format('Y-m-dTH:i')]
             ])
             ->add('goEndedAt',DateTimeType::class, [
                 'label'=> 'Arrivé ? (heure approximative)',
                 'widget' => 'single_text',
                 'html5' => true,
-                'attr'=>['placeholder'=> 'Date et heure d\'arrivé']
+                'attr'=>['placeholder'=> 'Date et heure d\'arrivé',
+                         'min'=> $now.'T00:00']
             ])
             //Localisation de retour
             ->add('localisation_return', LocalisationType::class)
@@ -43,13 +46,15 @@ class TransportType extends AbstractType
                 'label' => 'Quand ?',
                 'widget' => 'single_text',
                 'html5' => true,
-                'attr' => ['placeholder' => 'Date de retour']
+                'attr' => ['placeholder' => 'Date de retour',
+                            'min' => $now .'T00:00']
             ])
             ->add('returnEndedAt', DateTimeType::class, [
                 'label' => 'Arrivé ? (heure approximative)',
                 'widget' => 'single_text',
                 'html5' => true,
-                'attr' => ['placeholder' => 'Date et heure d\'arrivé au retour']
+                'attr' => ['placeholder' => 'Date et heure d\'arrivé au retour',
+                            'min' => $now . 'T00:00']
             ])
             ->add('placePrice', MoneyType::class, [
                 'label' => 'Prix par place',

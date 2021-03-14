@@ -307,9 +307,13 @@ class TransportController extends AbstractController
 
             /*Date et heure de départ (aller) */
             $gostartedAt = $request->request->get('transport')['goStartedAt'];
+            /*selon les widgets utilisés pour le champs de saisie, le format a recupéré n'est pas le même*/
+            $gostartedAt = explode('T',$gostartedAt);
+            // ex : ->setGoStartedAt(new \DateTime($gostartedAt['date'].' '.$gostartedAt['time'])) */
 
             /*Date et heure d'arrivé (aller) */
             $goEndedAt = $request->request->get('transport')['goEndedAt'];
+            $goEndedAt = explode('T',$goEndedAt);
 
             /*Localisation de retour (au retour) */
             $localisationReturn = new Localisation();
@@ -323,9 +327,11 @@ class TransportController extends AbstractController
 
             /*Date et heure de départ (au retour) */
             $returnStartedAt = $request->request->get('transport')['returnStartedAt'];
+            $returnStartedAt = explode('T',$returnStartedAt);
 
             /*Date et heure d'arrivé (au retour ) */
             $returnEndedAt = $request->request->get('transport')['returnEndedAt'];
+            $returnEndedAt = explode('T',$returnEndedAt);
 
             /*Prix des places */
             $placePrice = $request->request->get('transport')['placePrice'];
@@ -341,10 +347,10 @@ class TransportController extends AbstractController
                       ->setEvent($event)
                       ->setLocalisationStart($localisationStart)
                       ->setLocalisationReturn($localisationReturn)
-                      ->setGoStartedAt(new \DateTime($gostartedAt['date'].' '.$gostartedAt['time']))
-                      ->setGoEndedAt(new \DateTime($goEndedAt['date'].' '.$goEndedAt['time']))
-                      ->setReturnStartedAt(new \DateTime($returnStartedAt['date'].' '.$returnStartedAt['time']))
-                      ->setReturnEndedAt(new \DateTime($returnEndedAt['date'].' '.$returnEndedAt['time']))
+                      ->setGoStartedAt(new \DateTime($gostartedAt[0].' '.$gostartedAt[1]))
+                      ->setGoEndedAt(new \DateTime($goEndedAt[0].' '.$goEndedAt[1]))
+                      ->setReturnStartedAt(new \DateTime($returnStartedAt[0].' '.$returnStartedAt[1]))
+                      ->setReturnEndedAt(new \DateTime($returnEndedAt[0].' '.$returnEndedAt[1]))
                       ->setPlacePrice($placePrice)
                       ->setTotalPlace($totalPlace)
                       ->setCommentary($commentary)
@@ -476,8 +482,12 @@ class TransportController extends AbstractController
     /**
      * @Route("/transport/delete/{id}", name="transport_delete")
      */
-    public function delete(Transport $transport, EntityManagerInterface $em)
+    public function delete(Transport $transport, EntityManagerInterface $em):Response
     {
+
+        /*on memorise l'id de l'event du transport*/
+        $event_id = $transport->getEvent()->getId();
+
         /*Verification utilisateur connecté et propriétaire du transport */
         if(!$this->isGranted('delete',$transport)){
             $this->addFlash('danger', 'Action non autorisé');
@@ -487,8 +497,8 @@ class TransportController extends AbstractController
         $em->remove($transport);
         $em->flush();
 
-        
-        $this->redirectToRoute('transport',['event_id'=>$transport->getEvent()->getId()]);
+        $this->addFlash('success', 'transport supprimé');
+        return $this->redirectToRoute('event_show',['event_id'=>$event_id]);
     }
 
     /**

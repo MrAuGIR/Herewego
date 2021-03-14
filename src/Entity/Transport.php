@@ -6,6 +6,7 @@ use App\Repository\TransportRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TransportRepository::class)
@@ -26,16 +27,19 @@ class Transport
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\GreaterThan(message="la date d'arriver allé doit etre après la date de départ allé", propertyPath="goStartedAt")
      */
     private $goEndedAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\GreaterThan(message="la date de départ retour doit être après la date d'arrivé allé", propertyPath="goEndedAt")
      */
     private $returnStartedAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\GreaterThan(message="la date de d'arrivé retour doit être après la date de depart retour", propertyPath="returnStartedAt")
      */
     private $returnEndedAt;
 
