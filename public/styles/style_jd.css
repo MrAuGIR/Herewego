@@ -2,3 +2,40 @@
     height: 100px;
     text-align: center;
 }
+
+.avatar-profil {
+    width: 200px;
+    height: 200px;
+    
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar-profil img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    
+}
+
+.avatar-choice {
+    width: 100px;
+    height: 100px;    
+    border-radius: 50%;
+    overflow: hidden;
+    padding: 0;
+}
+.avatar-choice img{
+    display: block;
+    width: 100%;
+    height: 100%;    
+    cursor: pointer;
+}
+
+.premium {
+    border: 3px solid gold;
+}
+
+.selected-avatar {
+    border: 3px solid green;
+}

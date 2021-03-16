@@ -7,6 +7,7 @@ h1 {
 /* HEADER */
 
 .header-logo {
+    display: block;
     width: 50px;
 }
 .footer-logo {
@@ -72,23 +73,14 @@ main {
 }
 
 /* surcharge class picture (page principal) */
-.avatar-profil {
-    width: 200px;
-    height: 200px;
-    border: 3px solid gold;
-    border-radius: 50%;
-}
+
 
 .picture-demand{
     width: 150px;
     height: 150px;
 }
 
-.avatar-profil img{
-    display: block;
-    width: 100%;
-    height: 100%;
-}
+
 
 /* FOOTER */
 
