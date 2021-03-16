@@ -6,6 +6,7 @@
 {% block title %}Transport : {{ transport.id }}{% endblock %}
 
 {% block body %}
+<div class="container">
 	<h2>Gestion du transport : {{ transport.id }}</h2>
 	<div class="row my-4">
 		<div class="col-12 col-lg-6 d-flex justify-content-center">
@@ -102,6 +103,7 @@
 			</table>
 		</div>
 	</div>
+</div>
 {% endblock %}
 {% block javascripts %}
 {{parent()}}
