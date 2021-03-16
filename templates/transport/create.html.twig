@@ -11,6 +11,7 @@
 {% set errorEnd  = (form_errors(form.localisation_return.cityName))? "<i class='fas fa-exclamation-circle'></i>" : "" %}
 
 {% block body %}
+<div class="container">
 <div class="row">
 	<div class="col-12 col-md-4 col-lg-3">
 		<p>proposer un transport sur l'event : {{ event.title }}</p>
@@ -200,6 +201,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 {% endblock %}
 {% block javascripts %}

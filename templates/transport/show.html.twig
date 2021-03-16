@@ -3,55 +3,157 @@
 {% block title %}Transport : {{ transport.id }}{% endblock %}
 
 {% block body %}
-<h2>Transport : {{ transport.id }} / de l'event : {{ transport.event.title }}</h2>
-<div>
-    <h3>Recap du transport</h3>
-    <p>manager : {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
-    <p>Infos Aller : </p>
-    <ul>
-        <li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
-        <li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
-        <hr>
-        <li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
-        <li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
-    </ul>
-    <p>infos Retour : </p>
-    <ul>
-        <li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
-        <li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
-        <hr>
-        <li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
-        <li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
-    </ul>
-    <p>commentaires : {{ transport.commentary }}</p>
-    <p>Places disponibles : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
-    <p>Prix du billet : {{ transport.placePrice }} €</p>
+<div class="container">
+    <!-- <h2>Transport : {{ transport.id }} / de l'event : {{ transport.event.title }}</h2>
+    <div>
+        <h3>Recap du transport</h3>
+        <p>manager : {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+        <p>Infos Aller : </p>
+        <ul>
+            <li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+            <li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+            <hr>
+            <li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+            <li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+        </ul>
+        <p>infos Retour : </p>
+        <ul>
+            <li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+            <li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+            <hr>
+            <li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+            <li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+        </ul>
+        <p>commentaires : {{ transport.commentary }}</p>
+        <p>Places disponibles : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+        <p>Prix du billet : {{ transport.placePrice }} €</p>
+    </div> -->
+    <div class="row py-3">
+        <div class="col-12 d-flex justify-content-center my-1">
+            <h5>{{transport.event.title}}</h5>
+        </div>
+        <div class="col-12 d-flex justify-content-center my-1">
+            <h5><span class="badge tag-manager">manager</span> : {{ transport.user.firstName }} {{ transport.user.lastName }}</h5>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="col-12 px-0">
+            <span class="badge tag-aller">Aller : </span>
+        </div>
+        <div class="col-12 col-md-5 block-aller-1 px-2 ">
+            <ul>
+                <li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+                <li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-1 d-flex justify-content-center align-items-center block-aller-2">
+            <i class="fas fa-arrow-right fa-2x"></i>
+        </div>
+        <div class="col-12 col-md-5 px-0 block-aller-3">
+            <ul>
+                <li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+                <li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="col-12 px-0">
+            <span class="badge tag-retour">Retour : </span>
+        </div>
+        <div class="col-12 col-md-5 block-retour-1 px-2">
+            <ul>
+                <li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+                <li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-1 d-flex justify-content-center align-items-center block-retour-2 px-0">
+            <i class="fas fa-arrow-right fa-2x"></i>
+        </div>
+        <div class="col-12 col-md-5 block-retour-3 px-0">
+            <ul>
+                <li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
+                <li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row my-5">
+        <div class="col-12 px-0">
+            <span class="badge tag-commentaire">commentaires : </span>
+        </div>
+        <div class="col-12 px-0 transport-comment">
+            <p>{{ transport.commentary }}</p>
+        </div>
+    </div>
+    <div class="row my-2 mb-4">
+        <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <h6 class="bottom-accordeon">Places disponibles </h6>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    <span class="bottom-accordeon">{{ transport.remainingPlace }} / {{ transport.totalPlace }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="bottom-accordeon">Prix du billet</h6>
+                </div>
+                <div class="col-12">
+                    <span class="bottom-accordeon">{{ transport.placePrice }} €</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="row">
+        <div class="col-12 py-3">
+            <h3>Demander à rejoindre le transport</h3>
+        </div>
+    </div>
+    
+        {# Si l'utilisateur n'est pas le manager du transport et si il n'a pas déjà créé un ticket pour celui-ci #}
+        {% if transport.user.id == user.id %}
+        <div class="row">
+            <div class="col-12 py-3">
+                <p>Vous êtes le manager de ce Transport pour cet événement</p>
+                <a class="btn btn-primary" href="{{path('transport_manage',{transport_id:transport.id})}}">Gérer votre transport</a>
+            </div>
+        </div>
+        {% else %}
+            {% if ticket.id == null %}
+            <div class="row">
+                {{form_start(form)}}
+                <div class="col-12 mb-3">
+                    {{form_row(form.countPlaces, {'attr':{'min':1,'max':transport.remainingPlace}})}}
+                </div>
+                <div class="col-12 mb-3">
+                    {{form_row(form.commentary)}}
+                </div>
+                <div class="col-12 mb-3">
+                        <input class="btn btn-primary" type="submit" name="submit">
+                </div>
+                {{form_end(form)}}
+            </div>
+            {% else %}
+            <div class="row">
+                <div class="col-12">
+                    <p>Vous avez déjà réaliser un demande pour se transport</p>
+                    <p> Statut de votre demande : </p>
+                    {% if ticket.isValidate is null %}
+                        <span> Votre demande est en cours de validation</span><br>
+                    {% elseif ticket.isValidate == true %}
+                        <span>Votre demande à été accepté</span><br>
+                    {% else %}
+                        <span> Votre demande n'a pas été accepté</span><br>
+                    {% endif %}
+                    <a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
 </div>
 
-<hr>
-<h3>Demander à rejoindre le transport</h3>
-    {# Si l'utilisateur n'est pas le manager du transport et si il n'a pas déjà créé un ticket pour celui-ci #}
-    {% if transport.user.id == user.id %}
-        <p>Vous êtes le manager de ce Transport pour cet événement</p>
-        <a href="{{path('transport_manage',{transport_id:transport.id})}}">Gérer votre transport</a>
-    {% else %}
-        {% if ticket.id == null %}
-            {{form_start(form)}}
-            {{form_widget(form.countPlaces, {'attr':{'min':1,'max':transport.remainingPlace}})}}
-            {{form_widget(form.commentary)}}
-            <input class="btn btn-primary" type="submit" name="submit">
-            {{form_end(form)}}
-        {% else %}
-            <p>Vous avez déjà réaliser un demande pour se transport</p>
-            <p> Statut de votre demande : </p>
-            {% if ticket.isValidate is null %}
-                <span> Votre demande est en cours de validation</span><br>
-            {% elseif ticket.isValidate == true %}
-                <span>Votre demande à été accepté</span><br>
-            {% else %}
-                <span> Votre demande n'a pas été accepté</span><br>
-            {% endif %}
-            <a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
-        {% endif %}
-    {% endif %}
 {% endblock %}
