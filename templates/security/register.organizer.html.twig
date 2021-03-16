@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block body %}
+<div class="container">
     {% include "shared/_choice.register.html.twig" %} 
     <div class="row py-5">
         <div class="col-12">
@@ -11,7 +12,7 @@
         </div>
     </div>   
     {{form_start(form)}}
-    <div class="row">
+    <div class="row py-5">
         {% include "shared/_form.register.html.twig" %}
         <div class="col-12 col-lg-6 my-4">
             <div class="form-group">
@@ -31,6 +32,7 @@
         <button class="btn btn-primary" type="submit">Inscription</button>
     </div>
     {{form_end(form)}}
+</div>
 {% endblock %}
 {% block javascripts %}
 	{{parent()}}

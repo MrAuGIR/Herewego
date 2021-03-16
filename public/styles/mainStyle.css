@@ -14,6 +14,7 @@
     --second-footer-text-color: #708C91;
     --main-bg-color: #F2EFEA; 
     --second-bg-color: #FFF8F0;
+    --third-bg-color: #fcf9f6;
 }
 
 *{
@@ -22,6 +23,7 @@
 
 body{
     font-family: 'Raleway', sans-serif;
+    background-color: var(--third-bg-color);
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -41,6 +43,11 @@ h1, h2, h3, h4, h5, h6{
 }
 .block-bg-impair{
     background-color: var(--second-bg-color);
+}
+
+/*taille minimum du main*/
+main{
+    min-height: 100vh;
 }
 
 /*==========================================================================================================*/
