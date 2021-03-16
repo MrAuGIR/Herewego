@@ -1,0 +1,48 @@
+/*
+*   STYLE DU FOOTER
+*/
+
+:root{
+    --main-bg-color: #EDEDED;
+    --main-text-color : #054F6B;
+    --second-bg-color: #DDDDDD;
+    --second-text-color: #708C91;
+}
+
+footer{
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+}
+
+
+footer a{
+    text-decoration: none;
+    color : var(--main-text-color);
+}
+
+/*Gestion de la taille de la partie nav du footer*/
+.top-footer{
+    min-height: 25vh;
+    padding: 5vh 0vh;
+}
+
+
+/* GESTION DU LOGO AU CENTRE DU FOOTER */
+.logo-footer{
+    height: 150px;
+    width: 150px;
+}
+
+.logo-footer img{
+    height: 100%;
+    width: 100%;
+}
+
+
+/* le bas du footer  */
+.bottom-footer{
+    background-color: var(--second-bg-color);
+    color: var(--second-text-color);
+    font-size: small;
+    font-weight: bold;
+}

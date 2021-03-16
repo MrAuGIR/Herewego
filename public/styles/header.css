@@ -1,0 +1,27 @@
+/*
+* STYLE DU HEADER
+*/
+
+:root{
+    --main-header-bg-color: #f3f5ec;
+    --main-header-text-color : #054F6B;
+    --second-header-text-color: #78D5D7;
+}
+
+/* header{
+    display: flex;
+    flex-direction: column;
+    min-height: 25vh;
+    
+} */
+
+.nav-header-style{
+    background-color: var(--main-header-bg-color);
+    color: var(--main-header-text-color);
+    font-weight: bold;
+}
+
+.nav-header-style a{
+    text-decoration: none;
+    color: var(--main-header-text-color);
+}
