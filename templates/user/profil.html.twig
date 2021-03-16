@@ -14,7 +14,7 @@
 						<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
 					</li>
 					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('user_events')}}">Events</a>
+						<a class="nav-link" href="{{path('user_events')}}">Évênements</a>
 					</li>
 					<li class="nav-item w-25">
 						<a class="nav-link" href="{{path('user_history')}}">Historique</a>
@@ -22,7 +22,7 @@
 				</ul>
 			</div>
 			<div class="card-body">
-				<h2 class="mb-5 text-center">Mon Profil</h2>
+				<h1 class="mb-5 text-center">Mon Profil</h1>
 				<!--  Section profil  -->
 				<div class="row pb-4">
 					<div class="col-12 col-md-6 mb-5">
@@ -55,6 +55,7 @@
 							</div>
 						</div>
 					</div>
+					{# INFORMATIONS #}
 					<div class="col-12 col-md-6 mb-5">
 						<p class="text-uppercase fs-6 fw-bold lh-1">Nom :
 							{{ user.lastName }}</p>
@@ -64,7 +65,6 @@
 							{{ user.registerAt | date('d/m/Y') }}</em></p>
 						{% if user.isPremium %}
 							<a class="fs-7 lh-1 btn btn-warning">Membre Premium</a>
-
 						{% endif %}
 					</div>
 					<div class="col-12">
@@ -140,36 +140,5 @@
 
 {% block javascripts %}
 	{{ parent() }}
-	<script>
-		window.onload = () => {
-			let avatars = document.querySelectorAll(".avatar-choice")
-			for (const avatar of avatars) {
-				avatar.addEventListener("click", function () {
-					let xmlhttp = new XMLHttpRequest;
-					xmlhttp.onreadystatechange = function() {
-						if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-							let response = JSON.parse(this.responseText);
-							
-							const avatarProfil = document.querySelectorAll(".avatar-profil>img")
-							avatarProfil[0].src = '/img/avatar/' + response.path + '.png'
-
-							const avatarChoices = document.querySelectorAll(".avatar-choice")
-							console.log(avatarChoices);
-
-							for (let a of avatarChoices) {
-								
-								if (a.dataset.path == response.path) {
-									a.classList.add('selected-avatar')
-								} else {
-									a.classList.remove('selected-avatar')
-								}
-							}
-						}
-					};
-					xmlhttp.open("get", `/user/profil/avatar/${this.dataset.path}`)
-					xmlhttp.send()
-				})
-			}
-		}
-	</script>
+	<script src="{{ asset('/script/avatar/avatar_user.js') }}"></script>
 {% endblock %}

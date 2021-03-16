@@ -19,7 +19,7 @@
 			</ul>
 		</div>
 		<div class="card-body mb-3">
-			<h2 class="mb-5 text-center">Mes participations aux Êvenements à venir</h2>
+			<h1 class="mb-5 text-center">Mes participations aux Êvenements à venir</h1>
 			{% if participations | length == 0 %}
 				<h4>Aucune participations à ce jour</h4>
 			{% else %}		
@@ -34,7 +34,7 @@
 										<h2 class="accordion-header" id="heading{{p.id}}">
 											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
 												<div class="row w-100">
-													<div class="col-5"><strong>{{p.event.title}}</strong>{</div>
+													<div class="col-5"><strong>{{p.event.title}}</strong></div>
 													<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
 													<div class="col-3">
 														<span class="btn btn-info"><i class="fas fa-address-card text-light"></i> <i class="fas fa-car text-light"></i></span>
