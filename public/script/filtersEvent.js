@@ -76,6 +76,32 @@ window.onload = () => {
             requeteAjax(Url,Params);
        
     });
+
+    let inputSearch = document.getElementById('keyword');
+    inputSearch.addEventListener('input',()=>{
+
+            const Form = new FormData(FiltersForm);
+
+            // On fabrique la "queryString"
+            const Params = new URLSearchParams();
+
+            let value = inputSearch.value;
+            
+            console.log(value.length)
+
+            Form.forEach((value, key) => {
+                Params.append(key, value);
+            });
+
+
+            // On récupère l'url active
+            const Url = new URL(window.location.href);
+
+             requeteAjax(Url,Params);
+            
+            
+       
+    });
             
 
 }

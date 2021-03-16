@@ -7,12 +7,6 @@
     <div class="banniere">
         <div class="container">
             <div class="row">
-                <div class="col-12 ">
-                    <form action="{{path('event')}}" method="POST" class="d-flex my-5 w-50 ">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Recherche</button>
-                    </form>
-                </div>
                 <div class="col-12">
                     {% include "event/_search.html.twig" %}
                 </div>
@@ -20,18 +14,49 @@
         </div>
     </div>
     <!-- Event populaire -->
-    <div class="container">
-        <div class="row my-5 ">
-            <div class="col-12">
-                <h3>Derniers évènements</h3>
-            </div>
-            {% for event in lastEvents %}
-                <div class="col-12 col-md-8 col-lg-4 my-1">
-                    <div class="card bg-dark text-dark">
-                        {% if event.pictures is not empty %}
-                            <div class="picture">
-                                <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}"  alt="{{ event.title }}">
+    <div class="block-bg-pair">
+        <div class="container">
+            <div class="row py-5 ">
+                <div class="col-12 d-flex justify-content-center my-5">
+                    <h3 class="h3-index">Derniers événements</h3>
+                </div>
+                {% for event in lastEvents %}
+                    <div class="col-12 col-md-8 col-lg-4 my-3">
+                        <div class="card bg-dark text-dark">
+                            {% if event.pictures is not empty %}
+                                <div class="picture">
+                                    <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}"  alt="{{ event.title }}">
+                                </div>
+                            {% endif %}
+                            <div class="card-img-overlay">
+                                <p>{{ event.category.name }}</p>
+                                <h5 class="card-title">{{event.title}}</h5>
+                                <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
+                                <p class="card-text">{{ event.description }}</p>
+                                <p class="card-text "><a href="{{ path('event_show', {event_id: event.id }) }}">Page de l'event</a></p>
                             </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="col-12">
+                    <a class="btn btn-primary" href="{{path('event')}}">Voir plus de derniers events</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="block-bg-impair">
+        <div class="container">
+            <div class="row py-5">
+                <div class="col-12 d-flex justify-content-center my-5">
+                    <h3 class="h3-index">Evénements les plus populaires</h3>
+                </div>
+                {% for event in popularityEvents %}
+                <div class="col-12 col-md-8 col-lg-4 my-3">
+                    <div class="card bg-dark text-white">
+                        {% if event.pictures is not empty %}
+                        <div class="picture">
+                            <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
+                        </div>
                         {% endif %}
                         <div class="card-img-overlay">
                             <p>{{ event.category.name }}</p>
@@ -42,48 +67,27 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-            <div class="col-12">
-                <a class="btn btn-primary" href="{{path('event')}}">Voir plus de derniers events</a>
-            </div>
-        </div>
-        <div class="row my-5">
-            <div class="col-12">
-                <h3>Evenements les plus populaires</h3>
-            </div>
-            {% for event in popularityEvents %}
-            <div class="col-12 col-md-8 col-lg-4 my-1">
-                <div class="card bg-dark text-white">
-                    {% if event.pictures is not empty %}
-                    <div class="picture">
-                        <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
-                    </div>
-                    {% endif %}
-                    <div class="card-img-overlay">
-                        <p>{{ event.category.name }}</p>
-                        <h5 class="card-title">{{event.title}}</h5>
-                        <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
-                        <p class="card-text">{{ event.description }}</p>
-                        <p class="card-text "><a href="{{ path('event_show', {event_id: event.id }) }}">Page de l'event</a></p>
-                    </div>
+                {% endfor %}
+                <div class="col-12">
+                    <a class="btn btn-primary" href="{{path('event')}}">Voir plus d'événements populaires'</a>
                 </div>
             </div>
-            {% endfor %}
-            <div class="col-12">
-                <a class="btn btn-primary" href="{{path('event')}}">Voir plus d'evenements populaires'</a>
-            </div>
         </div>
-        <div class="row my-5">
-            <div class="col-12">
-                <h3>Catégorie d'évènements</h3>
-            </div>
-            <div class="col-12"></div>
-            {% for category in categories %}
-                <a href="{{path('event_category', {category_id: category.id}) }}" type="button" class="btn btn-primary btn-lg my-2 me-2">{{category.name}}</a>
-            {% endfor %}
-            </div>
-            <div class="col-12">
-                
+    </div>
+    <div class="block-bg-pair">
+        <div class="container">
+            <div class="row py-5">
+                <div class="col-12">
+                    <h3>Catégorie d'événements</h3>
+                </div>
+                <div class="col-12"></div>
+                {% for category in categories %}
+                    <a href="{{path('event_category', {category_id: category.id}) }}" type="button" class="btn btn-primary btn-lg my-2 me-2">{{category.name}}</a>
+                {% endfor %}
+                </div>
+                <div class="col-12">
+                    
+                </div>
             </div>
         </div>
     </div>

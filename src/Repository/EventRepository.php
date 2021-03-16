@@ -80,7 +80,7 @@ class EventRepository extends ServiceEntityRepository
      * @param $filters filtres de recherche
      * @return Event[]
      */
-    public function findByFilters($page, $limit, $order,$filtersCat = null, $localisation = null){
+    public function findByFilters($page, $limit, $order,$filtersCat = null, $localisation = null, $keyWord = null){
 
         //date actuelle
         $date = new \DateTime();
@@ -95,6 +95,12 @@ class EventRepository extends ServiceEntityRepository
         if($filtersCat != null){
             $query->andWhere('e.category in (:cats)')
                 ->setParameter('cats',array_values($filtersCat));
+        }
+
+        //si le mot clé n'est pas null
+        if ($keyWord != null) {
+            $query->andWhere('e.title LIKE :title')
+            ->setParameter('title', $keyWord . '%');
         }
 
         // si la localisation n'est pas null

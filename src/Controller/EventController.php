@@ -64,8 +64,11 @@ class EventController extends AbstractController
         /*On recupère la localisation */
         $localisation = $request->get('localisation');
 
+        /*On recupère le mot clé saisie*/
+        $keyWord = $request->get('q');
+
         /*on filtres les events en fonction des filtres*/
-        $events = $eventRepository->findByFilters($page,$limit,$order,$filtersCat,$localisation);
+        $events = $eventRepository->findByFilters($page,$limit,$order,$filtersCat,$localisation,$keyWord);
         
         /*On recupère le nombre total d'events : nécéssaire pour la pagination en fonction des filtres*/
         $total = $eventRepository->getCountEvent($filtersCat,$localisation);
