@@ -1,12 +1,51 @@
-/*
-* STYLE DU HEADER
-*/
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/*===========================================================================================================*/
+/* STYLE GLOBAL
+/*===========================================================================================================*/
 
 :root{
     --main-header-bg-color: #f3f5ec;
     --main-header-text-color : #054F6B;
     --second-header-text-color: #78D5D7;
+    --main-footer-bg-color: #EDEDED;
+    --main-footer-text-color : #054F6B;
+    --second-footer-bg-color: #DDDDDD;
+    --second-footer-text-color: #708C91;
+    --main-bg-color: #F2EFEA; 
+    --second-bg-color: #FFF8F0;
 }
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Raleway', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6{
+    color: var(--main-header-text-color);
+}
+
+/* surcharge de style bootstrape des bouton */
+.btn-primary{
+    background-color: #054F6B;
+    color: #EDEDED;
+}
+
+
+/* gestion intermitence de couleur sur les block container*/
+.block-bg-pair{
+    background-color: var(--main-bg-color);
+}
+.block-bg-impair{
+    background-color: var(--second-bg-color);
+}
+
+/*==========================================================================================================*/
+/* STYLE DU HEADER
+/*==========================================================================================================*/
 
 header{
     display: flex;
@@ -15,7 +54,12 @@ header{
     background-color:var(--main-header-bg-color) ;
     align-items: center;
     justify-content: center; 
-} 
+}
+
+.header-logo {
+    display: block;
+    width: 50px;
+}
 
 .nav-header-style{
     background-color: var(--main-header-bg-color);
@@ -32,6 +76,41 @@ header{
 /*==================================================================================================*/
 /* STYLE DU MAIN 
 /*====================================================================================================*/
+
+/* !! navbar de la creation transport !! */
+.absolute-navbar{
+    position: fixed;
+    top: 25vh;
+    left: 10vh;
+}
+
+.make-transport{
+    display: flex;
+    flex-direction: column;
+    min-height: 10vh;
+}
+
+@media screen and (min-width: 998px){
+    
+    .make-transport{
+        display: flex;
+        flex-direction: column;
+        min-height: 25vh;
+    }
+}
+
+@media screen and (min-width: 1200px){
+    
+    .make-transport{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 75vh;
+    }
+}
+/* !!  !!*/
+
 
 /* suppression du padding et margin top du main*/
 main{
@@ -51,6 +130,41 @@ main{
     background-repeat: no-repeat;
 }
 
+/* le formulaire de recherche */
+.search-event{
+    display: flex;
+    flex-direction: row;
+    background-color: var(--main-header-bg-color);
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 4rem;
+    margin-top: 4rem;
+    border-radius: 5px;
+}
+
+.search-word{
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+}
+
+.search-localisation{
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+}
+
+.search-category{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.search-order select{
+    max-width: 150px;
+    padding: 0.5rem;
+}
+
 /* taille des images dans les cards (rustine Provisoire) */
 .card .picture{
     height: 200px;
@@ -62,29 +176,25 @@ main{
     width: 100%;
 }
 
-/*
-
-
-/*
-*   STYLE DU FOOTER
-*/
-
-:root{
-    --main-bg-color: #EDEDED;
-    --main-text-color : #054F6B;
-    --second-bg-color: #DDDDDD;
-    --second-text-color: #708C91;
+.h3-index{
+    font-weight: bold;
 }
 
+
+/*============================================================================================================*/
+/*   STYLE DU FOOTER
+/*============================================================================================================*/
+
+
 footer{
-    background-color: var(--main-bg-color);
-    color: var(--main-text-color);
+    background-color: var(--main-footer-bg-color);
+    color: var(--main-footer-text-color);
 }
 
 
 footer a{
     text-decoration: none;
-    color : var(--main-text-color);
+    color : var(--main-footer-text-color);
 }
 
 /*Gestion de la taille de la partie nav du footer*/
@@ -108,8 +218,8 @@ footer a{
 
 /* le bas du footer  */
 .bottom-footer{
-    background-color: var(--second-bg-color);
-    color: var(--second-text-color);
+    background-color: var(--second-footer-bg-color);
+    color: var(--second-footer-text-color);
     font-size: small;
     font-weight: bold;
 }
