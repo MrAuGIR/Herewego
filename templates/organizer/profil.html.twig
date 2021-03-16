@@ -1,89 +1,136 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Profil {{ user.firstName }} {{ user.lastName }}{% endblock %}
+{% block title %}Profil
+	{{ user.firstName }}
+	{{ user.lastName }}
+{% endblock %}
 
 {% block body %}
-	<div class="card text-center">
-		<div class="card-header mb-5">
-			<ul class="nav nav-tabs card-header-tabs">
-				<li class="nav-item w-25">
-					<a class="nav-link active" aria-current="true" href="{{path('organizer_profil')}}">Profil</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('organizer_events')}}">Events</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('organizer_history')}}">Historique</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('organizer_stats')}}">Statistiques</a>
-				</li>
-			</ul>
-		</div>
-		<div class="card-body">
-			<h2 class="mb-5 text-center">Mon profil Organisateur</h2>
-			<!--  Section profil  -->
-			<div class="row pb-4">
-				<div class="col-12 col-md-4">
-					<div class="avatar-profil">
-						<img src="{{ asset('/img/avatar/' ~ user.pathAvatar ~ '.png') }}" alt="avatar {{ user.firstName }} {{ user.lastName }}">
-					</div>
-				</div>
-				<div class="col-12 col-md-8">
-					<p class="text-uppercase fs-6 fw-bold lh-1">Nom : {{ user.lastName }}</p>
-					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom : {{ user.firstName }}</p>
-					<p class="fs-7 lh-1">Membre depuis le : {{ user.registerAt | date('Y-m-d') }}</p>
-				</div>
+	<div class="container">
+		<div class="card text-center mt-3 mb-5">
+			<div class="card-header mb-5">
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item w-25">
+						<a class="nav-link active" aria-current="true" href="{{path('organizer_profil')}}">Profil</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('organizer_events')}}">Évênements</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('organizer_history')}}">Historique</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('organizer_stats')}}">Statistiques</a>
+					</li>
+				</ul>
 			</div>
-			<!-- Section information -->
-			<h2 class="my-5 border-top text-center">Mes informations</h2>
-			<form action="">
-
+			<div class="card-body">
+				<h1 class="mb-5 text-center">Mon Profil</h1>
+				<!--  Section profil  -->
 				<div class="row pb-4">
-					<div class="col-12 col-md-6 mb-3">
-						<label for="raison_sociale" class="form-label">Raison sociale</label>
-						<input type="text" class="form-control" id="raison_sociale" disabled value="{{ user.companyName }}">
+					<div class="col-12 col-md-6">
+						<div title="modifier mon Avatar" class="m-auto avatar-profil" data-bs-toggle="modal" data-bs-target="#modalAvatar">
+							<img src="{{ asset('/img/avatar/' ~ user.pathAvatar ~ '.png') }}" alt="avatar {{ user.firstName }} {{ user.lastName }}">
+						</div>
 					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="numero_siret" class="form-label">Numero de Siret</label>
-						<input type="text" class="form-control" id="numero_siret" disabled value="{{ user.siret }}">
+					<!-- Modal -->
+					<div class="modal fade" id="modalAvatar" tabindex="-1" aria-labelledby="modalAvatarLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalAvatarLabel">Changer mon avatar</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+										{% for i in 0..2 %}
+											<div data-path="{{ i }}" class="col-3 avatar-choice {{ i == user.pathAvatar ? " selected-avatar" : " " }}">
+												<img src="{{ asset('/img/avatar/' ~ i ~ '.png') }}" alt="avatar">
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="nom" class="form-label">Nom</label>
-						<input type="text" class="form-control" id="nom" disabled value="{{ user.lastName }}">
+
+					{# INFORMATIONS #}
+					<div class="col-12 col-md-6 mb-5">
+						<p class="text-uppercase fs-6 fw-bold lh-1">Nom :
+							{{ user.lastName }}</p>
+						<p class="text-uppercase fs-6 fw-bold lh-1">Prénom :
+							{{ user.firstName }}</p>
+						<p class="fs-7 lh-1"><em>Membre depuis le :
+							{{ user.registerAt | date('d/m/Y') }}</em></p>
 					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="prenom" class="form-label">Prenom</label>
-						<input type="text" class="form-control" id="prenom" disabled value="{{ user.firstName }}">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="email" class="form-label">Email</label>
-						<input type="email" class="form-control" id="email" disabled value="{{ user.email }}">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="telephone" class="form-label">Telephone</label>
-						<input type="text" class="form-control" id="telephone" disabled value="{{ user.phone }}">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="ville" class="form-label">Ville</label>
-						<input type="text" class="form-control" id="ville" disabled value="{{ user.localisation.cityName }}">
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						<label for="code_postal" class="form-label">Code postal</label>
-						<input type="text" class="form-control" id="code_postal" disabled value="{{ user.localisation.cityCp }}">
-					</div>
-					<div class="col-12 mb-3">
-						<label for="adresse" class="form-label">Adresse</label>
-						<input type="text" class="form-control" id="adresse" disabled value="{{ user.localisation.adress }}">
-					</div>
-					<div class="col-12 mb-3">
-						<label for="web_site" class="form-label">Web site</label>
-						<input type="text" class="form-control" id="web_site" disabled value="{{ user.webSite }}">
-					</div>
-					<a href="{{ path('organizer_edit') }}" title="page d'etition de profil" class="btn btn-info w-25 m-auto">je souhaite éditer mon profil</a>
 				</div>
-			</form>
-			
+				<!-- Section information -->
+				<h2 class="mb-3 text-center">Mes informations</h2>
+				<form action="">
+					<div class="row pb-4">
+						<div class="col-12 col-md-6 col-xl-4 mb-3">
+							<label for="raison_sociale" class="form-label">Raison sociale</label>
+							<input type="text" class="form-control" id="raison_sociale" disabled value="{{ user.companyName }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-4 mb-3">
+							<label for="numero_siret" class="form-label">Numero de Siret</label>
+							<input type="text" class="form-control" id="numero_siret" disabled value="{{ user.siret }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-4 mb-3">
+							<label for="web_site" class="form-label">Web site</label>
+							<input type="text" class="form-control" id="web_site" disabled value="{{ user.webSite }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-3 mb-3">
+							<label for="nom" class="form-label">Nom</label>
+							<input type="text" class="form-control" id="nom" disabled value="{{ user.lastName }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-3 mb-3">
+							<label for="prenom" class="form-label">Prenom</label>
+							<input type="text" class="form-control" id="prenom" disabled value="{{ user.firstName }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-3 mb-3">
+							<label for="email" class="form-label">Email</label>
+							<input type="email" class="form-control" id="email" disabled value="{{ user.email }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-3 mb-3">
+							<label for="telephone" class="form-label">Telephone</label>
+							<input type="text" class="form-control" id="telephone" disabled value="{{ user.phone }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-3 mb-3">
+							<label for="ville" class="form-label">Ville</label>
+							<input type="text" class="form-control" id="ville" disabled value="{{ user.localisation.cityName }}">
+						</div>
+						<div class="col-12 col-md-6 col-xl-3 mb-3">
+							<label for="code_postal" class="form-label">Code postal</label>
+							<input type="text" class="form-control" id="code_postal" disabled value="{{ user.localisation.cityCp }}">
+						</div>
+						<div class="col-12 col-xl-6 mb-3">
+							<label for="adresse" class="form-label">Adresse</label>
+							<input type="text" class="form-control" id="adresse" disabled value="{{ user.localisation.adress }}">
+						</div>
+						<div>
+							<div class="mb-3">
+								<a href="{{ path('organizer_edit') }}" title="page d'etition de profil" class="btn btn-secondary m-5 m-auto">Modifier mon profil</a>
+							</div>
+							<div class="mb-3">
+								<a href="{{ path('organizer_edit_password') }}" title="page de modification du mot de passe" class="btn btn-secondary  m-5 m-auto">Modifier mon mot de passe</a>
+							</div>
+							<div>
+								<a href="{{ path('organizer_delete') }}" title="suppression du compte" class="btn btn-danger m-5 m-auto">Supprimer mon compte</a>
+							</div>
+						</div>
+					</div>
+				</form>
+
+			</div>
 		</div>
 	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('/script/avatar/avatar_organizer.js') }}"></script>
 {% endblock %}
