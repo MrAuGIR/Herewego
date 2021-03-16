@@ -6,41 +6,45 @@
 {% endblock %}
 
 {% block body %}
-	<div class="card text-center">
-		<div class="card-header mb-5">
-			<ul class="nav nav-tabs card-header-tabs">
-				<li class="nav-item w-25">
-					<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('user_events')}}">Events</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('user_history')}}">Historique</a>
-				</li>
-			</ul>
-		</div>
-		<div class="card-body">
-			<h2 class="mb-5 text-center">Modifier mon mot de passe</h2>
-			<!--  Section profil  -->
-			{{form_start(formView)}}
-
-			<div class="row">
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.newPassword)}}
-					</div>
-				</div>	
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.newPasswordRepeat)}}
-					</div>
-				</div>	
-				<div class="row">
-					<button class="btn btn-primary w-25 m-auto" type="submit">Modifier</button>
-				</div>			
+	<div class="container">
+		<div class="card text-center">
+			<div class="card-header mb-5">
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item w-50">
+						<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('user_events')}}">Events</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('user_history')}}">Historique</a>
+					</li>
+				</ul>
 			</div>
-			{{form_end(formView)}}
+					
+			<div class="card-body mb-3">
+				<h2 class="mb-4 text-center">Modifier mon mot de passe</h2>
+				<div class="w-75 m-auto">					
+					{{form_start(formView)}}
+					<div class="row">
+						<div class="col-12 col-lg-6 mb-3">
+							<div class="form-group">
+								{{form_row(formView.newPassword)}}
+							</div>
+						</div>	
+						<div class="col-12 col-lg-6 mb-3">
+							<div class="form-group">
+								{{form_row(formView.newPasswordRepeat)}}
+							</div>
+						</div>	
+						<div class="row">
+							<button class="btn btn-primary w-25 m-auto" type="submit">Modifier</button>
+						</div>			
+					</div>
+					{{form_end(formView)}}
+				</div>
+			</div>
+			
 		</div>
 	</div>
 {% endblock %}
