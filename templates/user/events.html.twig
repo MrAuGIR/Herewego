@@ -3,24 +3,25 @@
 {% block title %}Events {{ user.firstName }} {{ user.lastName }}{% endblock %}
 
 {% block body %}
-	<div class="card text-center">
+<div class="container">
+	<div class="card text-center my-3">
 		<div class="card-header mb-5">
 			<ul class="nav nav-tabs card-header-tabs">
 				<li class="nav-item w-25">
 					<a class="nav-link" aria-current="true" href="{{path('user_profil')}}">Profil</a>
 				</li>
 				<li class="nav-item w-50">
-					<a class="nav-link active" href="{{path('user_events')}}">Events</a>
+					<a class="nav-link active" href="{{path('user_events')}}">Évênement</a>
 				</li>
 				<li class="nav-item w-25">
 					<a class="nav-link" href="{{path('user_history')}}">Historique</a>
 				</li>
 			</ul>
 		</div>
-		<div class="card-body">
+		<div class="card-body mb-3">
 			<h2 class="mb-5 text-center">Mes participations aux Êvenements à venir</h2>
 			{% if participations | length == 0 %}
-				<h4>aucune participations à ce jour</h4>
+				<h4>Aucune participations à ce jour</h4>
 			{% else %}		
 				<div class="accordion" id="accordionExample">
 					{% for p in participations %}		
@@ -33,24 +34,30 @@
 										<h2 class="accordion-header" id="heading{{p.id}}">
 											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
 												<div class="row w-100">
-													<div class="col-3">{{p.event.title}}</div>
-													<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
-													<div class="col-5">
-														<span class="btn btn-info">vous proposez un transport</span>														
+													<div class="col-5"><strong>{{p.event.title}}</strong>{</div>
+													<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+													<div class="col-3">
+														<span class="btn btn-info"><i class="fas fa-address-card text-light"></i> <i class="fas fa-car text-light"></i></span>
 													</div>
 												</div>
 											</button>
 										</h2>
 										<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
 											<div class="accordion-body">
-												<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-												<div class="row w-100">
-													<div class="col-6 bg-info">
-														<p class="text-center">Vous avez proposé un transport</p>
-														<p class="text-center">places restantes : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+												<div class="row">
+													<div class="col-12 col-md-6">
+														<div class="bg-secondary py-5">
+															infos Évênement
+														</div>
 													</div>
-													<div class="col-6">
-														<a class="btn btn-primary" href="{{ path('transport_manage', {transport_id: transport.id}) }}" role="button">Gerer mon transport</a>
+													<div class="col-12 col-md-6">
+														<div>
+															<p class="text-center"><strong>Vous avez proposé un transport pour cet évênement</strong></p>
+															<p class="text-center">Places restantes : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+														</div>
+														<div>
+															<a class="btn btn-primary" href="{{ path('transport_manage', {transport_id: transport.id}) }}" role="button">Gerer mon transport</a>
+														</div>
 													</div>
 												</div>
 											</div>
@@ -67,23 +74,29 @@
 														<h2 class="accordion-header" id="heading{{p.id}}">
 															<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
 																<div class="row w-100">
-																	<div class="col-3">{{p.event.title}}</div>
-																	<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
-																	<div class="col-5">
-																		<span class="btn btn-success">Vous avez un transport</span>														
+																	<div class="col-5"><strong>{{p.event.title}}</strong></div>
+																	<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+																	<div class="col-3">
+																		<span class="btn btn-success"><i class="fas fa-car text-light"></i></span>														
 																	</div>
 																</div>
 															</button>
 														</h2>
 														<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
 															<div class="accordion-body">
-																<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-																<div class="row w-100">
-																	<div class="col-6 bg-success">
-																		<p class="text-center text-light">Vous faites partis d'un transport</p>
+															    <div class="row">
+																	<div class="col-12 col-md-6">
+																		<div class="bg-secondary py-5">
+																			infos Évênement
+																		</div>
 																	</div>
-																	<div class="col-6">
-																		<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir mon transport</a>
+																	<div class="col-12 col-md-6">
+																		<div>
+																			<p class="text-center"><strong>Vous faites partis d'un transport</strong></p>
+																		</div>
+																		<div>
+																			<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir mon transport</a>
+																		</div>
 																	</div>
 																</div>
 															</div>
@@ -96,25 +109,30 @@
 														<h2 class="accordion-header" id="heading{{p.id}}">
 															<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
 																<div class="row w-100">
-																	<div class="col-3">{{p.event.title}}</div>
-																	<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
-																	<div class="col-5">
-																		<span class="btn btn-warning">Vous avez une demande de transport en cours</span>														
+																	<div class="col-5"><strong>{{p.event.title}}</strong></div>
+																	<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+																	<div class="col-3">
+																		<span class="btn btn-warning"><i class="far fa-question-circle text-light"></i> <i class="fas fa-car text-light"></i></span>														
 																	</div>
 																</div>
 															</button>
 														</h2>
 														<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
 															<div class="accordion-body">
-																<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-																<div class="row w-100">
-																	<div class="col-6 bg-warning">
-																		<p class="text-center">Vous avez fait une demande pour rejoindre un transport</p>
-																		<p class="text-center">demande effectué le {{ ticket.askedAt | date('Y-m-d') }} auprès de {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+															 	<div class="row">
+																	<div class="col-12 col-md-6">
+																		<div class="bg-secondary py-5">
+																			infos Évênement
+																		</div>
 																	</div>
-																	<div class="col-6">
-																		<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir le transport</a>
-																		<a class="btn btn-secondary" href="#" role="button">Annuler ma demande</a>
+																	<div class="col-12 col-md-6">
+																		<div>
+																			<p class="text-center"><strong>Vous avez fait une demande pour rejoindre un transport</strong></p>
+																			<p class="text-center">demande effectué le {{ ticket.askedAt | date('Y-m-d') }} auprès de {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+																		</div>
+																		<div>
+																			<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir le transport</a>
+																		</div>
 																	</div>
 																</div>
 															</div>
@@ -131,26 +149,30 @@
 											<h2 class="accordion-header" id="heading{{p.id}}">
 												<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
 													<div class="row w-100">
-														<div class="col-3">{{p.event.title}}</div>
-														<div class="col-3">{{ p.event.startedAt | date('Y-m-d') }}</div>
-														<div class="col-5">
-															<span class="btn btn-danger">Vous n'avez pas de transport</span>														
+														<div class="col-5"><strong>{{p.event.title}}</strong></div>
+														<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+														<div class="col-3">
+															<span class="btn btn-danger"><i class="fas fa-car text-light"></i></span>														
 														</div>
 													</div>
 												</button>
 											</h2>
 											<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
 												<div class="accordion-body">
-													<h2 class="box border border-primary">INFOS DE L'EVENT</h2>
-													<div class="row w-100">
-														<div class="col-6 bg-danger">
-															<p class="text-center text-light">Vous n'avez pas de transport pour cet event ?
-															</p>
+													<div class="row">
+														<div class="col-12 col-md-6">
+															<div class="bg-secondary py-5">
+																infos Évênement
+															</div>
 														</div>
-														<div class="col-6">
-															<a class="btn btn-primary" href="{{ path('transport', {event_id: p.event.id}) }}" role="button">Rejoindre un transport existant</a>
-															<a class="btn btn-primary" href="{{ path('transport_create', {event_id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
-														</div>
+														<div class="col-12 col-md-6">
+															<div>
+																<p class="text-center"><strong>Vous n'avez pas de transport pour cet évênement !</strong></p>
+															</div>
+															<div>
+																<a class="btn btn-primary mb-2" href="{{ path('transport', {event_id: p.event.id}) }}" role="button">Rejoindre un transport existant</a> <a class="btn btn-primary mb-2" href="{{ path('transport_create', {event_id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
+															</div>
+														</div>													
 													</div>
 												</div>
 											</div>
@@ -165,4 +187,5 @@
 			{% endif %}							
 		</div>
 	</div>
+</div>
 {% endblock %}
