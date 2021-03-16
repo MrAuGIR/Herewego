@@ -138,8 +138,6 @@ class OrganizerController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        dd("traitement du delete d'un organizer OK");
-
 
         $this->em->remove($user);
         $this->em->flush();
@@ -153,7 +151,7 @@ class OrganizerController extends AbstractController
         //      Question_user (à rendre NULL dans la bdd)
 
         $this->addFlash('success', "Votre compte a bien été supprimé");
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('home');
     }
     
     /**

@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
@@ -157,24 +159,24 @@ class UserController extends AbstractController
     /**
      * @Route("/profil/delete", name="user_delete")
      */
-    public function delete()
+    public function delete(SessionInterface $sessionInterface)
     {
         /**
          * @var User
          */
         $user = $this->getUser();
+
         if (!$user) {
             $this->addFlash('success', "Connectez-vous pour pouvoir supprimer votre compte");
             return $this->redirectToRoute('app_login');
         }
 
-        dd("traitement du delete d'un user"); 
-
+        
         $this->em->remove($user);
         $this->em->flush();
 
         $this->addFlash('success', "Votre compte a bien été supprimé");
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('home');
 
         // Le delete d'un User est très complexe :
         // Il impacte :
