@@ -178,14 +178,6 @@ class UserController extends AbstractController
         $this->addFlash('success', "Votre compte a bien été supprimé");
         return $this->redirectToRoute('home');
 
-        // Le delete d'un User est très complexe :
-        // Il impacte :
-        //      Event (createur)
-        //      Transport (manager)
-        //      Ticket (si a des tickets)
-        //      Participation
-        //      Question_user (à rendre NULL dans la bdd)
-
     }
     
     /**
@@ -204,6 +196,8 @@ class UserController extends AbstractController
 
         //recupère les participations à venir
         $participations = $participationRepository->findByDateAfterNow($user->getId());
+        
+        dump($participations);
         
         return $this->render('user/events.html.twig', [
             'user' => $user,

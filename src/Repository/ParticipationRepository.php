@@ -61,7 +61,7 @@ class ParticipationRepository extends ServiceEntityRepository
             ->andWhere('e.endedAt > :date')
             ->setParameter('date', $date)
             ->setParameter('userId', $userId)
-            // ->orderBy('e.startedAt', 'ASC')
+            ->orderBy('e.startedAt', 'ASC')
             ->getQuery()
             ->getResult()
         ;

@@ -3,37 +3,40 @@
 {% block title %}Historique : {{ user.firstName }} {{ user.lastName }}{% endblock %}
 
 {% block body %}
-	<div class="card text-center">
-		<div class="card-header mb-5">
-			<ul class="nav nav-tabs card-header-tabs">
-				<li class="nav-item w-25">
-					<a class="nav-link" aria-current="true" href="{{path('user_profil')}}">Profil</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('user_events')}}">Events</a>
-				</li>
-				<li class="nav-item w-50">
-					<a class="nav-link active" href="{{path('user_history')}}">Historique</a>
-				</li>
-			</ul>
-		</div>
-		<div class="card-body">
-			<h2 class="mb-5 text-center">Liste des events auquels j'ai participé</h2>
-			<div class="accordion" id="accordionExample">
-				{% for p in participations %}				
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="heading{{ p.event.id }}">
-							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ p.event.id }}" aria-expanded="false" aria-controls="collapse{{ p.event.id }}">
-								Event #{{ p.event.id }} - {{ p.event.title }} - {{ p.event.startedAt | date('Y-m-d') }}
-							</button>
-						</h2>
-						<div id="collapse{{ p.event.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ p.event.id }}" data-bs-parent="#accordionExample">
-							<div class="accordion-body">
-								{{ p.event.title }}
+	<div class="container">
+		<div class="card text-center mt-3">
+			<div class="card-header mb-5">
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item w-25">
+						<a class="nav-link" aria-current="true" href="{{path('user_profil')}}">Profil</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('user_events')}}">Évênement</a>
+					</li>
+					<li class="nav-item w-50">
+						<a class="nav-link active" href="{{path('user_history')}}">Historique</a>
+					</li>
+				</ul>
+			</div>
+			<div class="card-body mb-3">
+				<h2 class="mb-5 text-center">Liste des Évênement auquels j'ai participé</h2>
+				<p class="text-center">En construction</p>
+				{# <div class="accordion" id="accordionExample">
+					{% for p in participations %}				
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading{{ p.event.id }}">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ p.event.id }}" aria-expanded="false" aria-controls="collapse{{ p.event.id }}">
+									Event #{{ p.event.id }} - {{ p.event.title }} - {{ p.event.startedAt | date('Y-m-d') }}
+								</button>
+							</h2>
+							<div id="collapse{{ p.event.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ p.event.id }}" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									{{ p.event.title }}
+								</div>
 							</div>
 						</div>
-					</div>
-				{% endfor %}
+					{% endfor %}
+				</div> #}
 			</div>
 		</div>
 	</div>
