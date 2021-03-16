@@ -12,8 +12,7 @@
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
             <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
             <link rel="stylesheet" href="{{ asset('styles/style_jd.css') }}">
-            <link rel="stylesheet" href="{{ asset('styles/footer.css') }}">
-            <link rel="stylesheet" href="{{ asset('styles/header.css') }}">
+            <link rel="stylesheet" href="{{ asset('styles/mainStyle.css') }}">
         {% endblock %}
     </head>
     <body>
@@ -39,10 +38,10 @@
                     </div>
                 </div>
                 {% endblock %}
-                <div class="container">
+                
                 
         {% block body %}{% endblock %}
-                </div>
+                
             </main>
         <footer class="footer mt-auto">
             {% block footer %}
