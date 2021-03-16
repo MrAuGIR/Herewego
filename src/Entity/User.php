@@ -104,32 +104,32 @@ class User implements UserInterface
     private $isPremium;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="users", cascade={"remove"})
      */
     private $localisation;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="user", cascade={"remove"} )
      */
     private $tickets;
 
     /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="user", cascade={"remove"})
      */
     private $participations;
 
     /**
-     * @ORM\OneToMany(targetEntity=QuestionUser::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=QuestionUser::class, mappedBy="user", cascade={"remove"})
      */
     private $questionUsers;
 
     /**
-     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="user", cascade={"remove"})
      */
     private $transports;
 
     /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="user", cascade={"remove"})
      */
     private $events;
 

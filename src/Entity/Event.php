@@ -92,23 +92,23 @@ class Event
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="event", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="event", cascade={"persist","remove"})
      */
     private $pictures;
 
-   
+
     /**
-     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="event")
+     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="event", cascade={"remove"})
      */
     private $transports;
 
     /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="event")
+     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="event", cascade={"remove"})
      */
     private $participations;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="events")
+     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="events", cascade={"remove"})
      */
     private $localisation;
 

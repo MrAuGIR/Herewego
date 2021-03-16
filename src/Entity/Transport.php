@@ -84,7 +84,7 @@ class Transport
     private $event;
 
     /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="transport")
+     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="transport", cascade={"remove"})
      */
     private $tickets;
 

@@ -435,8 +435,6 @@ class EventController extends AbstractController
         //! GERER les droits par un return et un message
         $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
 
-        dd("traitement de la suppression de l'évent");
-
         // traitement de la suppression
         $this->em->remove($event);
         $this->em->flush();
