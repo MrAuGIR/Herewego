@@ -18,6 +18,7 @@ class TicketType extends AbstractType
         $builder
             // ->add('askedAt')
             ->add('countPlaces',NumberType::class,[
+                'attr'=>['class'=>'form-control'],
                 'constraints' => [
                     new NotNull(['message' => 'veuillez saisir une valeur'])
                 ]
