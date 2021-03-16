@@ -8,33 +8,48 @@
     {% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajax")|url_encode %}
 {% endif %}
 {% set action =(currentPath != '/event' )? path('event') : '' %}{# si on est sur la page daccueil on redirige vers la page events #}
-<form id="filters" method="GET" action="{{action}}" >
-    <div class="input-group-text ">
-        <span class="input-group-text" id="basic-addon1"><i class="fas fa-map-marker-alt"></i></span>
-        <input class="form-control pe-3" type="text" id="localisation" name="localisation" placeholder="ville de recherche">
+<form id="filters" method="GET" action="{{action}}" class="row search-event" >
+    <div class="col-12 col-md-6 "> 
+        <div class="search-word">
+            <input class="form-control pe-3" id="keyword" name="q" type="search" placeholder="Recherche par titre" aria-label="Search">
+        </div>  
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="search-localisation ">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-map-marker-alt"></i></span>
+            <input class="form-control pe-3" type="text" id="localisation" name="localisation" placeholder="ville de recherche">
+        </div>
+    </div>
+    <div class="col-12 col-md-6 search-category">
         {% for category in categories %}
-
+        
         {# On vérifie si la catégorie est dans les paramètres pour la checker ou non#}
         {% if queryParams is not empty and queryParams.categories is defined %}
             {% set checked = (category.id in queryParams.categories) ? "checked" : "" %}
         {% else %}
             {% set checked = "" %}
         {% endif %}
-
+        
         <div class="form-check px-3">
-            <input class="form-check-input input-check" type="checkbox" name="categories[]" value="{{category.id}}" id="cat{{category.id}}" {{checked}}>
+            <input class="form-check-input input-check" type="checkbox" name="categories[]" value="{{category.id}}"
+                id="cat{{category.id}}" {{checked}}>
             <label class="form-check-label" for="cat{{category.id}}">{{category.name}}</label>
         </div>
         {% endfor %}
-        <select id="#selectOrder" name="order"class="form-select form-select-sm" aria-label=".form-select-sm example">
+    </div>
+    <div class="col-12 col-md-6 search-order">
+        <select id="#selectOrder" name="order" class="form-select form-select-sm" aria-label=".form-select-sm example">
             <option value="ASC" selected>date croissante</option>
             <option value="DESC">date décroissante</option>
         </select>
     </div>
+    
     {% if currentPath == '/event/' %}
     <input type="hidden" name="page" value="{{page}}">       
     {% endif %}
     {% if currentPath != '/event/' %}
+    <div class="col-12 d-flex justify-content-center">
         <input class="btn btn-primary" type="submit" name="submit" value="Rechercher">
+    </div>
     {% endif %}
 </form>
