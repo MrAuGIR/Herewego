@@ -4,11 +4,13 @@
 }
 
 .avatar-profil {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     
     border-radius: 50%;
     overflow: hidden;
+
+    cursor: pointer;
 }
 
 .avatar-profil img{
@@ -33,9 +35,21 @@
 }
 
 .premium {
-    border: 3px solid gold;
+    border: 6px solid gold;
 }
 
 .selected-avatar {
     border: 3px solid green;
+}
+
+.adress-field {
+    height: 70px;
+}
+
+@media screen and (min-width: 768px){
+    .adress-field {
+        width: 60%;
+        margin: 0 auto;
+    }
+    
 }
