@@ -11,7 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -134,6 +136,22 @@ class UserController extends AbstractController
             'formView' => $formView,
             'user' => $user
         ]);
+    }
+
+    /**
+     * @Route("/profil/avatar/{path}", name="user_edit_avatar")
+     */
+    public function avatar($path)
+    {
+        /**
+         * @var User
+         */
+        $user = $this->getUser();
+        $user->setPathAvatar($path);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
     /**

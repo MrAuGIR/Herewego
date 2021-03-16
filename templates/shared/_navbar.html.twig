@@ -1,33 +1,3 @@
-{# <nav class="navbar navbar-expand-sm navbar-light bg-light">
-	<a class="navbar-brand" href="/">SymShop</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="navbarColor03">
-		<ul class="navbar-nav mr-auto">
-			{% for c in categoryRepository.findAll() %}
-				<li class="nav-item">
-					<a href="#" class="nav-link">{{ c.name }}</a>
-				</li>
-			{% endfor %}
-		</ul>
-		<ul class="navbar-nav">
-			{% if app.user %}
-				<li class="nav-item">
-					<a href="{{ path('security_logout') }}" class="btn btn-danger">Logout</a>
-				</li>		
-			{% else %}	
-				<li class="nav-item">
-					<a href="#" class="nav-link">Inscription</a>
-				</li>
-				<li class="nav-item">
-					<a href="{{ path('security_login') }}" class="btn btn-success">Login</a>
-				</li>
-			{% endif %}
-		</ul>
-	</div>
-</nav> #}
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container">
         <a class="navbar-brand" href="{{path('home')}}" title="accueil"><img class="header-logo" src="{{ asset('img/logo.png') }}" alt="logo"></a>

@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Profil {{ user.firstName }} {{ user.lastName }}{% endblock %}
+{% block title %}Profil
+	{{ user.firstName }}
+	{{ user.lastName }}
+{% endblock %}
 
 {% block body %}
 	<div class="card text-center">
@@ -22,14 +25,48 @@
 			<!--  Section profil  -->
 			<div class="row pb-4">
 				<div class="col-12 col-md-4">
-					<div class="avatar-profil">
+					<div class="avatar-profil {{ user.isPremium ? 'premium' : " "}}">
 						<img src="{{ asset('/img/avatar/' ~ user.pathAvatar ~ '.png') }}" alt="avatar {{ user.firstName }} {{ user.lastName }}">
 					</div>
+
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAvatar">
+						Changer d'avatar
+					</button>
+
+					<!-- Modal -->
+					<div class="modal fade" id="modalAvatar" tabindex="-1" aria-labelledby="modalAvatarLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalAvatarLabel">Changer mon avatar</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+										{% for i in 0..2 %}
+											<div data-path="{{ i }}" class="col-3 avatar-choice {{ i == user.pathAvatar ? "selected-avatar" : "" }}">
+												<img src="{{ asset('/img/avatar/' ~ i ~ '.png') }}" alt="avatar">
+											</div>
+										{% endfor %}	
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
 				</div>
 				<div class="col-12 col-md-8">
-					<p class="text-uppercase fs-6 fw-bold lh-1">Nom : {{ user.lastName }}</p>
-					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom : {{ user.firstName }}</p>
-					<p class="fs-7 lh-1">Membre depuis le : {{ user.registerAt | date('Y-m-d') }}</p>
+					<p class="text-uppercase fs-6 fw-bold lh-1">Nom :
+						{{ user.lastName }}</p>
+					<p class="text-uppercase fs-6 fw-bold lh-1">Prénom :
+						{{ user.firstName }}</p>
+					<p class="fs-7 lh-1">Membre depuis le :
+						{{ user.registerAt | date('Y-m-d') }}</p>
 					{% if user.isPremium %}
 						<p class="fs-7 lh-1 text-warning">Membre Premium</p>
 					{% endif %}
@@ -91,4 +128,47 @@
 			</form>
 		</div>
 	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		window.onload = () => {
+			let avatars = document.querySelectorAll(".avatar-choice")
+			for (const avatar of avatars) {
+				avatar.addEventListener("click", function () {
+					let xmlhttp = new XMLHttpRequest;
+					xmlhttp.onreadystatechange = function() {
+						if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+							let response = JSON.parse(this.responseText);
+							
+							const avatarProfil = document.querySelectorAll(".avatar-profil>img")
+							avatarProfil[0].src = '/img/avatar/' + response.path + '.png'
+
+							const avatarChoices = document.querySelectorAll(".avatar-choice")
+							console.log(avatarChoices);
+
+							for (let a of avatarChoices) {
+								
+								if (a.dataset.path == response.path) {
+									a.classList.add('selected-avatar')
+								} else {
+									a.classList.remove('selected-avatar')
+								}
+							}
+							
+							// {% for i in 0..2 %}
+							// 	<div data-path="{{ i }}" class="col-3 avatar-choice {{ i == user.pathAvatar ? "selected-avatar" : "" }}">
+							// 		<img src="{{ asset('/img/avatar/' ~ i ~ '.png') }}" alt="avatar">
+							// 	</div>
+							// {% endfor %}
+
+						}
+					};
+					xmlhttp.open("get", `/user/profil/avatar/${this.dataset.path}`)
+					xmlhttp.send()
+				})
+			}
+		}
+	</script>
 {% endblock %}
