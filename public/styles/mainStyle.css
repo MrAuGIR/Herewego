@@ -1,0 +1,115 @@
+/*
+* STYLE DU HEADER
+*/
+
+:root{
+    --main-header-bg-color: #f3f5ec;
+    --main-header-text-color : #054F6B;
+    --second-header-text-color: #78D5D7;
+}
+
+header{
+    display: flex;
+    flex-direction: column;
+    min-height: 10vh;
+    background-color:var(--main-header-bg-color) ;
+    align-items: center;
+    justify-content: center; 
+} 
+
+.nav-header-style{
+    background-color: var(--main-header-bg-color);
+    color: var(--main-header-text-color);
+    font-weight: bold;
+}
+
+.nav-header-style a{
+    text-decoration: none;
+    color: var(--main-header-text-color);
+}
+
+
+/*==================================================================================================*/
+/* STYLE DU MAIN 
+/*====================================================================================================*/
+
+/* suppression du padding et margin top du main*/
+main{
+    margin-top: 0;
+    padding-top:0;
+}
+
+
+/* style de la banniere sur la page index */
+.banniere{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: url('../img/banniere.png');
+    background-position: center;
+    background-size:cover;
+    background-repeat: no-repeat;
+}
+
+/* taille des images dans les cards (rustine Provisoire) */
+.card .picture{
+    height: 200px;
+    width: 100%;
+}
+.card .picture img{
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+/*
+
+
+/*
+*   STYLE DU FOOTER
+*/
+
+:root{
+    --main-bg-color: #EDEDED;
+    --main-text-color : #054F6B;
+    --second-bg-color: #DDDDDD;
+    --second-text-color: #708C91;
+}
+
+footer{
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+}
+
+
+footer a{
+    text-decoration: none;
+    color : var(--main-text-color);
+}
+
+/*Gestion de la taille de la partie nav du footer*/
+.top-footer{
+    min-height: 25vh;
+    padding: 5vh 0vh;
+}
+
+
+/* GESTION DU LOGO AU CENTRE DU FOOTER */
+.logo-footer{
+    height: 150px;
+    width: 150px;
+}
+
+.logo-footer img{
+    height: 100%;
+    width: 100%;
+}
+
+
+/* le bas du footer  */
+.bottom-footer{
+    background-color: var(--second-bg-color);
+    color: var(--second-text-color);
+    font-size: small;
+    font-weight: bold;
+}

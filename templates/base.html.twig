@@ -12,12 +12,10 @@
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
             <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
             <link rel="stylesheet" href="{{ asset('styles/style_jd.css') }}">
+            <link rel="stylesheet" href="{{ asset('styles/mainStyle.css') }}">
         {% endblock %}
-
-        
     </head>
     <body>
-        
         <header>
         {% block header %}
             {% include "shared/_navbar.html.twig" %}            
@@ -40,44 +38,49 @@
                     </div>
                 </div>
                 {% endblock %}
-                <div class="container">
+                
                 
         {% block body %}{% endblock %}
-                </div>
+                
             </main>
-        <footer class="footer mt-auto py-4 bg-primary">
+        <footer class="footer mt-auto">
             {% block footer %}
             <div class="container">
-                <div class="row">
-                    <ul>
-                        <li>
-                            <a style=" text-decoration:none; color:white;" href="{{path('faq_index')}}" >FAQ</a>
-                        </li>
-                        <li>
-                            <a style=" text-decoration:none; color:white;" href="{{path('plan')}}" title="Plan du site">Plan du site</a>
-                        </li> 
-                        <li>
-                            <a style=" text-decoration:none; color:white;" href="{{path('cgu')}}" title="condition general d'utilisation">CGU</a>
-                        </li> 
-                        <li>
-                            <a style=" text-decoration:none; color:white;" href="{{path('privacyPolicy')}}" title="politique de confidentialité">Politique de confidentialité</a>
-                        </li> 
-                        <li>
-                            <a style=" text-decoration:none; color:white;" href="{{path('legalNotice')}}" title="Mentions légales">Mentions légales</a>
-                        </li> 
-                        <li>
-                            <a style=" text-decoration:none; color:white;" href="{{path('whoAreWe')}}" title="Mentions légales">Qui somme nous</a>
-                        </li>
-                    </ul>
+                <div class="row top-footer">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <nav class="nav flex-column">
+                            <a class="nav-link" href="{{path('faq_index')}}">FAQ</a>
+                            <a class="nav-link" href="{{path('plan')}}" title="Plan du site">Plan du site</a>
+                        </nav>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                        <div class="picture logo-footer">
+                            <img src="{{asset('img/hwg_footer.png')}}" alt="logo du site">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <nav class="nav flex-column">
+                            <a class="nav-link" href="{{path('whoAreWe')}}" title="Mentions légales">Qui somme nous</a>
+                            <a class="nav-link" href="{{path('cgu')}}" title="condition general d'utilisation">CGU</a>
+                            <a class="nav-link" href="{{path('legalNotice')}}" title="Mentions légales">Mentions légales</a>
+                        </nav>
+                    </div>
                 </div>
-                <div class="text-center text-light">
-                    HereWeGo Prototype - Aurélien Girard - Jérémy Dallain - <a class="text-white" target="_blank" href="https://github.com/MrAuGIR/Herewego" title="github de projet">github</a> 
-                </div>            
             </div>
+            <div class="bottom-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 d-flex flex-column align-items-center">
+                            <p>HereWeGo 2021 &copy</p>
+                            <p>HereWeGo est site de gestion de covoiturages entre personnes vers des évènements programmés</p>
+                            <p>Aurélien Girard - Jérémy Dallain - <a class="text-white" target="_blank" href="https://github.com/MrAuGIR/Herewego" title="github de projet">github</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
         </footer>
-        
         {# <div>{{ dump(app.user) }}</div> #}
-        {% endblock %}
         {% block javascripts %}
             <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
         {% endblock %}        
