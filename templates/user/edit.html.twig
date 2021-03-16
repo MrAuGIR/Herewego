@@ -6,92 +6,89 @@
 {% endblock %}
 
 {% block body %}
-	<div class="card text-center">
-		<div class="card-header mb-5">
-			<ul class="nav nav-tabs card-header-tabs">
-				<li class="nav-item w-25">
-					<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('user_events')}}">Events</a>
-				</li>
-				<li class="nav-item w-25">
-					<a class="nav-link" href="{{path('user_history')}}">Historique</a>
-				</li>
-			</ul>
-		</div>
-		<div class="card-body">
-			<h2 class="mb-5 text-center">Modifier mon profil Utilisateur</h2>
-			<!--  Section profil  -->
-			{{form_start(formView)}}
-
-			<div class="row">
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.email)}}
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.firstname)}}
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.lastname)}}
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.phone)}}
-					</div>
-				</div>
-				<div class="col-12">
-					<div class="form-group mb-3">
-						<label>Renseigner votre adresse</label>
-						<input class="form-control" type="text" id="adressUser" name="adressUser" placeholder="saisissez votre adresse">
-					</div>
-					<div>
-						<nav id="resultatApiUser">
-
-						</nav>
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.localisation.cityName,{'id':'cityUser'})}}
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.localisation.cityCp,{'id':'postcodeUser'})}}
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-group">
-						{{form_row(formView.localisation.adress,{'id':'nameAddUser'})}}
-					</div>
-				</div>
-				<div class="col-12 col-lg-6 my-4">
-                	<div class="form-floating mb-3">
-                		{{form_row(formView.localisation.coordonneesX,{'id':'xUser'})}}
-            		</div>
-            	</div>
-				<div class="col-12 col-lg-6 my-4">
-					<div class="form-floating mb-3">
-						{{form_row(formView.localisation.coordonneesY,{'id':'yUser'})}}
-					</div>
-				</div>
-				<div class="row">
-					<button class="btn btn-primary w-25" type="submit">Modifier</button>
-				</div>
+	<div class="container">
+		<div class="card text-center mt-3">
+			<div class="card-header mb-5">
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item w-25">
+						<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('user_events')}}">Events</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('user_history')}}">Historique</a>
+					</li>
+				</ul>
 			</div>
-			{{form_end(formView)}}
-		</div>
-		<hr>
-		<div>
-			<a href="{{ path('user_edit_password') }}" title="page de modification du mot de passe" class="btn btn-warning w-25 m-auto">je souhaite modifier mon mot de passe</a>
-			<a href="{{ path('user_delete') }}" title="suppression du compte" class="btn btn-danger w-25 m-auto">je souhaite supprimer mon compte</a>
+			<div class="card-body mb-3">
+				<h2 class="mb-5 text-center">Modifier mon Profil</h2>
+				<!--  Section profil  -->
+				{{form_start(formView)}}
+
+				<div class="row">
+					<div class="col-12 col-md-6 col-xl-3 my-4">
+						<div class="form-group">
+							{{form_row(formView.firstname)}}
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xl-3 my-4">
+						<div class="form-group">
+							{{form_row(formView.lastname)}}
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xl-3 my-4">
+						<div class="form-group">
+							{{form_row(formView.email)}}
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xl-3 my-4">
+						<div class="form-group">
+							{{form_row(formView.phone)}}
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="form-group mb-3">
+							<label>Renseigner votre adresse</label>
+							<input class="form-control adress-field" type="text" id="adressUser" name="adressUser" placeholder="saisissez votre adresse">
+						</div>
+						<div>
+							<nav id="resultatApiUser">
+
+							</nav>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xl-3 my-4">
+						<div class="form-group">
+							{{form_row(formView.localisation.cityName,{'id':'cityUser'})}}
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-xl-3 my-4">
+						<div class="form-group">
+							{{form_row(formView.localisation.cityCp,{'id':'postcodeUser'})}}
+						</div>
+					</div>
+					<div class="col-12 col-xl-6 my-4">
+						<div class="form-group">
+							{{form_row(formView.localisation.adress,{'id':'nameAddUser'})}}
+						</div>
+					</div>
+					<div class="col-12 col-lg-6 my-4 d-none">
+						<div class="form-floating mb-3">
+							{{form_row(formView.localisation.coordonneesX,{'id':'xUser'})}}
+						</div>
+					</div>
+					<div class="col-12 col-lg-6 my-4 d-none">
+						<div class="form-floating mb-3">
+							{{form_row(formView.localisation.coordonneesY,{'id':'yUser'})}}
+						</div>
+					</div>
+					<div class="row">
+						<button class="btn btn-primary w-25 m-auto" type="submit">Modifier</button>
+					</div>	
+				</div>
+				{{form_end(formView)}}
+			</div>
 		</div>
 	</div>
 {% endblock %}
