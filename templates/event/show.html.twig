@@ -4,6 +4,7 @@
 
 
 {% block body %}
+<div class="container">
 	<h1>Event : {{ event.title }} (event vu : {{ countView }} fois)</h1>
 	<div class="row d-flex justify-content-center my-5">
 		<div class="col-12 col-lg-8 border-end">
@@ -14,10 +15,13 @@
 						</div>
 					{% endif %}
 				<div class="col-12">
-					<p>{{ event.category.name }}</p>
+					<p class="badge bg-secondary">{{ event.category.name }}</p>
 				</div>
-				<div class="col-12">
-					<p>Description : {{ event.description | raw }}</p>
+				<div class="col-12 d-flex justify-content-center">
+					<h6>Description</h6>
+				</div>
+				<div class="col-12 border" style="min-height: 50px;">
+					{{ event.description | raw }}
 				</div>
 				{% if isOnEvent %}				
 					<div class="col-12 col-md-6 mt-4 mb-4">
@@ -29,8 +33,8 @@
 				{% endif %}
 			</div>
 		</div>
-		<div class="col-12 col-lg-4">
-			<div class="row">
+		<div class="col-12 col-lg-4 px-2">
+			<div class="row py-2">
 				{% if user %}		
 					{% if isOnEvent %}
 						<div class="col-12 py-2">
@@ -43,7 +47,9 @@
 						</div>
 					{% endif %}		
 				{% else %}
+				<div class="col-12 py-2">
 					<a class="btn btn-primary" href="{{ path('app_login') }}">Connectez vous pour participer à cet évênement</a>
+				</div>
 				{% endif %}
 			</div>
 			<div class="row">
@@ -73,9 +79,21 @@
 			<div class="row">
 				<div class="col-12 py-2">
 					<div class="border-top">
-						<span class="fs-6  lh-1">Facebook : <a href="{{ event.facebookLink }}">{{ event.facebookLink }}</a></span><br>
-						<span class="fs-6  lh-1">Twitter : <a href="{{ event.twitterLink }}">{{ event.twitterLink }}</a></span><br>
-						<span class="fs-6  lh-1">Instagram : <a href="{{ event.instagramLink }}">{{ event.instagramLink }}</a></span><br>
+						<div class="col-12">
+							<span class="fs-6  lh-1">Facebook : 
+								<a class="link-secondary" href="{{ event.facebookLink }}">{{ event.facebookLink}}</a>
+							</span>
+						</div>
+						<div class="col-12">
+							<span class="fs-6  lh-1">Twitter : 
+								<a class="link-secondary" href="{{ event.twitterLink }}">{{ event.twitterLink}}</a>
+							</span>
+						</div>
+						<div class="col-12">
+							<span class="fs-6  lh-1">Instagram : 
+								<a class="link-secondary" href="{{ event.instagramLink }}">{{ event.instagramLink}}</a>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -91,5 +109,11 @@
 
 		</div>
 	</div>
-	{{ event.tag | raw }}
+	<div class="row py-5">
+		<div class="col-12">
+			{{ event.tag | raw }}
+		</div>
+	</div>
+	
+</div>
 {% endblock %}
