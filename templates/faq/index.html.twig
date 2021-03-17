@@ -1,28 +1,35 @@
 {% extends 'base.html.twig' %}
-{% block title %}FAQ{% endblock %}
+{% block title %}FAQ
+{% endblock %}
 
 {% block body %}
-    <h1>Foire aux Questions</h1>
-    <div class="row my-5">
-        <h4>Comment fonctionne le site ? </h4>
-        <div class="mb-5">        
-            <a href="{{path('faq_question')}}" title="poser une question">Vous avez une question, et vous ne trouvez pas de réponse ? Posez la nous !</a>
-        </div>
-        <div class="col-12">
-            <div class="accordion accordion-flush" id="accordionFlushExample">
-                {% for question in questions %}                    
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="flush-heading{{ question.id }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ question.id }}" aria-expanded="false" aria-controls="flush-collapse{{ question.id }}">
-                            <span class="question">{{ question.question }}</span>
-                        </button>
-                        </h2>
-                        <div id="flush-collapse{{ question.id }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ question.id }}" data-bs-parent="#accordionFlushExample">
-                        <div class="accordion-body">{{ question.answer }}</div>
-                        </div>
-                    </div>               
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+	<div class="container">
+		<div class="my-5">
+			<h1 class="text-center">Foire aux Questions</h1>
+			<div class="row my-5">
+				<h4>Comment fonctionne le site ?
+				</h4>
+				<div class="mb-5">
+                    <p>Vous avez une question, et vous ne trouvez pas de réponse ?</p>
+					<a class="btn btn-primary" href="{{path('faq_question')}}" title="poser une question">Posez la nous !</a>
+				</div>
+				<div class="col-12">
+					<div class="accordion accordion-flush" id="accordionFlushExample">
+						{% for question in questions %}
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="flush-heading{{ question.id }}">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ question.id }}" aria-expanded="false" aria-controls="flush-collapse{{ question.id }}">
+										<span class="question">{{ question.question }}</span>
+									</button>
+								</h2>
+								<div id="flush-collapse{{ question.id }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ question.id }}" data-bs-parent="#accordionFlushExample">
+									<div class="accordion-body">{{ question.answer }}</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

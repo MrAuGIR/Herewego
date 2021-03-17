@@ -1,16 +1,30 @@
 {% extends "base.html.twig" %}
-{% block title %}Posez-nous une question{% endblock %}
+{% block title %}Posez-nous une question
+{% endblock %}
 
 {% block body %}
-    <h1>Posez-nous une questions</h1>
-    <div class="row my-2">
-        <div class="col-12">
-            <a href="{{path('faq_index')}}" title="page faq">Retourner vers la FAQ</a>
-        </div>
-    </div>
-    <div class="row my-2">
-        <div class="col-12">
-            {{ form(formView) }}
-        </div>
-    </div>
-{% endblock %}
+	<div class="container">
+		<div class="my-5">
+			<h1 class="text-center">Posez nous une question</h1>
+			<div class="row my-2">
+				<div class="col-12">
+					<a class="btn btn-primary" href="{{path('faq_index')}}" title="page faq">Retourner vers la FAQ</a>
+				</div>
+			</div>
+			<div class="row my-4">
+				<div class="col-8 m-auto mb-3">
+                    <div class="form-group">
+					    {{ form_row(formView.subject) }}
+                    </div>
+				</div>
+				<div class="col-8 m-auto mb-3">
+					<div class="form-group">
+						{{form_row(formView.question)}}
+					</div>
+				</div>
+				<div class="col-12 text-center">
+                    <button class="btn btn-primary w-50" type="submit">Envoyer</button>
+                </div>
+			</div>
+		</div>
+	{% endblock %}

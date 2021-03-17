@@ -33,8 +33,8 @@ class TagService
     public static function createTag(string $tagCode, string $eventId, string $eventTitle) : string {
         return "<div style='border: 3px solid black;width: 100px;'>
                     <a style='text-decoration:none; color:black' title='$eventTitle' href='/event/show/$eventId'>
-                        <img style='width: 90%; display: block; margin: 0 auto;' src='/img/hwg.png' alt='tag-event'>
-                        <div style='text-align: center;font-weight: bold;'>$tagCode</div>
+                        <img style='width: 90%; display: block; margin: 0 auto;' src='/img/hwg_header.png' alt='tag-event'>
+                        <div style='text-align: center;font-weight: bold; color: #054550'>$tagCode</div>
                     </a>
                 </div>";
     }
