@@ -435,17 +435,43 @@ class EventController extends AbstractController
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
-        //! GERER les droits par un return et un message
         $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
+
+        $transports = $event->getTransports();
+        $transportManagerMails = [];
+
+        $ticketUserMails = [];
+
+        foreach ($transports as $transport) {
+            $transportManagerMails[] = $transport->getUser()->getEmail();
+
+            $tickets = $transport->getTickets();      
+            foreach ($tickets as $ticket) {
+                $ticketUserMails[] = $ticket->getUser()->getEmail();
+            }
+        }
+        
+        // envoyer un mail à chaque User qui a créé un transport sur cet event
+        //envoyer un mail à chaque User qui a un ticket sur ces transports
+
+        $email = new TemplatedEmail();
+        $email->from(new Address("admin@gmail.com", "Admin"))
+            ->subject("Annulation de l'évênement : ".$event->getTitle())
+            ->to(...$transportManagerMails, ...$ticketUserMails)
+            ->htmlTemplate("emails/annulation_event.html.twig")
+            ->context([
+                'event' => $event
+            ]);
+        $this->mailer->send($email);
+
 
         // traitement de la suppression
         $this->em->remove($event);
         $this->em->flush();
-        // CA MARCHE MAIS J'AI PASSER EN CASCADE AU DELETE POUR TRANSPORT ET PICTURE
-        // JE PENSE QUE C'EST LE COMPORTEMENT A FAIRE MAIS IL FAUT PREVENIR LES USERS QUE C'EST FAIT
-        // MAIL A FAIRE JUSTE AVANT LE DELETE (MEME CHOSE POUR UPDATE)
-        
-        // redirection vers le dash organizer / events (avec message)
+
+
+
+
         $this->addFlash('success', "La suppression de l'évênement a réussie");
         return $this->redirectToRoute('event');
     }
