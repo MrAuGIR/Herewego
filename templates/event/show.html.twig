@@ -1,119 +1,133 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ event.title }}
+{% block title %}
+	{{ event.title }}
 {% endblock %}
 
 
 {% block body %}
-<div class="container">
-	<h1>Event : {{ event.title }} (event vu : {{ countView }} fois)</h1>
-	<div class="row d-flex justify-content-center my-5">
-		<div class="col-12 col-lg-8 border-end">
-			<div class="row px-2 py-2">
-				{% if event.pictures is not empty %}
+	<div class="container">
+		<h1>Event :
+			{{ event.title }}
+			(event vu :
+			{{ countView }}
+			fois)</h1>
+		<div class="row d-flex justify-content-center my-5">
+			<div class="col-12 col-lg-8 border-end">
+				<div class="row px-2 py-2">
+					{% if event.pictures is not empty %}
 						<div class="picture">
-							<img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
+							<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img" alt="{{ event.title }}">
 						</div>
 					{% endif %}
-				<div class="col-12">
-					<p class="badge bg-secondary">{{ event.category.name }}</p>
-				</div>
-				<div class="col-12 d-flex justify-content-center">
-					<h6>Description</h6>
-				</div>
-				<div class="col-12 border" style="min-height: 50px;">
-					{{ event.description | raw }}
-				</div>
-				{% if isOnEvent %}				
-					<div class="col-12 col-md-6 mt-4 mb-4">
-						<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-info">Les transports</a>
-					</div>
-					<div class="col-12 col-md-6 mt-4 mb-4">
-						<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-info">Proposer un transport</a>
-					</div>
-				{% endif %}
-			</div>
-		</div>
-		<div class="col-12 col-lg-4 px-2">
-			<div class="row py-2">
-				{% if user %}		
-					{% if isOnEvent %}
-						<div class="col-12 py-2">
-							<p>Vous participez à cet évênement</p>
-							<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
-						</div>
-					{% else %}	
-						<div class="col-12 py-2">
-							<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Participer</a>
-						</div>
-					{% endif %}		
-				{% else %}
-				<div class="col-12 py-2">
-					<a class="btn btn-primary" href="{{ path('app_login') }}">Connectez vous pour participer à cet évênement</a>
-				</div>
-				{% endif %}
-			</div>
-			<div class="row">
-				<div class="col-12">
-					<p class="fs-5 fw-bold">Du {{ event.startedAt | date('Y-m-d') }} au {{ event.endedAt | date('Y-m-d') }}</p>
-				</div>
-				<div class="col-12">
-					<p class="fs-5 fw-bold">Horaire D : {{ event.startedAt | date('H:i')}}</p>
-					<p class="fs-5 fw-bold">Horaire F : {{ event.endedAt | date('H:i')}}</p>
-				</div>
-				{% if event.eventGroup is not same as(null) %}
 					<div class="col-12">
-						<a href="{{ path('event_group', {group_id: event.eventGroup.id }) }}" title="">Voir les autres événement du même Event-group</a>
-					</div>				
-				{% endif %}
-			</div>
-			<div class="row">
-				<div class="col-12 py-2">
-					<div class="border-top">
-						<span class="fs-6  lh-1">{{ event.localisation.adress }}</span><br>
-						<span class="fs-6 lh-1">{{ event.localisation.cityName }}</span><br>
-						<span class="fs-6 lh-1">France</span>
-						<span class="fs-6 lh-1">Tel : {{ event.phone }}</span>
+						<p class="badge bg-secondary">{{ event.category.name }}</p>
 					</div>
+					<div class="col-12 d-flex justify-content-center">
+						<h6>Description</h6>
+					</div>
+					<div class="col-12 border" style="min-height: 50px;">
+						{{ event.description | raw }}
+					</div>
+					{% if isOnEvent %}
+						<div class="col-12 col-md-6 mt-4 mb-4">
+							<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-info">Les transports</a>
+						</div>
+						<div class="col-12 col-md-6 mt-4 mb-4">
+							<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-info">Proposer un transport</a>
+						</div>
+					{% endif %}
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-12 py-2">
-					<div class="border-top">
-						<div class="col-12">
-							<span class="fs-6  lh-1">Facebook : 
-								<a class="link-secondary" href="{{ event.facebookLink }}">{{ event.facebookLink}}</a>
-							</span>
+			<div class="col-12 col-lg-4 px-2">
+				<div class="row py-2">
+					{% if user %}
+						{% if isOnEvent %}
+							<div class="col-12 py-2">
+								<p>Vous participez à cet évênement</p>
+								<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
+							</div>
+						{% else %}
+							<div class="col-12 py-2">
+								<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Participer</a>
+							</div>
+						{% endif %}
+					{% else %}
+						<div class="col-12 py-2">
+							<a class="btn btn-primary" href="{{ path('app_login') }}">Connectez vous pour participer à cet évênement</a>
 						</div>
+					{% endif %}
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<p class="fs-5 fw-bold">Du
+							{{ event.startedAt | date('Y-m-d') }}
+							au
+							{{ event.endedAt | date('Y-m-d') }}</p>
+					</div>
+					<div class="col-12">
+						<p class="fs-5 fw-bold">Horaire D :
+							{{ event.startedAt | date('H:i')}}</p>
+						<p class="fs-5 fw-bold">Horaire F :
+							{{ event.endedAt | date('H:i')}}</p>
+					</div>
+					{% if event.eventGroup is not same as(null) %}
 						<div class="col-12">
-							<span class="fs-6  lh-1">Twitter : 
-								<a class="link-secondary" href="{{ event.twitterLink }}">{{ event.twitterLink}}</a>
-							</span>
+							<a href="{{ path('event_group', {group_id: event.eventGroup.id }) }}" title="">Voir les autres événement du même Event-group</a>
 						</div>
-						<div class="col-12">
-							<span class="fs-6  lh-1">Instagram : 
-								<a class="link-secondary" href="{{ event.instagramLink }}">{{ event.instagramLink}}</a>
-							</span>
+					{% endif %}
+				</div>
+				<div class="row">
+					<div class="col-12 py-2">
+						<div class="border-top">
+							<span class="fs-6  lh-1">{{ event.localisation.adress }}</span><br>
+							<span class="fs-6 lh-1">{{ event.localisation.cityName }}</span><br>
+							<span class="fs-6 lh-1">France</span>
+							<span class="fs-6 lh-1">Tel :
+								{{ event.phone }}</span>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-12 py-2">
-					<div class="border-top">
-						<span class="fs-6  lh-1">
-							Site de l'event :<a href="{{ event.website }}">{{ event.website }}</a>
-						</span><br>
+				<div class="row">
+					<div class="col-12 py-2">
+						<div class="border-top">
+							<div class="col-12">
+								<span class="fs-6  lh-1">Facebook :
+									<a class="link-secondary" href="{{ event.facebookLink }}">{{ event.facebookLink}}</a>
+								</span>
+							</div>
+							<div class="col-12">
+								<span class="fs-6  lh-1">Twitter :
+									<a class="link-secondary" href="{{ event.twitterLink }}">{{ event.twitterLink}}</a>
+								</span>
+							</div>
+							<div class="col-12">
+								<span class="fs-6  lh-1">Instagram :
+									<a class="link-secondary" href="{{ event.instagramLink }}">{{ event.instagramLink}}</a>
+								</span>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
+				<div class="row">
+					<div class="col-12 py-2">
+						<div class="border-top">
+							<span class="fs-6  lh-1">
+								Site de l'event :<a href="{{ event.website }}">{{ event.website }}</a>
+							</span><br>
+						</div>
+					</div>
+					<div class="col-12">
+						<span id="to-copy">
+							{{ event.tag | raw }}
+						</span>
+						{# <button id="copy" class="btn btn-warning">
+							<i class="far fa-copy"></i>
+						</button> #}
+					</div>
+				</div>
 
+			</div>
 		</div>
 	</div>
-	<div class="row py-5">
-		<div class="col-12">
-			{{ event.tag | raw }}
-		</div>
-	</div>
-	
-</div>
 {% endblock %}
+
