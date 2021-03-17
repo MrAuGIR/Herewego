@@ -12,9 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @Route("/organizer")
@@ -26,12 +28,14 @@ class OrganizerController extends AbstractController
     protected $encoder;
     protected $em;
     protected $csvService;
+    protected $tokenStorage;
 
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, CsvService $csvService)
+    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, CsvService $csvService, TokenStorageInterface $tokenStorage)
     {
         $this->encoder = $encoder;
         $this->em = $em;
         $this->csvService = $csvService;
+        $this->tokenStorage = $tokenStorage;
     }
     
     /**
@@ -144,7 +148,7 @@ class OrganizerController extends AbstractController
     /**
      * @Route("/profil/delete", name="organizer_delete")
      */
-    public function delete()
+    public function delete(SessionInterface $sessionInterface)
     {
         /**
          * @var User
@@ -155,17 +159,11 @@ class OrganizerController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        $this->tokenStorage->setToken(null);
+        $sessionInterface->invalidate();
 
         $this->em->remove($user);
         $this->em->flush();
-
-       // Le delete d'un User est très complexe :
-        // Il impacte :
-        //      Event (createur)
-        //      Transport (manager)
-        //      Ticket (si a des tickets)
-        //      Participation
-        //      Question_user (à rendre NULL dans la bdd)
 
         $this->addFlash('success', "Votre compte a bien été supprimé");
         return $this->redirectToRoute('home');

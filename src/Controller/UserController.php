@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @Route("/user")
@@ -28,11 +29,13 @@ class UserController extends AbstractController
 {
     protected $encoder;
     protected $em;
+    protected $tokenStorage;
 
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
+    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
     {
         $this->em = $em;
         $this->encoder = $encoder;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -54,17 +57,17 @@ class UserController extends AbstractController
         $tickets = $user->getTickets();
         $validatedTickets = 0;
         foreach ($tickets as $ticket) {
-            if ($ticket->getIsValidate()){
+            if ($ticket->getIsValidate()) {
                 $validatedTickets++;
             }
         }
 
         return $this->render('user/profil.html.twig', [
-            'user' => $user, 
+            'user' => $user,
             'validatedTickets' => $validatedTickets
         ]);
     }
-    
+
     /**
      * @Route("/profil/edit", name="user_edit")
      */
@@ -83,7 +86,7 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
+        if ($form->isSubmitted()) {
 
             $this->em->flush();
             $this->addFlash('success', "Profil modifié avec succés.");
@@ -115,7 +118,7 @@ class UserController extends AbstractController
         $form = $this->createForm(EditPassType::class);
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
+        if ($form->isSubmitted()) {
 
             $data = $form->getData();
 
@@ -127,13 +130,13 @@ class UserController extends AbstractController
             $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
 
             $this->em->flush();
-            
+
             $this->addFlash('success', "La modification du mot de passe est un succés.");
             return $this->redirectToRoute('user_profil');
         }
 
         $formView = $form->createView();
-        
+
         return $this->render('user/pass.html.twig', [
             'formView' => $formView,
             'user' => $user
@@ -171,15 +174,16 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        
+        $this->tokenStorage->setToken(null);
+        $sessionInterface->invalidate();
+
         $this->em->remove($user);
         $this->em->flush();
 
         $this->addFlash('success', "Votre compte a bien été supprimé");
         return $this->redirectToRoute('home');
-
     }
-    
+
     /**
      * @Route("/events", name="user_events")
      */
@@ -196,9 +200,9 @@ class UserController extends AbstractController
 
         //recupère les participations à venir
         $participations = $participationRepository->findByDateAfterNow($user->getId());
-        
+
         dump($participations);
-        
+
         return $this->render('user/events.html.twig', [
             'user' => $user,
             'participations' => $participations
