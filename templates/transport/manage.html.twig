@@ -51,8 +51,8 @@
 			<p>Nombre de place restantes :<strong> {{transport.remainingPlace}}</strong></p>
 		</div>
 	</div>
-	<div class="row mt-3">
-		<div class="col-12 col-lg-8 border-end">
+	<div class="row mt-3 my-5">
+		<div class="col-12 border-end">
 			<table id="exemple" class="display" style="width:100%">
 				<thead>
 					<tr>
@@ -82,7 +82,7 @@
 							<td>{{ ticket.user.firstName }}</td>
 							<td>{{ ticket.countPlaces }}</td>
 							<td>{{ ticket.askedAt | date('Y-m-d') }}</td>
-							<td>{{ ticket.commentary }}</td>
+							<td>{{ ticket.commentary | raw }}</td>
 							<td>
 								{% if transport.remainingPlace > 0 and ticket.isValidate != true %}
 								<a href="{{ path('transport_accept_ticket', {ticket_id: ticket.id }) }}">Valider</a>
