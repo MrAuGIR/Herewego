@@ -26,33 +26,47 @@
 					<span>Créateur du transport <strong>{{ transport.getUser.lastname}}</strong> {{ transport.getUser.firstname}}</span>
 				</div>
 				<div class="card-body">
-					<p>Infos Aller : </p>
-					<ul>
-						<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
-						<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
-						<li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
-						<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
-					</ul>
-					<hr>
-					<p>infos Retour : </p>
-					<ul>
-						<li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
-						<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
-						<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
-						<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
-					</ul>
+					<div class="row">
+						<div class="col-12">
+							<p>Aller : </p>
+						</div>
+						<div class="col-12">
+							<ul>
+								<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+								<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+								<li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+								<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+							</ul>
+						</div>
+						<div class="col-12">
+							<p>Retour : </p>
+						</div>
+						<div class="col-12">
+							<ul>
+								<li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+								<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+								<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
+								<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<h2>Les demandes de tickets</h2>
 	<div class="row">
-		<div class="col-12">
-			<p>Nombre de place restantes :<strong> {{transport.remainingPlace}}</strong></p>
+		<div class="col-12 col-md-6 pt-5 d-flex justify-content-center border-bottom">
+			<h3>Les demandes de tickets</h2>
+		</div>
+		<div class="col-12 col-md-6 pt-5 d-flex justify-content-end border-bottom">
+			<div class="row">
+				<span>Places restantes</span>
+				<h3> {{transport.remainingPlace}}</h3>
+			</div>
 		</div>
 	</div>
-	<div class="row mt-3 my-5">
-		<div class="col-12 border-end">
+	<div class="row">
+		<div class="col-12 border-end my-5">
 			<table id="exemple" class="display" style="width:100%">
 				<thead>
 					<tr>
