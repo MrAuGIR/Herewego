@@ -29,7 +29,6 @@ class FaqType extends AbstractType
                 ],
                 'required' => false
             ])
-            ->add('Valider', SubmitType::class)
         ;
     }
 
