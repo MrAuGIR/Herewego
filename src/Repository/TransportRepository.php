@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Transport;
+use App\Entity\User;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -47,4 +50,21 @@ class TransportRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * findTransportToAlert
+     * Renvoie les transport débutant dans moins de 2 jours
+     * @return Transport[]
+     */
+    public function findTransportToAlert()
+    {
+        $date = new \DateTime('now');
+        $date = $date->modify('-2 day');
+        
+        $query = $this->createQueryBuilder('p')
+            ->where('p.goStartedAt > :date')
+            ->setParameter('date',$date);
+
+        return $query->getQuery()->getResult();
+    }
 }
