@@ -117,17 +117,21 @@
 						</div>
 					</div>
 					<div class="col-12">
-						<span id="to-copy">
+						<span>
 							{{ event.tag | raw }}
 						</span>
-						{# <button id="copy" class="btn btn-warning">
+						<div id="to-copy" class="d-none">{{ event.tag }}</div>
+						<button title="copier le tag" id="btn-copy" class="btn btn-primary">
 							<i class="far fa-copy"></i>
-						</button> #}
+						</button>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
 {% endblock %}
 
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('/script/clipBoard/clipBoard.js') }}"></script>
+{% endblock %}
