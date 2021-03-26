@@ -8,10 +8,11 @@ window.onload = () => {
                     let response = JSON.parse(this.responseText);
                     
                     const avatarProfil = document.querySelectorAll(".avatar-profil>img")
+                    const avatarNavbar = document.querySelector(".avatar-navbar")
                     avatarProfil[0].src = '/img/avatar/' + response.path + '.png'
+                    avatarNavbar.src = '/img/avatar/' + response.path + '.png'
 
                     const avatarChoices = document.querySelectorAll(".avatar-choice")
-                    console.log(avatarChoices);
 
                     for (let a of avatarChoices) {
                         

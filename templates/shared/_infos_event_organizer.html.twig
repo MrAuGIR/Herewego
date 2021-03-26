@@ -1,0 +1,16 @@
+<div class="border">
+	<div class="row">
+		<div class="col-12 col-lg-6">
+			<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img" alt="{{ event.title }}">
+		</div>
+		<div class="col-12 col-lg-6 p-2">
+			<h5>{{ event.title }}</h5>
+			<p>Du
+				{{ event.startedAt | date('d/m/Y') }}
+				au
+				{{ event.endedAt | date('d/m/Y') }}
+			</p>
+			
+		</div>
+	</div>
+</div>

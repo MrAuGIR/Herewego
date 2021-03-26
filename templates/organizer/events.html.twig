@@ -40,7 +40,8 @@
 									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{event.id}}" aria-expanded="true" aria-controls="collapse{{event.id}}">
 										<div class="row w-100">
 											<div class="col-5">
-												<strong>{{event.title}}</strong></div>
+												<strong>{{event.title}}</strong>
+											</div>
 											<div class="col-4">Commence le
 												{{ event.startedAt | date('d/m/Y') }}</div>
 										</div>
@@ -50,24 +51,19 @@
 									<div class="accordion-body">
 										<div class="row">
 											<div class="col-12 col-md-6">
-												<div class="bg-secondary py-5">
-													infos Évênement
-												</div>
+												{% include "shared/_infos_event_organizer.html.twig" %}
 											</div>
 											<div class="col-12 col-md-6">
-												<div class="mb-3">												
-													<a class="btn btn-primary" href="{{ path('event_show', {event_id: event.id}) }}" role="button">Voir la page de l'event</a>
-													<a class="btn btn-warning" href="{{ path('event_edit', {event_id: event.id}) }}" role="button">Modifier l'event</a>
-												</div>
-												<p>nombre de vues :
+												<p>Nombre de vues :
 													{{ event.countViews }}</p>
-												<p>nombre de transports organisés :
+												<p>Nombre de transports organisés :
 													{{ event.transports | length }}</p>
-												<p>nombre de paticipants inscrits :
+												<p>Nombre de paticipants inscrits :
 													{{ event.participations | length }}</p>
-												<p>le tag de l'event à partager :
-													...</p>
-														
+												<div class="mb-3">
+													<a class="btn btn-primary mb-2" href="{{ path('event_show', {event_id: event.id}) }}" role="button">Voir l'évênement</a>
+													<a class="btn btn-warning mb-2" href="{{ path('event_edit', {event_id: event.id}) }}" role="button">Modifier l'évênement</a>
+												</div>
 											</div>
 										</div>
 									</div>

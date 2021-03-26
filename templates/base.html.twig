@@ -48,19 +48,19 @@
             {% block footer %}
             <div class="container">
                 <div class="row top-footer">
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <nav class="nav flex-column">
+                    <div class="col-12 col-lg-4 order-lg-1">
+                        <nav class="nav flex-column align-items-center justify-content-center h-100">
                             <a class="nav-link" href="{{path('faq_index')}}">FAQ</a>
                             <a class="nav-link" href="{{path('plan')}}" title="Plan du site">Plan du site</a>
                         </nav>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <div class="col-12 order-first order-lg-2 col-lg-4 d-flex justify-content-center">
                         <div class="picture logo-footer">
                             <img src="{{asset('img/hwg_footer.png')}}" alt="logo du site">
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <nav class="nav flex-column">
+                    <div class="col-12 col-lg-4 order-lg-3">
+                        <nav class="nav flex-column align-items-center justify-content-center h-100">
                             <a class="nav-link" href="{{path('whoAreWe')}}" title="Mentions légales">Qui somme nous</a>
                             <a class="nav-link" href="{{path('cgu')}}" title="condition general d'utilisation">CGU</a>
                             <a class="nav-link" href="{{path('legalNotice')}}" title="Mentions légales">Mentions légales</a>
@@ -68,13 +68,13 @@
                     </div>
                 </div>
             </div>
-            <div class="bottom-footer">
+            <div class="bottom-footer py-3">
                 <div class="container">
                     <div class="row">
                         <div class="col-12 d-flex flex-column align-items-center">
                             <p>HereWeGo 2021 &copy</p>
                             <p>HereWeGo est site de gestion de covoiturages entre personnes vers des évènements programmés</p>
-                            <p>Aurélien Girard - Jérémy Dallain - <a class="text-white" target="_blank" href="https://github.com/MrAuGIR/Herewego" title="github de projet">github</a></p>
+                            <p>Aurélien Girard - Jérémy Dallain - <a class="text-primary" target="_blank" href="https://github.com/MrAuGIR/Herewego" title="github de projet">github</a></p>
                         </div>
                     </div>
                 </div>

@@ -6,7 +6,7 @@
 
 {% block body %}
 	<div class="container">
-		<h1>Event :
+		<h1 class="text-center mt-4">Event :
 			{{ event.title }}
 			(event vu :
 			{{ countView }}
@@ -116,7 +116,7 @@
 							</span><br>
 						</div>
 					</div>
-					<div class="col-12">
+					<div class="pt-2 border-top d-flex justify-content-center align-items-end">
 						<span>
 							{{ event.tag | raw }}
 						</span>
