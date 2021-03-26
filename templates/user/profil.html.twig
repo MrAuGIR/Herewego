@@ -14,7 +14,7 @@
 						<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
 					</li>
 					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('user_events')}}">Évênements</a>
+						<a class="nav-link" href="{{path('user_events')}}">Participations</a>
 					</li>
 					<li class="nav-item w-25">
 						<a class="nav-link" href="{{path('user_history')}}">Historique</a>
@@ -91,19 +91,19 @@
 				<h2 class="my-5 text-center">Mes informations</h2>
 				<form action="">
 					<div class="row pb-4">
-						<div class="col-12 col-md-6 col-xl-3 mb-3">
+						<div class="col-12 col-md-6 mb-3">
 							<label for="nom" class="form-label">Nom</label>
 							<input type="text" class="form-control" id="nom" disabled value="{{ user.lastName }}">
 						</div>
-						<div class="col-12 col-md-6 col-xl-3 mb-3">
+						<div class="col-12 col-md-6 mb-3">
 							<label for="prenom" class="form-label">Prenom</label>
 							<input type="text" class="form-control" id="prenom" disabled value="{{ user.firstName }}">
 						</div>
-						<div class="col-12 col-md-6 col-xl-3 mb-3">
+						<div class="col-12 col-md-6 mb-3">
 							<label for="email" class="form-label">Email</label>
 							<input type="email" class="form-control" id="email" disabled value="{{ user.email }}">
 						</div>
-						<div class="col-12 col-md-6 col-xl-3 mb-3">
+						<div class="col-12 col-md-6 mb-3">
 							<label for="telephone" class="form-label">Telephone</label>
 							<input type="text" class="form-control" id="telephone" disabled value="{{ user.phone }}">
 						</div>

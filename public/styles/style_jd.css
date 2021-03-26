@@ -53,3 +53,9 @@
     }
     
 }
+
+.avatar-navbar {
+    display: block;
+    width: 30px;
+    border-radius: 50%;
+}

@@ -17,14 +17,14 @@ class EditPassType extends AbstractType
             ->add('newPassword', PasswordType::class, [
                 'label' => "Votre nouveau mot de passe",
                 'attr' => [
-                    'placeholder' => "Tapez votre nouveau mot de passe"
+                    'placeholder' => "Votre nouveau mot de passe"
                 ],
                 'required' => false
             ])
             ->add('newPasswordRepeat', PasswordType::class, [
-                'label' => "Ressaisissez votre nouveau mot de passe",
+                'label' => "Confirmez votre mot de passe",
                 'attr' => [
-                    'placeholder' => "Ressaisissez votre nouveau mot de passe"
+                    'placeholder' => "Confirmez votre mot de passe"
                 ],
                 'required' => false
             ])

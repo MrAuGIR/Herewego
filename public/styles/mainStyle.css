@@ -86,7 +86,7 @@ header{
 
 .header-logo {
     display: block;
-    width: 50px;
+    width: 80px;
 }
 
 .nav-header-style{
@@ -142,7 +142,7 @@ header{
 
 /* suppression du padding et margin top du main*/
 main{
-    margin-top: 0;
+    margin-top: 20px;
     padding-top:0;
 }
 
@@ -337,8 +337,8 @@ footer a{
 
 /* GESTION DU LOGO AU CENTRE DU FOOTER */
 .logo-footer{
-    height: 150px;
-    width: 150px;
+    height: 200px;
+    width: 200px;
 }
 
 .logo-footer img{

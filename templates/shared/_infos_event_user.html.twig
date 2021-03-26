@@ -1,0 +1,18 @@
+<div class="border">
+	<div class="row">
+		<div class="col-12 col-lg-6">
+			<img src="{{ asset('uploads/' ~ p.event.pictures[0].path) }}" class="card-img" alt="{{ p.event.title }}">
+		</div>
+		<div class="col-12 col-lg-6 p-2">
+			<h5>{{ p.event.title }}</h5>
+			<p>Du
+				{{ p.event.startedAt | date('d/m/Y') }}
+				au
+				{{ p.event.endedAt | date('d/m/Y') }}
+            </p>
+            <div>
+                <a class="btn btn-primary" href="{{ path('event_show', {event_id: p.event.id }) }}">Voir l'évênement</a>
+            </div>
+		</div>
+	</div>
+</div>

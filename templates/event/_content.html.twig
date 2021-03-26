@@ -46,8 +46,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ event.title }}</h5>
                         <p><em>Le {{ event.startedAt | date('d/m/Y') }}</em></p>
-                        <p class="card-text">{{ event.description | u.truncate(90, "...") | raw}}</p>
-                        <div class="btn btn-sm bg-info">{{ event.category.name }}</div>
+                        {# <p class="card-text">{{ event.description | u.truncate(90, "...") | raw}}</p> #}
+                        <div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
                     </div>
                     <div>                        
                         {% if event.pictures is not empty %}   
