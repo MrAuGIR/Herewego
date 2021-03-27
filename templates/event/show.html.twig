@@ -6,17 +6,34 @@
 
 {% block body %}
 	<div class="container">
-		<h1 class="text-center mt-4">Event :
-			{{ event.title }}
-			(event vu :
+		<h1 class="text-center mt-4">{{ event.title }}
+		</h1>
+		<p class="text-center mt-4">vu
 			{{ countView }}
-			fois)</h1>
+			fois</p>
 		<div class="row d-flex justify-content-center my-5">
 			<div class="col-12 col-lg-8 border-end">
 				<div class="row px-2 py-2">
 					{% if event.pictures is not empty %}
-						<div class="picture">
+						{# <div class="picture">
 							<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img" alt="{{ event.title }}">
+						</div> #}
+						<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+							<div class="carousel-inner">
+							{% for picture in event.pictures %}								
+								<div class="carousel-item {{ picture == event.pictures[0] ? 'active' : '' }}">
+									<img src="{{ asset('uploads/' ~ picture.path) }}" class="d-block w-100" alt="{{ event.title }}">
+								</div>
+							{% endfor %}
+							</div>
+							<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Previous</span>
+							</button>
+							<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+								<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Next</span>
+							</button>
 						</div>
 					{% endif %}
 					<div class="col-12">
@@ -30,10 +47,10 @@
 					</div>
 					{% if isOnEvent %}
 						<div class="col-12 col-md-6 mt-4 mb-4">
-							<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-info">Les transports</a>
+							<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-primary">Les transports</a>
 						</div>
 						<div class="col-12 col-md-6 mt-4 mb-4">
-							<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-info">Proposer un transport</a>
+							<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-primary">Proposer un transport</a>
 						</div>
 					{% endif %}
 				</div>
@@ -43,7 +60,7 @@
 					{% if user %}
 						{% if isOnEvent %}
 							<div class="col-12 py-2">
-								<p>Vous participez à cet évênement</p>
+								<p class="fw-bold">Vous participez à cet évênement</p>
 								<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
 							</div>
 						{% else %}
@@ -60,15 +77,15 @@
 				<div class="row">
 					<div class="col-12">
 						<p class="fs-5 fw-bold">Du
-							{{ event.startedAt | date('Y-m-d') }}
+							{{ event.startedAt | date('d/m/Y') }}
 							au
-							{{ event.endedAt | date('Y-m-d') }}</p>
+							{{ event.endedAt | date('d/m/Y') }}</p>
 					</div>
 					<div class="col-12">
-						<p class="fs-5 fw-bold">Horaire D :
-							{{ event.startedAt | date('H:i')}}</p>
-						<p class="fs-5 fw-bold">Horaire F :
-							{{ event.endedAt | date('H:i')}}</p>
+						<p class="fs-5 fw-bold">Horaire de Début :
+							{{ event.startedAt | date('H')}} h {{ event.startedAt | date('i')}}</p>
+						<p class="fs-5 fw-bold">Horaire de Fin :
+							{{ event.endedAt | date('H')}} h {{ event.endedAt | date('i')}}</p>
 					</div>
 					{% if event.eventGroup is not same as(null) %}
 						<div class="col-12">

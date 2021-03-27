@@ -43,7 +43,7 @@
 								</div>
 								<div class="modal-body">
 									<div class="row">
-										{% for i in 0..2 %}
+										{% for i in 0..4 %}
 											<div data-path="{{ i }}" class="col-3 avatar-choice {{ i == user.pathAvatar ? " selected-avatar" : " " }}">
 												<img src="{{ asset('/img/avatar/' ~ i ~ '.png') }}" alt="avatar">
 											</div>
