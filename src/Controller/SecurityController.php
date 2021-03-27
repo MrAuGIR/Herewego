@@ -21,7 +21,7 @@ class SecurityController extends AbstractController
      */
     public function register()
     {
-        return $this->render('Security/register.html.twig');
+        return $this->render('security/register.html.twig');
     }
 
     /**
