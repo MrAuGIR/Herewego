@@ -112,7 +112,7 @@ class EventRepository extends ServiceEntityRepository
 
         //ordre d'affichage et gestion des resultat en fonction de la page en cours
         if($order != null){
-            $query->orderBy('e.createdAt', $order)
+            $query->orderBy('e.startedAt', $order)
                 ->setFirstResult(($page * $limit) - $limit)
                 ->setMaxResults($limit);
         }else{

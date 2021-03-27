@@ -17,6 +17,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 
 /**
 * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
@@ -247,25 +250,45 @@ class EventCrudController extends AbstractController
     /**
      * @Route("/delete/{id}", name="eventcrud_delete")
      */
-    public function delete(Event $event)
+    public function delete(Event $event, MailerInterface $mailer)
     {
-        
+
         if (!$event) {
-            $this->addFlash('danger',"l'event demandé n'existe pas");
-            return $this->redirectToRoute('eventcrud');
+            throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
-        dd("traitement de la suppression de l'évent");
+        $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
+
+        $transports = $event->getTransports();
+        $transportManagerMails = [];
+
+        $ticketUserMails = [];
+
+        foreach ($transports as $transport) {
+            $transportManagerMails[] = $transport->getUser()->getEmail();
+
+            $tickets = $transport->getTickets();
+            foreach ($tickets as $ticket) {
+                $ticketUserMails[] = $ticket->getUser()->getEmail();
+            }
+        }
+
+        $email = new TemplatedEmail();
+        $email->from(new Address("admin@gmail.com", "Admin"))
+        ->subject("Annulation de l'évênement : " . $event->getTitle())
+            ->to(...$transportManagerMails, ...$ticketUserMails)
+            ->htmlTemplate("emails/annulation_event.html.twig")
+            ->context([
+                'event' => $event
+            ]);
+        $mailer->send($email);
+
 
         // traitement de la suppression
         $this->em->remove($event);
         $this->em->flush();
-        // CA MARCHE MAIS J'AI PASSER EN CASCADE AU DELETE POUR TRANSPORT ET PICTURE
-        // JE PENSE QUE C'EST LE COMPORTEMENT A FAIRE MAIS IL FAUT PREVENIR LES USERS QUE C'EST FAIT
-        // MAIL A FAIRE JUSTE AVANT LE DELETE (MEME CHOSE POUR UPDATE)
 
-        // redirection vers le dash organizer / events (avec message)
-        $this->addFlash('success', "La suppression de l'évênement a réussie");
+        $this->addFlash('success', 'evenement supprimé');
         return $this->redirectToRoute('eventcrud');
     }
 }
