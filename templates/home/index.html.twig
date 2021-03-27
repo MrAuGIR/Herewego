@@ -1,95 +1,104 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
-
-{% block body %}
-        <!-- DEBUT CONTENU DE LA PAGE -->
-    <div class="banniere">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    {% include "event/_search.html.twig" %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Event populaire -->
-    <div class="block-bg-pair">
-        <div class="container">
-            <div class="row py-5 ">
-                <div class="col-12 d-flex justify-content-center my-5">
-                    <h3 class="h3-index">Derniers événements</h3>
-                </div>
-                {% for event in lastEvents %}
-                    <div class="col-12 col-md-8 col-lg-4 my-3">
-                        <div class="card bg-dark text-dark">
-                            {% if event.pictures is not empty %}
-                                <div class="picture">
-                                    <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}"  alt="{{ event.title }}">
-                                </div>
-                            {% endif %}
-                            <div class="card-img-overlay">
-                                <p>{{ event.category.name }}</p>
-                                <h5 class="card-title">{{event.title}}</h5>
-                                <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
-                                <p class="card-text">{{ event.description }}</p>
-                                <p class="card-text "><a href="{{ path('event_show', {event_id: event.id }) }}">Page de l'event</a></p>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-                <div class="col-12">
-                    <a class="btn btn-primary" href="{{path('event')}}">Voir plus de derniers events</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="block-bg-impair">
-        <div class="container">
-            <div class="row py-5">
-                <div class="col-12 d-flex justify-content-center my-5">
-                    <h3 class="h3-index">Evénements les plus populaires</h3>
-                </div>
-                {% for event in popularityEvents %}
-                <div class="col-12 col-md-8 col-lg-4 my-3">
-                    <div class="card bg-dark text-white">
-                        {% if event.pictures is not empty %}
-                        <div class="picture">
-                            <img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img" alt="{{ event.title }}">
-                        </div>
-                        {% endif %}
-                        <div class="card-img-overlay">
-                            <p>{{ event.category.name }}</p>
-                            <h5 class="card-title">{{event.title}}</h5>
-                            <p>{{ event.startedAt | date('Y-m-d') }} à {{ event.startedAt | date('H:i:s')}}</p>
-                            <p class="card-text">{{ event.description }}</p>
-                            <p class="card-text "><a href="{{ path('event_show', {event_id: event.id }) }}">Page de l'event</a></p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <div class="col-12">
-                    <a class="btn btn-primary" href="{{path('event')}}">Voir plus d'événements populaires'</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="block-bg-pair">
-        <div class="container">
-            <div class="row py-5">
-                <div class="col-12">
-                    <h3>Catégorie d'événements</h3>
-                </div>
-                <div class="col-12"></div>
-                {% for category in categories %}
-                    <a href="{{path('event_category', {category_id: category.id}) }}" type="button" class="btn btn-primary btn-lg my-2 me-2">{{category.name}}</a>
-                {% endfor %}
-                </div>
-                <div class="col-12">
-                    
-                </div>
-            </div>
-        </div>
-    </div>
+{% block title %}Hello HomeController!
 {% endblock %}
 
+{% block body %}
+	<!-- DEBUT CONTENU DE LA PAGE -->
+	<div class="banniere">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					{% include "event/_search.html.twig" %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Event populaire -->
+	<div class="block-bg-pair">
+		<div class="container">
+			<div class="row py-5 ">
+				<div class="col-12 d-flex justify-content-center my-5">
+					<h3 class="h3-index">Derniers événements</h3>
+				</div>
+				{% for event in lastEvents %}
+					<div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+						<a href="{{ path('event_show', {event_id: event.id }) }}">
+							<div class="card event-card">
+								<div class="card-body">
+									<h5 class="card-title">{{ event.title }}</h5>
+									<p>
+										<em>Le
+											{{ event.startedAt | date('d/m/Y') }}</em>
+									</p>
+									{# <p class="card-text">{{ event.description | u.truncate(90, "...") | raw}}</p> #}
+									<div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
+								</div>
+								<div>
+									{% if event.pictures is not empty %}
+										<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img-top" alt="{{ event.title }}">
+									{% else %}
+										<img src="{{ asset('uploads/image_defaut.jpg') }}" class="card-img-top" alt="{{ event.title }}">
+									{% endif %}
+								</div>
+							</div>
+						</a>
+					</div>
+				{% endfor %}
+				<div class="col-12">
+					<a class="btn btn-primary" href="{{path('event')}}">Voir plus de derniers events</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="block-bg-impair">
+		<div class="container">
+			<div class="row py-5">
+				<div class="col-12 d-flex justify-content-center my-5">
+					<h3 class="h3-index">Evénements les plus populaires</h3>
+				</div>
+				{% for event in popularityEvents %}
+					<div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+						<a href="{{ path('event_show', {event_id: event.id }) }}">
+							<div class="card event-card">
+								<div class="card-body">
+									<h5 class="card-title">{{ event.title }}</h5>
+									<p>
+										<em>Le
+											{{ event.startedAt | date('d/m/Y') }}</em>
+									</p>
+									{# <p class="card-text">{{ event.description | u.truncate(90, "...") | raw}}</p> #}
+									<div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
+								</div>
+								<div>
+									{% if event.pictures is not empty %}
+										<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img-top" alt="{{ event.title }}">
+									{% else %}
+										<img src="{{ asset('uploads/image_defaut.jpg') }}" class="card-img-top" alt="{{ event.title }}">
+									{% endif %}
+								</div>
+							</div>
+						</a>
+					</div>
+				{% endfor %}
+				<div class="col-12">
+					<a class="btn btn-primary" href="{{path('event')}}">Voir plus d'événements populaires'</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="block-bg-pair">
+		<div class="container">
+			<div class="row py-5">
+				<div class="col-12">
+					<h3>Catégorie d'événements</h3>
+				</div>
+				<div class="col-12"></div>
+				{% for category in categories %}
+					<a href="{{path('event_category', {category_id: category.id}) }}" type="button" class="btn btn-primary btn-lg my-2 me-2">{{category.name}}</a>
+				{% endfor %}
+			</div>
+			<div class="col-12"></div>
+		</div>
+	</div>
+</div>{% endblock %}
