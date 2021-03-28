@@ -407,7 +407,6 @@ class EventController extends AbstractController
     
                 //creation de l'event (grace a localisation)
                 $event->setSlug(strtolower($slugger->slug($event->getTitle())))
-                    ->setTag(strtoupper($slugger->slug($event->getTitle())))
                     ->setLocalisation($localisation);
                 $this->em->persist($event);
     
