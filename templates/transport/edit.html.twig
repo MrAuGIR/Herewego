@@ -11,9 +11,9 @@
 {% set errorEnd  = (form_errors(form.localisation_return.cityName))? "<i class='fas fa-exclamation-circle'></i>" : "" %}
 
 {% block body %}
-ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
+{# ATTENTION a la modification d'un transport ! si des personnes ont fait des demandes de tickets, et qu'on veut absoluement changer qq chose du transport alors on doit l'annuler.. à reflechir mais on ne peut dire à l'utilisateur que les données du transport ont changé alors qu'il s'etait engagé dessus...
 <p>modifier un transport</p>
-<p>id du transport : {{ transport.id }}</p>
+<p>id du transport : {{ transport.id }}</p> #}
 <div class="row">
 	<div class="col-12 col-md-4 col-lg-3">
 		<p>proposer un transport sur l'event : {{ event.title }}</p>
