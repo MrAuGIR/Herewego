@@ -36,7 +36,7 @@
 								{% endfor %}
 								<div class="picture">
 									{% if event.pictures is not empty %}
-										<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img-top" alt="{{ event.title }}">
+										<img src="{{ asset('uploads/' ~ images[0].path) }}" class="card-img-top" alt="{{ event.title }}">
 									{% else %}
 										<img src="{{ asset('img/image_event_default.jpg') }}" class="card-img-top" alt="{{ event.title }}">
 									{% endif %}
