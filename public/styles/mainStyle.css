@@ -192,7 +192,16 @@ main{
     max-width: 150px;
     padding: 0.5rem;
 }
-
+/* tag de l'event */
+.tag-block{
+    border: 3px solid #054550;
+    width: 120px;
+}
+.tag-img{
+    width: 90%; 
+    display: block; 
+    margin: 0 auto;
+}
 /* taille des images dans les cards (rustine Provisoire) */
 .card .picture{
     height: 200px;
