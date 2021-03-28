@@ -201,7 +201,6 @@ class UserController extends AbstractController
         //recupère les participations à venir
         $participations = $participationRepository->findByDateAfterNow($user->getId());
 
-        dump($participations);
 
         return $this->render('user/events.html.twig', [
             'user' => $user,
