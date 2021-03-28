@@ -137,10 +137,10 @@
 						</div>
 					</div>
 					<div class="pt-2 border-top d-flex justify-content-center align-items-end">
-						<div class="tag-block">
-							<a class="tag-link" title="{{event.title}}" href="{{'https://herewego.aureliengirard.fr/event/show/'~ event.id}}">
-								<img class="tag-img" src="{{asset('img/hwg_header.png')}}" alt="tag-event">
-								<div class='tag-code'>{{event.getTagCode}}</div>
+						<div style="border: 3px solid #054550; width: 120px;">
+							<a style="text-decoration:none;color:black;" title="{{event.title}}" href="{{'https://herewego.aureliengirard.fr/event/show/'~ event.id}}">
+								<img style="width: 50px; margin: 0 auto;" src="https://herewego.aureliengirard.fr/event/img/hwg_header.png" alt="tag-event">
+								<div style="text-align: center;font-weight: bold;color: #054550">{{event.tag | raw}}</div>
 							</a>
 						</div>
 						<div id="to-copy" class="d-none">{{ event.tag }}</div>
