@@ -20,6 +20,11 @@
 		</div>
 		<div class="card-body mb-3">
 			<h1 class="mb-5 text-center">Mes participations aux Êvenements à venir</h1>
+			{% for p in participations %}
+				<ul>
+					<li>{{p.id}} : {{p.event.title}}</li>
+				</ul>
+			{% endfor %}
 			{% if participations | length == 0 %}
 				<h4>Aucune participations à ce jour</h4>
 			{% else %}		

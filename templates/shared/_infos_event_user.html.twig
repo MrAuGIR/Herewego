@@ -1,7 +1,11 @@
 <div class="border">
 	<div class="row">
 		<div class="col-12 col-lg-6">
-			<img src="{{ asset('uploads/' ~ p.event.pictures[0].path) }}" class="card-img" alt="{{ p.event.title }}">
+			{% if p.event.pictures[0] is defined %}
+				<img src="{{ asset('uploads/' ~ p.event.pictures[0].path) }}" class="card-img" alt="{{ p.event.title }}">
+			{% else %}
+				<img src="{{ asset('img/image_event_default.png') }}" class="card-img" alt="{{ p.event.title }}">
+			{% endif %}
 		</div>
 		<div class="col-12 col-lg-6 p-2">
 			<h5>{{ p.event.title }}</h5>
