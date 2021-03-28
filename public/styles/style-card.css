@@ -11,3 +11,7 @@ a:hover {
 .event-card:hover {
     background: #f5f5f5;
 }
+
+.event-card-desc {
+    height: 65px;
+}

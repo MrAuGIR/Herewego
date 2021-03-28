@@ -1,7 +1,12 @@
 <div class="border">
 	<div class="row">
 		<div class="col-12 col-lg-6">
-			<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img" alt="{{ event.title }}">
+			{# <img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img" alt="{{ event.title }}"> #}
+			{% if event.pictures is not empty %}   
+				<img src="{{ asset('uploads/' ~ event.pictures[0].path)  }}" class="card-img-top" alt="{{ event.title }}">
+			{% else %}
+				<img src="{{ asset('img/image_event_default.jpg') }}" class="card-img-top" alt="{{ event.title }}">
+			{% endif %}
 		</div>
 		<div class="col-12 col-lg-6 p-2">
 			<h5>{{ event.title }}</h5>

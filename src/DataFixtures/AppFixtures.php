@@ -169,12 +169,12 @@ class AppFixtures extends Fixture
                     ->setCategory($category);            
                     $manager->persist($event);
     
-                    $picture = new Picture;
-                    $picture->setTitle("ma picture de ".$event->getTitle())
-                        ->setOrderPriority(1)
-                        ->setPath("image_default.jpg")
-                        ->setEvent($event);
-                    $manager->persist($picture);
+                    // $picture = new Picture;
+                    // $picture->setTitle("ma picture de ".$event->getTitle())
+                    //     ->setOrderPriority(1)
+                    //     ->setPath("image_default.jpg")
+                    //     ->setEvent($event);
+                    // $manager->persist($picture);
 
                     for ($t=0; $t < 5; $t++) { 
                         $user = new User();
