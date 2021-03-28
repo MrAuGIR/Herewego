@@ -137,12 +137,7 @@
 						</div>
 					</div>
 					<div class="pt-2 border-top d-flex justify-content-center align-items-end">
-						<div style="border: 3px solid #054550; width: 120px;">
-							<a style="text-decoration:none;color:black;" title="{{event.title}}" href="{{'https://herewego.aureliengirard.fr/event/show/'~ event.id}}">
-								<img style="width: 90%; margin: 0 auto;" src="https://herewego.aureliengirard.fr/img/hwg_header.png" alt="tag-event">
-								<div style="text-align: center;font-weight: bold;color: #054550">{{event.tag | raw}}</div>
-							</a>
-						</div>
+						{{event.tag | raw}}
 						<div id="to-copy" class="d-none">{{ event.tag }}</div>
 						<button title="copier le tag" id="btn-copy" class="btn btn-primary">
 							<i class="far fa-copy"></i>
