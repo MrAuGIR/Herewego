@@ -137,8 +137,11 @@
 						</div>
 					</div>
 					<div class="pt-2 border-top d-flex justify-content-center align-items-end">
-						<div>
-							{{ event.tag | raw }}
+						<div class="tag-block">
+							<a class="tag-link" title="{{event.title}}" href="{{'https://herewego.aureliengirard.fr/event/show/'~ event.id}}">
+								<img class="tag-img" src="{{asset('img/hwg_header.png')}}" alt="tag-event">
+								<div class='tag-code'>{{event.getTagCode}}</div>
+							</a>
 						</div>
 						<div id="to-copy" class="d-none">{{ event.tag }}</div>
 						<button title="copier le tag" id="btn-copy" class="btn btn-primary">
