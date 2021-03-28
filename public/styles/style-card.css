@@ -16,6 +16,30 @@ a:hover {
     min-height: 68px;
 }
 
+.card-body{
+    min-height: 125px;
+}
+@media screen and (min-width: 576px){
+    .card-body{
+        min-height: 250px;
+    }
+}
+@media screen and (min-width: 768px){
+    .card-body{
+        min-height: 220px;
+    }
+}
+@media screen and (min-width: 992px){
+    .card-body{
+        min-height: 230px;
+    }
+}
+@media screen and (min-width: 1200px){
+    .card-body{
+        min-height: 200px;
+    }
+}
+
 .card .picture{
     height: 150px;
     width: 100%;
