@@ -31,12 +31,7 @@ class TagService
     }
 
     public static function createTag(string $tagCode, string $eventId, string $eventTitle) : string {
-        $html = "<div style='tag-block'>";
-        $html .= "<a style='tag-link' title='$eventTitle' href='https://herewego.aureliengirard.fr/event/show/$eventId'>";
-        $html .= "<img style='tag-img' src='public/img/hwg.png' alt='tag-event'>";
-        $html .= "<div style='tag-code'>$tagCode</div>";
-        $html .= "</a></div>";
- 
-        return $html;
+        
+        return "<div style='text-align: center;font-weight: bold;color: #054550'>$tagCode</div>";
     }
 }
