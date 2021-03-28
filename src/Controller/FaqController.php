@@ -23,7 +23,6 @@ class FaqController extends AbstractController
 
         $questions = $QuestionAdminRepository->findBy([], ['importance' => 'DESC']);
 
-        dump($questions);
 
         return $this->render('faq/index.html.twig', [
             'questions' => $questions
