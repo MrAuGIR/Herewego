@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Évênements
+{% block title %}Évènements
 	{{ user.firstName }}
 	{{ user.lastName }}
 {% endblock %}
@@ -14,7 +14,7 @@
 						<a class="nav-link" aria-current="true" href="{{path('organizer_profil')}}">Profil</a>
 					</li>
 					<li class="nav-item w-25">
-						<a class="nav-link active" href="{{path('organizer_events')}}">Évênements</a>
+						<a class="nav-link active" href="{{path('organizer_events')}}">Évènements</a>
 					</li>
 					<li class="nav-item w-25">
 						<a class="nav-link" href="{{path('organizer_history')}}">Historique</a>
@@ -25,12 +25,12 @@
 				</ul>
 			</div>
 			<div class="card-body">
-				<a class="btn btn-success d-block w-50 m-auto mb-5" href="{{ path('event_create') }}" role="button">Créer un Évênement</a>
+				<a class="btn btn-success d-block w-50 m-auto mb-5" href="{{ path('event_create') }}" role="button">Créer un Évènement</a>
 
-				<h1 class="mb-5 text-center">Liste de mes Évênements à venir</h1>
+				<h1 class="mb-5 text-center">Liste de mes Évènements à venir</h1>
 
 				<div class="mb-3">
-					<a class="btn btn-secondary" href="{{ asset('csv/' ~ fileName) }}" download="{{ fileName }}">Exporter tous les Évênements à venir au format CSV</a>
+					<a class="btn btn-secondary" href="{{ asset('csv/' ~ fileName) }}" download="{{ fileName }}">Exporter tous les Évènements à venir au format CSV</a>
 				</div>
 				<div class="accordion" id="accordionExample">
 					<div class="accordion" id="accordionExample">
@@ -61,8 +61,8 @@
 												<p>Nombre de paticipants inscrits :
 													{{ event.participations | length }}</p>
 												<div class="mb-3">
-													<a class="btn btn-primary mb-2" href="{{ path('event_show', {event_id: event.id}) }}" role="button">Voir l'évênement</a>
-													<a class="btn btn-warning mb-2" href="{{ path('event_edit', {event_id: event.id}) }}" role="button">Modifier l'évênement</a>
+													<a class="btn btn-primary mb-2" href="{{ path('event_show', {event_id: event.id}) }}" role="button">Voir l'évènement</a>
+													<a class="btn btn-warning mb-2" href="{{ path('event_edit', {event_id: event.id}) }}" role="button">Modifier l'évènement</a>
 												</div>
 											</div>
 										</div>

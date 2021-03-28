@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}Évênements du groupe
+{% block title %}Événements du groupe
 	{{ eventGroup.name }}
 {% endblock %}
 
@@ -13,7 +13,7 @@
 			{% if eventGroup.events is empty %}
 				<div class="col-12">
 					<div class="alert alert-info">
-						<p>Pas d'Êvenements pour ce groupe</p>
+						<p>Pas d'événements pour ce groupe</p>
 					</div>
 				</div>
 			{% else %}
