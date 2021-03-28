@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Tools\TagService;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -449,5 +450,18 @@ class Event
         $this->user = $user;
 
         return $this;
+    }
+    
+    /**
+     * getTagCode
+     *Retour le code de l'event pour son tag html
+     * @return string
+     */
+    public function getTagCode():string
+    {
+        $tagCode ="";
+        $tagService = new TagService();
+        $tagCode = $tagService->code() . '-' . $tagService->year($this->getStartedAt()) . $tagService->department($this->getLocalisation()->getCityCp());
+        return $tagCode;
     }
 }
