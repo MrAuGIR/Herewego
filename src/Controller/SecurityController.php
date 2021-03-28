@@ -54,7 +54,8 @@ class SecurityController extends AbstractController
                 ->setIsPremium(False)
                 ->setRoles(['ROLE_USER'])
                 ->setRegisterAt(new \DateTime())
-                ->setLocalisation($localisation);
+                ->setLocalisation($localisation)
+                ->setPathAvatar(0);
 
             $manager->persist($user);
 
@@ -104,7 +105,8 @@ class SecurityController extends AbstractController
                  ->setRegisterAt(new \DateTime())
                  ->setLocalisation($localisation)
                  ->setCompanyName($request->request->get('register')['companyName'])
-                 ->setSiret($request->request->get('register')['siret']);
+                 ->setSiret($request->request->get('register')['siret'])
+                 ->setPathAvatar(0);
 
             if(!empty($request->request->get('regsiter')['webSite'])){
                 $user->setWebSite($request->request->get('regsiter')['webSite']);
