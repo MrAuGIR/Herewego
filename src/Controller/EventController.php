@@ -89,7 +89,7 @@ class EventController extends AbstractController
     /**
      * @Route("/show/{event_id}", name="event_show")
      */
-    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository)
+    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, PictureRepository $pictureRepository)
     {
         $event = $eventRepository->findOneBy([
             'id' => $event_id
@@ -98,6 +98,12 @@ class EventController extends AbstractController
             $this->addFlash('warning', "L'évênement demandé n'existe pas");
             return $this->redirectToRoute('event');
         }
+
+        $pictures = $pictureRepository->findBy(['event' => $event_id], ['orderPriority' => 'DESC']);
+
+        // dd($pictures);
+
+
 
         // recuperer l'id du user connecté // si pas connecté $user = Null
         $user = $this->getUser();
@@ -121,6 +127,7 @@ class EventController extends AbstractController
         return $this->render('event/show.html.twig', [
             'event' => $event,
             'user' => $user,
+            'pictures' => $pictures,
             'isOnEvent' => $isOnEvent,
             'countView' => $event->getCountViews()
         ]);

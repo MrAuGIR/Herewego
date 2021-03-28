@@ -14,17 +14,14 @@
 		<div class="row d-flex justify-content-center my-5">
 			<div class="col-12 col-lg-8 border-end">
 				<div class="row px-2 py-2">
-					{% if event.pictures is not empty %}
-						{# <div class="picture">
-							<img src="{{ asset('uploads/' ~ event.pictures[0].path) }}" class="card-img" alt="{{ event.title }}">
-						</div> #}
+					{% if pictures is not empty %}
 						<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
 							<div class="carousel-inner">
-							{% for picture in event.pictures %}								
-								<div class="carousel-item {{ picture == event.pictures[0] ? 'active' : '' }}">
-									<img src="{{ asset('uploads/' ~ picture.path) }}" class="d-block w-100" alt="{{ event.title }}">
-								</div>
-							{% endfor %}
+								{% for picture in pictures %}
+									<div class="carousel-item {{ picture == pictures[0] ? 'active' : '' }}">
+										<img src="{{ asset('uploads/' ~ picture.path) }}" class="d-block w-100" alt="{{ event.title }}">
+									</div>
+								{% endfor %}
 							</div>
 							<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
 								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -35,6 +32,8 @@
 								<span class="visually-hidden">Next</span>
 							</button>
 						</div>
+					{% else %}
+						<img src="{{ asset('img/image_event_default.jpg') }}" class="card-img-top" alt="{{ event.title }}">
 					{% endif %}
 					<div class="col-12">
 						<p class="badge bg-secondary">{{ event.category.name }}</p>
@@ -83,9 +82,13 @@
 					</div>
 					<div class="col-12">
 						<p class="fs-5 fw-bold">Horaire de Début :
-							{{ event.startedAt | date('H')}} h {{ event.startedAt | date('i')}}</p>
+							{{ event.startedAt | date('H')}}
+							h
+							{{ event.startedAt | date('i')}}</p>
 						<p class="fs-5 fw-bold">Horaire de Fin :
-							{{ event.endedAt | date('H')}} h {{ event.endedAt | date('i')}}</p>
+							{{ event.endedAt | date('H')}}
+							h
+							{{ event.endedAt | date('i')}}</p>
 					</div>
 					{% if event.eventGroup is not same as(null) %}
 						<div class="col-12">
