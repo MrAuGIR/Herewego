@@ -13,5 +13,44 @@ a:hover {
 }
 
 .event-card-desc {
-    height: 65px;
+    min-height: 68px;
+}
+
+.card .picture{
+    height: 150px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+@media screen and (min-width: 576px){
+    .card .picture{
+        height: 150px;
+        width: 100%;
+    }
+}
+@media screen and (min-width: 768px){
+    .card .picture{
+        height: 200px;
+        width: 100%;
+    }
+}
+@media screen and (min-width: 992px){
+    .card .picture{
+        height: 200px;
+        width: 100%;
+    }
+}
+@media screen and (min-width: 1200px){
+    .card .picture{
+        height: 225px;
+        width: 100%;
+    }
+}
+.card .picture img{
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }

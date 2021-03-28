@@ -50,7 +50,6 @@ class SecurityController extends AbstractController
             /* creation de l'organisateur*/
             $hash = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash)
-                ->setIsValidate(False)
                 ->setIsPremium(False)
                 ->setRoles(['ROLE_USER'])
                 ->setRegisterAt(new \DateTime())
@@ -99,7 +98,6 @@ class SecurityController extends AbstractController
             /* creation de l'organisateur*/
             $hash = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash)
-                 ->setIsValidate(False)
                  ->setIsPremium(False)
                  ->setRoles(['ROLE_ORGANIZER'])
                  ->setRegisterAt(new \DateTime())
