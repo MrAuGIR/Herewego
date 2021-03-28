@@ -32,7 +32,9 @@
                         </li>   
                         <li>
                             {# <a class="navbar-brand" href="#" title="Profil"><i class="bi bi-person-circle fs-3"></i></a> #}
-                            <img class="avatar-navbar" src="{{ asset('/img/avatar/' ~ app.user.pathAvatar ~ '.png') }}" alt="avatar {{ app.user.firstName }} {{ app.user.lastName }}">
+                            <a href="{{path('user_profil')}}" title="Profil">          
+                                <img class="avatar-navbar" src="{{ asset('/img/avatar/' ~ app.user.pathAvatar ~ '.png') }}" alt="avatar {{ app.user.firstName }} {{ app.user.lastName }}">
+                            </a>
                         </li>    
                     {% elseif app.user.roles[0] == "ROLE_ORGANIZER" %}
                         <li class="nav-item dropdown">
@@ -58,7 +60,7 @@
                             </ul>
                         </li>   
                         <li>
-                            <a class="navbar-brand" href="{{path('organizer_profil')}}" title="Profil">                            
+                            <a href="{{path('organizer_profil')}}" title="Profil">                            
                                 <img class="avatar-navbar" src="{{ asset('/img/avatar/' ~ app.user.pathAvatar ~ '.png') }}" alt="avatar {{ app.user.firstName }} {{ app.user.lastName }}">
                             </a>
                         </li>    
