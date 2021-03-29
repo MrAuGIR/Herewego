@@ -116,7 +116,7 @@ class EventRepository extends ServiceEntityRepository
                 ->setFirstResult(($page * $limit) - $limit)
                 ->setMaxResults($limit);
         }else{
-            $query->orderBy('e.createdAt')
+            $query->orderBy('e.startedAt', 'ASC')
                 ->setFirstResult(($page * $limit) - $limit)
                 ->setMaxResults($limit);
         }
