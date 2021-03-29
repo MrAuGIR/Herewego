@@ -16,7 +16,10 @@
 <p>id du transport : {{ transport.id }}</p> #}
 <div class="row">
 	<div class="col-12 col-md-4 col-lg-3">
-		<p>proposer un transport sur l'event : {{ event.title }}</p>
+		<div>
+			<p>proposer un transport sur l'event : {{ event.title }}</p>
+			<p>Date de début {{event.startedAt | date('d/m/Y')}} - Date de Fin {{event.endedAt | date('d/m/Y')}}</p>
+		</div>
 		<nav id="myMenu"  class="navbar nav nav-pills flex-column navbar-light bg-light">
 			<a class="nav-link active" data-menuanchor="p1" class="active"href="#p1">Aller - Lieu de départ {{errorStart|raw}}</a>
 			<a class="nav-link" data-menuanchor="p2" href="#p2">Aller - Date de départ</a>
