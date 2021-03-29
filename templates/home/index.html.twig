@@ -24,6 +24,9 @@
 					<div class="col-12 col-sm-6 col-lg-4 mb-3">
 						<a href="{{ path('event_show', {event_id: event.id }) }}">
 							<div class="card event-card">
+								<div class="card-header" {{'style= background-color:'~ event.category.color }}  >
+
+                    			</div> 
 								<div class="card-body">
 									<h5 class="card-title">{{ event.title }}</h5>
 									<p>
@@ -31,7 +34,7 @@
 											{{ event.startedAt | date('d/m/Y') }}</em>
 									</p>
 									<div class="card-text event-card-desc">{{ event.description | u.truncate(90, "...") | raw}}</div>
-									<div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
+									<span style="border: 2px solid {{ event.category.color }};color: {{ event.category.color }}" class="badge">{{ event.category.name }}</span>
 								</div>
 								{% set images = [] %}
 								{% for image in event.pictures|sort((a,b) => a.orderPriority >= b.orderPriority) %}
@@ -64,6 +67,9 @@
 					<div class="col-12 col-sm-6 col-lg-4 mb-3">
 						<a href="{{ path('event_show', {event_id: event.id }) }}">
 							<div class="card event-card">
+								<div class="card-header" {{'style= background-color:'~ event.category.color }}  >
+
+                    			</div>  
 								<div class="card-body">
 									<h5 class="card-title">{{ event.title }}</h5>
 									<p>
@@ -71,7 +77,7 @@
 											{{ event.startedAt | date('d/m/Y') }}</em>
 									</p>
 									<div class="card-text event-card-desc">{{ event.description | u.truncate(90, "...") | raw}}</div>
-									<div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
+									<span style="border: 2px solid {{ event.category.color }};color: {{ event.category.color }}" class="badge">{{ event.category.name }}</span>
 								</div>
 								{% set images = [] %}
 								{% for image in event.pictures|sort((a,b) => a.orderPriority >= b.orderPriority) %}
