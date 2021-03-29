@@ -188,7 +188,6 @@ class EventCrudController extends AbstractController
 
                 //creation de l'event (grace a localisation)
                 $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
-                    ->setTag(strtoupper($this->slugger->slug($event->getTitle())))
                     ->setLocalisation($localisation);
                 $this->em->persist($event);
 
@@ -257,7 +256,7 @@ class EventCrudController extends AbstractController
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
-        $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
+      
 
         $transports = $event->getTransports();
         $transportManagerMails = [];
