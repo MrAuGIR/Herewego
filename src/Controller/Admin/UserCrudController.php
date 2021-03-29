@@ -54,10 +54,8 @@ class UserCrudController extends AbstractController
 
         //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
         if($request->get('ajax')) {
-
-            return new JsonResponse([
-                'content' => $this->renderView('admin/user/_content.html.twig', ['users' => $users])
-            ]);
+    
+            return new JsonResponse(['success' => 1 ]);
         }
 
 
