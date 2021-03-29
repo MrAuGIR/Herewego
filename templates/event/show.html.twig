@@ -6,7 +6,7 @@
 
 {% block body %}
 	<div class="container">
-		<h1 class="text-center mt-4">{{ event.title }}
+		<h1 style="border-bottom: 1px solid {{ event.category.color }}" class="text-center mt-4 pb-2">{{ event.title }}
 		</h1>
 		<p class="text-center mt-4">vu
 			{{ countView }}
@@ -36,7 +36,7 @@
 						<img src="{{ asset('img/image_event_default.jpg') }}" class="card-img-top" alt="{{ event.title }}">
 					{% endif %}
 					<div class="col-12">
-						<p class="badge bg-secondary">{{ event.category.name }}</p>
+						<span style="border: 2px solid {{ event.category.color }};color: {{ event.category.color }}" class="badge">{{ event.category.name }}</span>
 					</div>
 					<div class="col-12 d-flex justify-content-center">
 						<h6>Description</h6>
