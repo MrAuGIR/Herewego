@@ -6,9 +6,6 @@
     <div class="col-12 d-flex justify-content-center">
         <a class="btn btn-primary" href="{{ path('organizercrud_create')}}">Ajouter un organisateur</a>
     </div>
-    <div class="col-12">
-        <a class="btn btn-primary" href="{{path('verifySiret',{id:951})}}">Verifier Siret</a>
-    </div>
     {% include "admin/organizer/_content.html.twig" %}
 {% endblock %}
 {% block javascripts %}
