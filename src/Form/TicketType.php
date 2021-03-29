@@ -18,12 +18,14 @@ class TicketType extends AbstractType
         $builder
             // ->add('askedAt')
             ->add('countPlaces',NumberType::class,[
+                'label' => 'Nombre de places',
                 'attr'=>['class'=>'form-control'],
                 'constraints' => [
                     new NotNull(['message' => 'veuillez saisir une valeur'])
                 ]
             ])
             ->add('commentary',CKEditorType::class,[
+                'label' => 'Commentaire',
                 'constraints' => [
                     new NotBlank(['message' => 'veuillez saisir un court message d\'indication'])
                 ]
