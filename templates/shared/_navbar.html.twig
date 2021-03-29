@@ -66,12 +66,12 @@
                         </li>    
                     {% elseif app.user.roles[0] == "ROLE_ADMIN" %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-warning" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="text-warning">Admin</span>
+                            <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="text-primary">Administrateur</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('admin')}}">Dashboard</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('admin')}}">Tableau de bord</a>
                                 </li>  
                                 <li>
                                     <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">Déconnexion</a>
