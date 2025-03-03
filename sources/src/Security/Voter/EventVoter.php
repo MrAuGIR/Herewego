@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventVoter extends Voter
 {
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
@@ -16,7 +16,7 @@ class EventVoter extends Voter
             && $subject instanceof \App\Entity\Event;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
@@ -25,13 +25,10 @@ class EventVoter extends Voter
         }
 
         // ... (check conditions and return true to grant permission) ...
-        switch ($attribute) {
-            case 'CAN_EDIT':
-                return $subject->getUser() === $user;
-            case 'CAN_DELETE':
-                return $subject->getUser() === $user;
-        }
+        return match ($attribute) {
+            'CAN_DELETE', 'CAN_EDIT' => $subject->getUser() === $user,
+            default => false,
+        };
 
-        return false;
     }
 }
