@@ -13,9 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route('/', name: 'home' , methods: [Request::METHOD_POST])]
     public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
         //derniers evenements créée
@@ -34,7 +32,6 @@ class HomeController extends AbstractController
             ]);
         }
 
-
         return $this->render('home/index.html.twig', [
             'lastEvents'=> $lastEvents,
             'popularityEvents' => $MostPopularityEvents,
@@ -43,9 +40,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/cgu", name="cgu")
-     */
+    #[Route('/cgu', name: 'cgu', methods: [Request::METHOD_GET])]
     public function cgu(): Response
     {
         return $this->render('home/cgu.html.twig', [
@@ -53,19 +48,15 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/legal-Notice", name="legalNotice")
-     */
-    public function legaleNotice(): Response
+    #[Route('/legal-Notice', name: 'legalNotice', methods: [Request::METHOD_GET])]
+    public function legalNotice(): Response
     {
         return $this->render('home/legalNotice.html.twig', [
             'controller_name' => 'HomeController',
         ]);
     }
 
-    /**
-     * @Route("/plan", name="plan")
-     */
+    #[Route('/plan', name: 'plan', methods: [Request::METHOD_GET])]
     public function plan(): Response
     {
         return $this->render('home/plan.html.twig', [
@@ -73,10 +64,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/privacy-Policy", name="privacyPolicy")
-     */
+    #[Route('/privacy-Policy', name: 'privacyPolicy', methods: [Request::METHOD_GET])]
     public function privacyPolicy(): Response
     {
 
@@ -85,10 +73,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/who-are-we", name="whoAreWe")
-     */
+    #[Route('/who-are-we', name: 'whoAreWe', methods: [Request::METHOD_GET])]
     public function who(): Response
     {
         return $this->render('home/whoAreWe.html.twig', [
