@@ -4,22 +4,16 @@ namespace App\DataFixtures;
 
 
 use Faker\Factory;
-use App\Entity\City;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Ticket;
-use App\Entity\Picture;
 use App\Entity\Category;
 use App\Entity\Transport;
-use App\Entity\EventGroup;
 use App\Entity\Localisation;
 use App\Entity\Participation;
 use App\Entity\QuestionUser;
 use App\Entity\QuestionAdmin;
 use App\Entity\SocialNetwork;
-use App\Repository\CityRepository;
-use Bezhanov\Faker\Provider\Commerce;
-use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -27,41 +21,26 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
-    
-    private $slugger;
-    private $passwordEncoder;
 
-    public function __construct(SluggerInterface $slugger, UserPasswordEncoderInterface $passwordEncoder, CityRepository $cityRepository)
+    public function __construct(
+        private SluggerInterface $slugger,
+        private UserPasswordEncoderInterface $passwordEncoder,
+    )
     {
-        $this->slugger = $slugger;
-        $this->passwordEncoder = $passwordEncoder;
+
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
         $faker->addProvider(new \Bezhanov\Faker\Provider\Commerce($faker));
         $faker->addProvider(new \Bluemmb\Faker\PicsumPhotosProvider($faker));
 
-        function makeLocalisation($faker, $manager) {
-            // $city = new City();
-            // $city->setCityName($faker->city())
-            // ->setCityCp($faker->numberBetween(10000, 90000));
-            // $manager->persist($city);
-            
-            $localisation = new Localisation();
-            $localisation->setAdress($faker->address())
-                        ->setCityName($faker->city())
-                        ->setCityCp($faker->numberBetween(1000, 90000))
-                        ->setCoordonneesX($faker->numberBetween(0, 100))
-                        ->setCoordonneesY($faker->numberBetween(0, 100));
-            $manager->persist($localisation);
-            return $localisation;
-        }
+
     
 
         $admin = new User();
-        $localisation = makeLocalisation($faker, $manager);
+        $localisation = $this->makeLocalisation($faker, $manager);
 
         $admin->setLastname('Mine')
             ->setFirstname('Johnad')
@@ -81,7 +60,7 @@ class AppFixtures extends Fixture
         for($i=0; $i<10; $i++){
 
             $user = new User();
-            $localisation = makeLocalisation($faker, $manager);
+            $localisation = $this->makeLocalisation($faker, $manager);
             $user->setLastname($faker->lastName())
             ->setFirstname($faker->firstName())
             ->setEmail($faker->email())
@@ -127,7 +106,7 @@ class AppFixtures extends Fixture
             for ($e=1; $e < 8; $e++) { 
                 
                 $organizer = new User();
-                $localisation = makeLocalisation($faker, $manager);
+                $localisation = $this->makeLocalisation($faker, $manager);
                 $organizer->setLastname($faker->lastName())
                 ->setFirstname($faker->firstName())
                 ->setEmail($faker->email())
@@ -145,7 +124,7 @@ class AppFixtures extends Fixture
                 ->setWebSite($faker->url());
                 $manager->persist($organizer);
                 
-                $localisation = makeLocalisation($faker, $manager);
+                $localisation = $this->makeLocalisation($faker, $manager);
 
                 for ($i=0; $i < mt_rand(1, 3); $i++) { 
                     
@@ -178,7 +157,7 @@ class AppFixtures extends Fixture
 
                     for ($t=0; $t < 5; $t++) { 
                         $user = new User();
-                        $localisation = makeLocalisation($faker, $manager);
+                        $localisation = $this->makeLocalisation($faker, $manager);
                         $user->setLastname($faker->lastName())
                         ->setFirstname($faker->firstName())
                         ->setEmail($faker->email())
@@ -199,8 +178,8 @@ class AppFixtures extends Fixture
                             ->setUser($user);
                         $manager->persist($question);
 
-                        $localisationS = makeLocalisation($faker, $manager);
-                        $localisationR = makeLocalisation($faker, $manager);
+                        $localisationS = $this->makeLocalisation($faker, $manager);
+                        $localisationR = $this->makeLocalisation($faker, $manager);
 
                         $transport = new Transport;
                         $transport->setGoStartedAt($faker->dateTime())
@@ -242,5 +221,17 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    private function makeLocalisation($faker, $manager): Localisation
+    {
+        $localisation = new Localisation();
+        $localisation->setAdress($faker->address())
+            ->setCityName($faker->city())
+            ->setCityCp($faker->numberBetween(1000, 90000))
+            ->setCoordonneesX($faker->numberBetween(0, 100))
+            ->setCoordonneesY($faker->numberBetween(0, 100));
+        $manager->persist($localisation);
+        return $localisation;
     }
 }

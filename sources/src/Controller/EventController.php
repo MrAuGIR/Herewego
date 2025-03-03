@@ -9,7 +9,6 @@ use App\Form\EventType;
 use App\Tools\TagService;
 use App\Entity\Localisation;
 use App\Entity\Participation;
-use Symfony\Component\Mime\Email;
 use App\Repository\EventRepository;
 use Symfony\Component\Mime\Address;
 use App\Repository\CategoryRepository;
@@ -26,28 +25,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-/**
- * @Route("/event")
- */
+#[Route("/event")]
 class EventController extends AbstractController
 {
-    protected $em;
-    protected $slugger;
-    protected $tag;
-    protected $mailer;
-
-    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger, TagService $tag, MailerInterface $mailer)
+    public function __construct(
+        protected EntityManagerInterface $em,
+        protected SluggerInterface $slugger,
+        protected TagService $tag,
+        protected MailerInterface $mailer
+    )
     {
-        $this->em = $em;
-        $this->slugger = $slugger;
-        $this->tag = $tag;
-        $this->mailer = $mailer;
     }
 
-    /**
-     * @Route("/", name="event")
-     */
-    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request)
+    #[Route("/", name: 'event' , methods: [Request::METHOD_POST, Request::METHOD_GET])]
+    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): JsonResponse | Response
     {
         /* nombre d'évenements par page */
         $limit = 12;
