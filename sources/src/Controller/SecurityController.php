@@ -10,9 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends AbstractController
 {
@@ -23,7 +23,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route("/register/user", name: "app_register_user")]
-    public function registerUser(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager): Response
+    public function registerUser(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): Response
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_USER']]);
@@ -44,7 +44,7 @@ class SecurityController extends AbstractController
             $manager->persist($localisation);
 
             /* creation de l'organisateur*/
-            $hash = $encoder->encodePassword($user, $user->getPassword());
+            $hash = $encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($hash)
                 ->setIsPremium(False)
                 ->setRoles(['ROLE_USER'])
@@ -69,7 +69,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/register/organizer", name="app_register_organizer")
      */
-    public function registerOrganizer(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager): Response
+    public function registerOrganizer(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): Response
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role'=>['ROLE_ORGANIZER']]);
@@ -92,7 +92,7 @@ class SecurityController extends AbstractController
             $manager->persist($localisation);
 
             /* creation de l'organisateur*/
-            $hash = $encoder->encodePassword($user, $user->getPassword());
+            $hash = $encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($hash)
                  ->setIsPremium(False)
                  ->setRoles(['ROLE_ORGANIZER'])

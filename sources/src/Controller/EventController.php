@@ -77,10 +77,8 @@ class EventController extends AbstractController
         return $this->render('event/index.html.twig', compact('events','categories','total','limit','page'));
     }
 
-    /**
-     * @Route("/show/{event_id}", name="event_show")
-     */
-    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, PictureRepository $pictureRepository)
+    #[Route("/show/{event_id}", name: "event_show", methods: [Request::METHOD_GET])]
+    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, PictureRepository $pictureRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         $event = $eventRepository->findOneBy([
             'id' => $event_id
@@ -91,10 +89,6 @@ class EventController extends AbstractController
         }
 
         $pictures = $pictureRepository->findBy(['event' => $event_id], ['orderPriority' => 'DESC']);
-
-        // dd($pictures);
-
-
 
         // recuperer l'id du user connecté // si pas connecté $user = Null
         $user = $this->getUser();

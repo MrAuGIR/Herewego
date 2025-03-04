@@ -17,29 +17,21 @@ class Event
     #[ORM\Column]
     private ?int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message = "Le titre est obligatoire.")
-     * @Assert\Length(min=5, max=255, minMessage="La question doit faire au moins 5 caractères", maxMessage="Le titre doit faire moins de 255 caractères")
-     */
-    private $title;
+    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "La question doit faire au moins 5 caractères", maxMessage: "Le titre doit faire moins de 255 caractères")]
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $title;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank(message = "La description est obligatoire.")
-     */
-    private $description;
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[ORM\Column(type: 'text')]
+    private ?string $description;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message = "La date de début d'évênement est obligatoire.")
-     */
-    private $startedAt;
+    #[Assert\NotBlank(message: "La date de début d'événement est obligatoire.")]
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $startedAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message = "La date de fin d'évênement est obligatoire.")
-     */
+    #[Assert\NotBlank(message: "La date de fin d'événement est obligatoire.")]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $endedAt;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -60,62 +52,39 @@ class Event
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $slug;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $slug;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EventGroup::class, inversedBy="Events")
-     */
-    private $eventGroup;
+    #[ORM\ManyToOne(targetEntity: EventGroup::class, inversedBy: 'Events')]
+    private ?EventGroup $eventGroup;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="events")
-     * @Assert\NotBlank(message = "La catégorie est obligatoire.")
-     */
-    private $category;
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'events')]
+    #[Assert\NotBlank(message: "La catégorie est obligatoire.")]
+    private ?Category $category;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="event", cascade={"persist","remove"})
-     */
-    private $pictures;
+    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'event', cascade: ['persist','remove'])]
+    private Collection $pictures;
 
+    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'event', cascade: ['remove'])]
+    private Collection $transports;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="event", cascade={"remove"})
-     */
-    private $transports;
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
+    private Collection $participations;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="event", cascade={"remove"})
-     */
-    private $participations;
+    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'events', cascade: ['remove'])]
+    private ?Localisation $localisation;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="events", cascade={"remove"})
-     */
-    private $localisation;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $facebookLink;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $facebookLink;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $instagramLink;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $instagramLink;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $twitterLink;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $twitterLink;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="events")
-     */
-    private $user;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'events')]
+    private ?User $user;
 
     public function __construct()
     {
@@ -286,7 +255,7 @@ class Event
     }
 
     /**
-     * @return Collection|Picture[]
+     * @return Collection
      */
     public function getPictures(): Collection
     {
@@ -317,7 +286,7 @@ class Event
 
 
     /**
-     * @return Collection|Transport[]
+     * @return Collection
      */
     public function getTransports(): Collection
     {
@@ -347,7 +316,7 @@ class Event
     }
 
     /**
-     * @return Collection|Participation[]
+     * @return Collection
      */
     public function getParticipations(): Collection
     {
