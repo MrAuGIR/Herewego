@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipationRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * @Route("/user")
@@ -27,21 +29,18 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class UserController extends AbstractController
 {
-    protected $encoder;
-    protected $em;
-    protected $tokenStorage;
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface $em,
+        protected TokenStorageInterface $tokenStorage
+    )
     {
-        $this->em = $em;
-        $this->encoder = $encoder;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
      * @Route("/profil", name="user_profil")
      */
-    public function profil()
+    public function profil(): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
          * @var User
@@ -104,10 +103,10 @@ class UserController extends AbstractController
     /**
      * @Route("/profil/password", name="user_edit_password")
      */
-    public function password(Request $request)
+    public function password(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
-         * @var User
+         * @var PasswordAuthenticatedUserInterface $user
          */
         $user = $this->getUser();
         if (!$user) {
@@ -127,7 +126,7 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('user_edit_password');
             }
 
-            $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
+            $user->setPassword($this->encoder->hashPassword($user, $data['newPassword']));
 
             $this->em->flush();
 

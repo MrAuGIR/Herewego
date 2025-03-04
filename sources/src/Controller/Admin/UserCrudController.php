@@ -10,11 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
@@ -23,14 +23,11 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserCrudController extends AbstractController
 {
 
-    protected $encoder;
-    protected $em;
-    
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface $em
+    )
     {
-        $this->encoder = $encoder;
-        $this->em = $em;
     }
 
 
@@ -99,7 +96,7 @@ class UserCrudController extends AbstractController
             $this->em->persist($localisation);
 
             /* creation de l'organisateur*/
-            $hash = $this->encoder->encodePassword($user, $user->getPassword());
+            $hash = $this->encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($hash)
                 ->setIsValidate(true) // Comme c'est l'admin qui crée le user, il est validé dés le départ
                 ->setIsPremium(False)
@@ -143,7 +140,7 @@ class UserCrudController extends AbstractController
             $this->em->persist($localisation);
 
             /* creation de l'organisateur*/
-            $hash = $this->encoder->encodePassword($user, $user->getPassword());
+            $hash = $this->encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($hash)
                 ->setIsPremium(False)
                 ->setRoles(['ROLE_USER'])

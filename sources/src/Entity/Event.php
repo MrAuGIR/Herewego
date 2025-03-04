@@ -9,9 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=EventRepository::class)
- */
+#[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
 {
     /**
