@@ -12,12 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -42,37 +40,25 @@ class Event
      * @ORM\Column(type="datetime")
      * @Assert\NotBlank(message = "La date de fin d'évênement est obligatoire.")
      */
-    private $endedAt;
+    private ?\DateTimeInterface $endedAt;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $email;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $email;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $website;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $website;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $phone;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $phone;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $countViews;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $countViews;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $tag;
+    #[ORM\Column(type: 'text')]
+    private ?string $tag;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $createdAt;
 
     /**
      * @ORM\Column(type="string", length=255)

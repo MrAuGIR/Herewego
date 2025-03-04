@@ -12,6 +12,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @method Event|null findOneBy(array $criteria, array $orderBy = null)
  * @method Event[]    findAll()
  * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Event>
  */
 class EventRepository extends ServiceEntityRepository
 {
@@ -40,7 +41,8 @@ class EventRepository extends ServiceEntityRepository
      * Retourne les derniers évènements créés (général ou par catégorie)
      * @return Event[]
      */
-    public function findLast($category = null){
+    public function findLast($category = null): array
+    {
 
         if($category === null){
             return $this->createQueryBuilder('e')
@@ -63,7 +65,8 @@ class EventRepository extends ServiceEntityRepository
      * Retourne les events les plus populaires
      * @return Event[]
      */
-    public function findByPopularity(){
+    public function findByPopularity(): array
+    {
 
         return $this->createQueryBuilder('e')
             ->orderBy('e.countViews', 'ASC')
@@ -80,7 +83,8 @@ class EventRepository extends ServiceEntityRepository
      * @param $filters filtres de recherche
      * @return Event[]
      */
-    public function findByFilters($page, $limit, $order,$filtersCat = null, $localisation = null, $keyWord = null){
+    public function findByFilters($page, $limit, $order,$filtersCat = null, $localisation = null, $keyWord = null): array
+    {
 
         //date actuelle
         $date = new \DateTime();
