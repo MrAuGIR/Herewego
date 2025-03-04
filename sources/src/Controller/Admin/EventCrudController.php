@@ -27,15 +27,9 @@ use Symfony\Component\Mime\Address;
 */
 class EventCrudController extends AbstractController
 {
-    protected $em;
-    protected $slugger;
-    protected $tag;
 
-    public function __construct(EntityManagerInterface $em, SluggerInterface $slugger, TagService $tag)
+    public function __construct(protected EntityManagerInterface $em,protected SluggerInterface $slugger,protected TagService $tag)
     {
-        $this->em = $em;
-        $this->slugger = $slugger;
-        $this->tag = $tag;
     }
 
 
