@@ -11,128 +11,78 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(
- * fields= {"email"},
- * message="l'email est déjà utilisée"
- * )
- */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ["email"], message: "l'email est déjà utilisée")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     * @Assert\Email
-     */
-    private $email;
+    #[ORM\Column(type: "string", length: 180, unique: true)]
+    #[Assert\Email]
+    private string $email;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
+    #[ORM\Column(type: "json")]
+    private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    private $password;
+    #[ORM\Column(type: "string")]
+    private string $password;
 
-    /**
-     * @Assert\EqualTo(propertyPath="password", message="mot de passe non identique")
-     */
-    public $confirmPassword;
+    #[Assert\EqualTo(propertyPath: "password", message: "mot de passe non identique")]
+    public ?string $confirmPassword = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $lastname;
+    #[ORM\Column(type: "string", length: 50)]
+    private string $lastname;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $firstname;
+    #[ORM\Column(type: "string", length: 50)]
+    private string $firstname;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $companyName;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $companyName = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $siret;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $siret = null;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
-    private $phone;
+    #[ORM\Column(type: "string", length: 50, nullable: true)]
+    private ?string $phone = null;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":null}, nullable=true)
-     */
-    private $isValidate;
+    #[ORM\Column(type: "boolean", nullable: true, options: ["default" => null])]
+    private ?bool $isValidate = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $registerAt;
+    #[ORM\Column(type: "datetime")]
+    private \DateTimeInterface $registerAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $validatedAt;
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $validatedAt = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $pathAvatar;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $pathAvatar = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $webSite;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $webSite = null;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":0})
-     */
-    private $isPremium;
+    #[ORM\Column(type: "boolean", options: ["default" => 0])]
+    private bool $isPremium = false;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="users", cascade={"remove"})
-     */
-    private $localisation;
+    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: "users", cascade: ["remove"])]
+    private ?Localisation $localisation = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="user", cascade={"remove"} )
-     */
-    private $tickets;
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "user", cascade: ["remove"])]
+    private Collection $tickets;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="user", cascade={"remove"})
-     */
-    private $participations;
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: "user", cascade: ["remove"])]
+    private Collection $participations;
 
-    /**
-     * @ORM\OneToMany(targetEntity=QuestionUser::class, mappedBy="user", cascade={"remove"})
-     */
-    private $questionUsers;
+    #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: "user", cascade: ["remove"])]
+    private Collection $questionUsers;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="user", cascade={"remove"})
-     */
-    private $transports;
+    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: "user", cascade: ["remove"])]
+    private Collection $transports;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="user", cascade={"remove"})
-     */
-    private $events;
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: "user", cascade: ["remove"])]
+    private Collection $events;
 
     public function __construct()
     {

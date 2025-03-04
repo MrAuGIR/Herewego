@@ -12,6 +12,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @method Participation|null findOneBy(array $criteria, array $orderBy = null)
  * @method Participation[]    findAll()
  * @method Participation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<Participation>
  */
 class ParticipationRepository extends ServiceEntityRepository
 {
