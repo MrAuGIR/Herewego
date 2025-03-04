@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use DateTime;
 use App\Entity\User;
 use App\Files\CsvService;
 use App\Form\EditPassType;
@@ -10,32 +9,26 @@ use App\Form\EditProfilType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/organizer")
- * @IsGranted("ROLE_ORGANIZER", message="Vous devez être organisateur pour accéder à cette partie du site.")
- */
+
+#[Route('/organizer')]
+#[IsGranted("ROLE_ADMIN", message: "Vous devez être organisateur pour accéder à cette partie du site.")]
 class OrganizerController extends AbstractController
 {
-
-    protected $encoder;
-    protected $em;
-    protected $csvService;
-    protected $tokenStorage;
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, CsvService $csvService, TokenStorageInterface $tokenStorage)
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface $em,
+        protected CsvService $csvService,
+        protected TokenStorageInterface $tokenStorage
+    )
     {
-        $this->encoder = $encoder;
-        $this->em = $em;
-        $this->csvService = $csvService;
-        $this->tokenStorage = $tokenStorage;
     }
     
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use GuzzleHttp\Client;
 use App\Entity\Localisation;
 use App\Entity\User;
 use App\Form\RegisterType;
@@ -10,33 +9,30 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Flex\Path;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
- * @Route("/admin/organizer")
- */
+
+#[Route("/admin/organizer")]
+#[IsGranted("ROLE_ADMIN", message: "404 page not found", statusCode: 404)]
 class OrganizerCrudController extends AbstractController
 {
-    protected $encoder;
-    protected $em;
-
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface $em
+    )
     {
-        $this->encoder = $encoder;
-        $this->em = $em;
     }
 
     /**
      * @Route("/", name="organizercrud")
      */
+    #[Route('/', name: "organizercrud", methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function index(UserRepository $userRepository, Request $request): Response
     {
         /*On recupère l'utilisateur*/
@@ -45,7 +41,7 @@ class OrganizerCrudController extends AbstractController
         /* si on a recupérer un utilisateur, c'est qu'un action sur les checkbox a été effectué*/
         if ($user) {
 
-            $user->setIsValidate(($user->getIsValidate()) ? false : true);
+            $user->setIsValidate(!$user->getIsValidate());
             $this->em->flush();
         }
 
@@ -65,10 +61,8 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/show/{id}", name="organizercrud_show")
-     */
-    public function show(User $user)
+    #[Route('/show/{id}', name: 'organizercrud_show', methods: [Request::METHOD_GET])]
+    public function show(User $user): Response
     {
 
         return $this->render('admin/organizer/show.html.twig', [
@@ -76,9 +70,7 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/create", name="organizercrud_create")
-     */
+    #[Route('/create', name: "organizercrud_create", methods: [Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $user = new User();
@@ -99,7 +91,7 @@ class OrganizerCrudController extends AbstractController
             $this->em->persist($localisation);
 
             /* creation de l'organisateur*/
-            $hash = $this->encoder->encodePassword($user, $user->getPassword());
+            $hash = $this->encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($hash)
                 ->setIsValidate(true) // Comme c'est l'admin qui crée le user, il est validé dés le départ
                 ->setIsPremium(False)
@@ -126,10 +118,7 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/edit/{id}", name="organizercrud_edit")
-     */
+    #[Route("/edit/{id}", name: "organizercrud_edit", methods: [Request::METHOD_PUT])]
     public function edit(User $user, Request $request): Response
     {
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_ORGANIZER']]);
@@ -148,7 +137,7 @@ class OrganizerCrudController extends AbstractController
             $this->em->persist($localisation);
 
             /* creation de l'organisateur*/
-            $hash = $this->encoder->encodePassword($user, $user->getPassword());
+            $hash = $this->encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($hash)
                 ->setIsPremium(False)
                 ->setRoles(['ROLE_ORGANIZER'])
@@ -174,16 +163,9 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/delete/{id}", name="organizercrud_delete")
-     */
-    public function delete(User $user, Request $request)
+    #[Route("/delete/{id}", name: 'organizercrud_delete', methods: [Request::METHOD_DELETE])]
+    public function delete(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
-
-        //gerer les exceptions si organisateur inexistant
-        //gerer la suppression en cascade event de l'organisateur
-
-
         $this->em->remove($user);
         $this->em->flush();
 
@@ -191,15 +173,15 @@ class OrganizerCrudController extends AbstractController
         return $this->redirectToRoute('organizercrud');
     }
 
-
-    /**
-     * @Route("/verifySiret/{id}", name="verifySiret")
-     */
-    public function verifySiret(User $user)
+    #[Route("/verifySiret/{id}", name: 'verifySiret', methods: [Request::METHOD_GET])]
+    public function verifySiret(User $user): \Symfony\Component\HttpFoundation\RedirectResponse
     {
+        /**
+         * @todo extraire dans un service
+         */
         if(!empty($user->getSiret())){
             // siret isfac 49098556100011
-            $client = new Client(['base_uri' => 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/']);
+            $client = new CurlHttpClient(['base_uri' => 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/']);
             try{
                 $response = $client->request('GET', $user->getSiret(), [
                     'curl' => [
@@ -231,11 +213,6 @@ class OrganizerCrudController extends AbstractController
             } catch (Exception $e) {
                 $error = $e->getMessage();
             }
-            
-            
-            
-            
-            
 
             $this->addFlash('danger', 'Siret invalide');
             return $this->redirectToRoute('organizercrud_edit', ['id' => $user->getId()]);
@@ -245,7 +222,4 @@ class OrganizerCrudController extends AbstractController
         $this->addFlash('danger','Siret null ou vide');
         return $this->redirectToRoute('organizercrud_edit');
     }
-
-    
-
 }

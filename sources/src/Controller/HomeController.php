@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,17 +14,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'home' , methods: [Request::METHOD_POST])]
-    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
+    #[Route('/', name: 'home' , methods: [Request::METHOD_GET])]
+    public function index(EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, Request $request): Response
     {
         //derniers evenements créée
-        $lastEvents = $eventRepository->findLast();
+        $lastEvents = $entityManager->getRepository(EventRepository::class)->findLast();
 
         //les events les plus populaires
-        $MostPopularityEvents = $eventRepository->findByPopularity();
+        $MostPopularityEvents =  $entityManager->getRepository(EventRepository::class)->findByPopularity();
 
         //les catégories d'evenements
-        $Categories = $categoryRepository->findAll();
+        $categories = $entityManager->getRepository(CategoryRepository::class)->findAll();
 
         //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
         if ($request->get('ajax')) {
@@ -35,7 +36,7 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'lastEvents'=> $lastEvents,
             'popularityEvents' => $MostPopularityEvents,
-            'categories' => $Categories,
+            'categories' => $categories,
             'controller_name' => 'HomeController',
         ]);
     }

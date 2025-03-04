@@ -3,70 +3,48 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
-use GuzzleHttp\Client;
-use App\Entity\Localisation;
-use App\Entity\User;
 use App\Form\CategoryType;
-use App\Form\RegisterType;
 use App\Repository\CategoryRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Flex\Path;
 
-/**
- * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
- * @Route("/admin/category")
- */
+#[isGranted("ROLE_ADMIN", message: "404 page not found", statusCode: 404)]
+#[Route("/admin/category")]
 class CategoryCrudController extends AbstractController
 {
-    protected $encoder;
-    protected $em;
-    protected $slugger;
-
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, SluggerInterface $slugger)
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface $em,
+        protected SluggerInterface $slugger
+    )
     {
-        $this->encoder = $encoder;
-        $this->em = $em;
-        $this->slugger = $slugger;
     }
 
-    /**
-     * @Route("/", name="categorycrud")
-     */
+    #[Route("/", name: 'categorycrud', methods: [Request::METHOD_GET])]
     public function index(CategoryRepository $categoryRepository): Response
     {
-
         $categories = $categoryRepository->findAll();
-
 
         return $this->render('admin/category/index.html.twig', [
             'categories' => $categories,
         ]);
     }
 
-    /**
-     * @Route("/show/{id}", name="categorycrud_show")
-     */
-    public function show(Category $category)
+    #[Route("/show/{id}", name:"categorycrud_show", methods: [Request::METHOD_GET])]
+    public function show(Category $category): Response
     {
-
         return $this->render('admin/category/show.html.twig', [
             'category' => $category,
         ]);
     }
 
-    /**
-     * @Route("/create", name="categorycrud_create")
-     */
+    #[Route("/create", name:"categorycrud_create", methods: [Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $category = new Category();
@@ -108,10 +86,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/edit/{id}", name="categorycrud_edit")
-     */
+    #[Route("/edit/{id}", name: "categorycrud_edit", methods: [Request::METHOD_PUT])]
     public function edit(Category $category, Request $request): Response
     {
         
@@ -155,16 +130,9 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/delete/{id}", name="categorycrud_delete")
-     */
+    #[Route("/delete", name: "categorycrud_delete", methods: [Request::METHOD_DELETE])]
     public function delete(Category $category, Request $request)
     {
-
-        //gerer les exceptions si organisateur inexistant
-        //gerer la suppression en cascade event de l'organisateur
-
-
         $this->em->remove($category);
         $this->em->flush();
 
