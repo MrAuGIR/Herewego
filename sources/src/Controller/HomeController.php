@@ -15,16 +15,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'home' , methods: [Request::METHOD_GET])]
-    public function index(EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, Request $request): Response
+    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
         //derniers evenements créée
-        $lastEvents = $entityManager->getRepository(EventRepository::class)->findLast();
+        $lastEvents = $eventRepository->findLast();
 
         //les events les plus populaires
-        $MostPopularityEvents =  $entityManager->getRepository(EventRepository::class)->findByPopularity();
+        $MostPopularityEvents =  $eventRepository->findByPopularity();
 
         //les catégories d'evenements
-        $categories = $entityManager->getRepository(CategoryRepository::class)->findAll();
+        $categories = $categoryRepository->findAll();
 
         //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
         if ($request->get('ajax')) {

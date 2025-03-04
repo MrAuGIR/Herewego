@@ -16,17 +16,13 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/register", name="app_register")
-     */
-    public function register()
+    #[Route("/register", name: "app_register")]
+    public function register(): Response
     {
         return $this->render('security/register.html.twig');
     }
 
-    /**
-     * @Route("/register/user", name="app_register_user")
-     */
+    #[Route("/register/user", name: "app_register_user")]
     public function registerUser(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager): Response
     {
         $user = new User();
@@ -123,10 +119,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/login", name="app_login")
-     */
+    #[Route("/login", name: "app_login")]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // if ($this->getUser()) {
