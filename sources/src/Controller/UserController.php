@@ -15,18 +15,19 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * @Route("/user")
  * @IsGranted("ROLE_USER", message="Vous devez être utilisateur classique pour accéder à cette partie du site.")
  */
+#[Route('/user')]
+#[IsGranted("ROLE_USER", message: "Vous devez être utilisateur classique pour accéder a cette partie du site")]
 class UserController extends AbstractController
 {
     public function __construct(
@@ -37,14 +38,10 @@ class UserController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/profil", name="user_profil")
-     */
+    #[Route('/profil', name: 'user_profil', methods: [Request::METHOD_POST])]
     public function profil(): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
-        /**
-         * @var User
-         */
+
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', "Connectez-vous pour accéder à votre profil.");
@@ -67,10 +64,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profil/edit", name="user_edit")
-     */
-    public function edit(Request $request)
+    #[Route('/profil/edit', name: 'user_edit', methods: [Request::METHOD_PUT])]
+    public function edit(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
          * @var User
@@ -100,9 +95,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profil/password", name="user_edit_password")
-     */
+    #[Route('/profil/password', name: 'user_edit_password', methods: [Request::METHOD_PUT])]
     public function password(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
@@ -142,10 +135,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profil/avatar/{path}", name="user_edit_avatar")
-     */
-    public function avatar($path)
+    #[Route('/profil/avatar/{path}', name: 'user_edit_avatar', methods: [Request::METHOD_PUT])]
+    public function avatar($path): JsonResponse
     {
         /**
          * @var User
@@ -158,10 +149,8 @@ class UserController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    /**
-     * @Route("/profil/delete", name="user_delete")
-     */
-    public function delete(SessionInterface $sessionInterface)
+    #[Route('/profil/delete', name: 'user_delete', methods: [Request::METHOD_DELETE])]
+    public function delete(SessionInterface $sessionInterface): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         /**
          * @var User
@@ -183,10 +172,8 @@ class UserController extends AbstractController
         return $this->redirectToRoute('home');
     }
 
-    /**
-     * @Route("/events", name="user_events")
-     */
-    public function events(ParticipationRepository $participationRepository)
+    #[Route('/events', name: 'user_events', methods: [Request::METHOD_GET])]
+    public function events(ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
          * @var User;
@@ -207,10 +194,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/history", name="user_history")
-     */
-    public function history(ParticipationRepository $participationRepository)
+    #[Route('/history', name: 'user_history', methods: [Request::METHOD_GET])]
+    public function history(ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
          * @var User;
