@@ -13,38 +13,38 @@ class Localisation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: "Veuillez saisir l'adresse de départ")]
     private string $adress;
 
-    #[ORM\ManyToOne(targetEntity: City::class, inversedBy: "localisations")]
+    #[ORM\ManyToOne(targetEntity: City::class, inversedBy: 'localisations')]
     #[ORM\JoinColumn(nullable: true)]
     private ?City $city = null;
 
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: "localisation")]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'localisation')]
     private Collection $users;
 
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: "localisation")]
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'localisation')]
     private Collection $events;
 
-    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: "localisation_start")]
+    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'localisation_start')]
     private Collection $transports;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Assert\NotBlank(message: "Le nom de la ville ne peut pas être vide")]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Le nom de la ville ne peut pas être vide')]
     private ?string $cityName = null;
 
-    #[ORM\Column(type: "string", length: 50, nullable: true)]
-    #[Assert\NotBlank(message: "Le code postal de la ville ne peut pas être vide")]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Le code postal de la ville ne peut pas être vide')]
     private ?string $cityCp = null;
 
-    #[ORM\Column(type: "string", length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $coordonneesX = null;
 
-    #[ORM\Column(type: "string", length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $coordonneesY = null;
 
     public function __construct()
@@ -71,7 +71,6 @@ class Localisation
         return $this;
     }
 
-
     public function getCity(): ?City
     {
         return $this->city;
@@ -84,9 +83,6 @@ class Localisation
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getUsers(): Collection
     {
         return $this->users;
@@ -94,7 +90,7 @@ class Localisation
 
     public function addUser(User $user): self
     {
-        if (!$this->users->contains($user)) {
+        if (! $this->users->contains($user)) {
             $this->users[] = $user;
             $user->setLocalisation($this);
         }
@@ -114,9 +110,6 @@ class Localisation
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getEvents(): Collection
     {
         return $this->events;
@@ -124,7 +117,7 @@ class Localisation
 
     public function addEvent(Event $event): self
     {
-        if (!$this->events->contains($event)) {
+        if (! $this->events->contains($event)) {
             $this->events[] = $event;
             $event->setLocalisation($this);
         }
@@ -154,7 +147,7 @@ class Localisation
 
     public function addTransport(Transport $transport): self
     {
-        if (!$this->transports->contains($transport)) {
+        if (! $this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setLocalisationStart($this);
         }
@@ -221,5 +214,4 @@ class Localisation
 
         return $this;
     }
-
 }

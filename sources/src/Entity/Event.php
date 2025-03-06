@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Tools\TagService;
 use App\Repository\EventRepository;
+use App\Tools\TagService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,12 +17,12 @@ class Event
     #[ORM\Column]
     private ?int $id;
 
-    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
-    #[Assert\Length(min: 5, max: 255, minMessage: "La question doit faire au moins 5 caractères", maxMessage: "Le titre doit faire moins de 255 caractères")]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Length(min: 5, max: 255, minMessage: 'La question doit faire au moins 5 caractères', maxMessage: 'Le titre doit faire moins de 255 caractères')]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $title;
 
-    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
     #[ORM\Column(type: 'text')]
     private ?string $description;
 
@@ -59,10 +59,10 @@ class Event
     private ?EventGroup $eventGroup;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'events')]
-    #[Assert\NotBlank(message: "La catégorie est obligatoire.")]
+    #[Assert\NotBlank(message: 'La catégorie est obligatoire.')]
     private ?Category $category;
 
-    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'event', cascade: ['persist','remove'])]
+    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
     private Collection $pictures;
 
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'event', cascade: ['remove'])]
@@ -254,9 +254,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getPictures(): Collection
     {
         return $this->pictures;
@@ -264,7 +261,7 @@ class Event
 
     public function addPicture(Picture $picture): self
     {
-        if (!$this->pictures->contains($picture)) {
+        if (! $this->pictures->contains($picture)) {
             $this->pictures[] = $picture;
             $picture->setEvent($this);
         }
@@ -284,10 +281,6 @@ class Event
         return $this;
     }
 
-
-    /**
-     * @return Collection
-     */
     public function getTransports(): Collection
     {
         return $this->transports;
@@ -295,7 +288,7 @@ class Event
 
     public function addTransport(Transport $transport): self
     {
-        if (!$this->transports->contains($transport)) {
+        if (! $this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setEvent($this);
         }
@@ -315,9 +308,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getParticipations(): Collection
     {
         return $this->participations;
@@ -325,7 +315,7 @@ class Event
 
     public function addParticipation(Participation $participation): self
     {
-        if (!$this->participations->contains($participation)) {
+        if (! $this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setEvent($this);
         }
@@ -404,17 +394,17 @@ class Event
 
         return $this;
     }
-    
+
     /**
      * getTagCode
-     *Retour le code de l'event pour son tag html
-     * @return string
+     *Retour le code de l'event pour son tag html.
      */
-    public function getTagCode():string
+    public function getTagCode(): string
     {
-        $tagCode ="";
+        $tagCode = '';
         $tagService = new TagService();
-        $tagCode = $tagService->code() . '-' . $tagService->year($this->getStartedAt()) . $tagService->department($this->getLocalisation()->getCityCp());
+        $tagCode = $tagService->code().'-'.$tagService->year($this->getStartedAt()).$tagService->department($this->getLocalisation()->getCityCp());
+
         return $tagCode;
     }
 }

@@ -4,41 +4,38 @@ namespace App\Controller\Admin;
 
 use App\Entity\Event;
 use App\Entity\Localisation;
-use App\Entity\Participation;
 use App\Entity\Picture;
 use App\Form\EventType;
-use App\Tools\TagService;
 use App\Repository\EventRepository;
 use App\Repository\ParticipationRepository;
+use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
-* @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
-* @Route("/admin/event")
-*/
+ * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
+ *
+ * @Route("/admin/event")
+ */
 class EventCrudController extends AbstractController
 {
-
-    public function __construct(protected EntityManagerInterface $em,protected SluggerInterface $slugger,protected TagService $tag)
+    public function __construct(protected EntityManagerInterface $em, protected SluggerInterface $slugger, protected TagService $tag)
     {
     }
-
 
     /**
      * @Route("/", name="eventcrud")
      */
     public function index(EventRepository $eventRepository): Response
     {
-
         $events = $eventRepository->findAll();
 
 
@@ -47,32 +44,28 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/create", name="eventcrud_create")
      */
-    public function create(Request $request):Response
+    public function create(Request $request): Response
     {
-
-        /*recupération de l'utilisateur, l'administrateur dans ce cas*/
+        /* recupération de l'utilisateur, l'administrateur dans ce cas */
         $user = $this->getUser();
 
         $event = new Event();
-        $form = $this->createForm(EventType::class,$event);
+        $form = $this->createForm(EventType::class, $event);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()){
-
-            if($form->isValid()){
-
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
                 // GESTION DES IMAGES
-                //on recupere les images transmise
+                // on recupere les images transmise
                 $pictures = $form->get('pictures')->getData();
-                //on boucle sur les images
+                // on boucle sur les images
                 foreach ($pictures as $picture) {
-                    //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                    $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+                    // on genere un nouveau nom de fichier (codé) et on rajoute son extension
+                    $fichier = md5(uniqid()).'.'.$picture->guessExtension();
 
                     // on copie le fichier dans le dossier uploads
                     // 2 params (destination, fichier)
@@ -87,9 +80,9 @@ class EventCrudController extends AbstractController
                         ->setOrderPriority(1);
                     $event->addPicture($img);
                 }
-                //FIN GESTION DES IMAGES
+                // FIN GESTION DES IMAGES
 
-                /*Localisation de l'event*/
+                /* Localisation de l'event */
                 $localisation = new Localisation();
                 $localisation->setAdress($request->request->get('event')['localisation']['adress'])
                     ->setCityName($request->request->get('event')['localisation']['cityName'])
@@ -98,14 +91,14 @@ class EventCrudController extends AbstractController
                     ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
                 $this->em->persist($localisation);
 
-                //creation de l'event (grace a localisation)
+                // creation de l'event (grace a localisation)
                 $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
                         ->setTag('pro')
                         ->setCreatedAt(new \DateTime())
                         ->setUser($user)
                         ->setLocalisation($localisation);
 
-                $tagCode = $this->tag->code() . '-' . $this->tag->year($event->getStartedAt()) . $this->tag->department($localisation->getCityCp());
+                $tagCode = $this->tag->code().'-'.$this->tag->year($event->getStartedAt()).$this->tag->department($localisation->getCityCp());
 
                 $this->em->persist($event);
                 $this->em->flush(); // obligé de flush pour avoir l'id (nécessaire pour le tag)
@@ -114,31 +107,27 @@ class EventCrudController extends AbstractController
                 $this->em->flush();
 
 
-                $this->addFlash('success', "Vous avez créé un nouvel évênement");
+                $this->addFlash('success', 'Vous avez créé un nouvel évênement');
+
                 return $this->redirectToRoute('eventcrud');
             }
-
-
-        }else{
-            
-            $this->addFlash('danger', "Veuillez remplir tous les champs obligatoires");
+        } else {
+            $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
         }
 
         return $this->render('admin/event/create.html.twig', [
-            'formView' => $form->createView()
+            'formView' => $form->createView(),
         ]);
     }
 
-
     /**
-     * 
      * @Route("/edit/{id}", name="eventcrud_edit")
      */
-    public function edit(Event $event, Request $request):Response
+    public function edit(Event $event, Request $request): Response
     {
-        
-        if (!$event) {
-            $this->addFlash('danger','L\'event demandé n\'existe pas');
+        if (! $event) {
+            $this->addFlash('danger', 'L\'event demandé n\'existe pas');
+
             return $this->redirectToRoute('eventcrud');
         }
 
@@ -147,14 +136,13 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
                 // GESTION DES IMAGES
-                //on recupere les images transmise
+                // on recupere les images transmise
                 $pictures = $form->get('pictures')->getData();
-                //on boucle sur les images
+                // on boucle sur les images
                 foreach ($pictures as $picture) {
-                    //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                    $fichier = md5(uniqid()) . '.' . $picture->guessExtension();
+                    // on genere un nouveau nom de fichier (codé) et on rajoute son extension
+                    $fichier = md5(uniqid()).'.'.$picture->guessExtension();
 
                     // on copie le fichier dans le dossier uploads
                     // 2 params (destination, fichier)
@@ -169,9 +157,9 @@ class EventCrudController extends AbstractController
                         ->setOrderPriority(1);
                     $event->addPicture($img);
                 }
-                //FIN GESTION DES IMAGES
+                // FIN GESTION DES IMAGES
 
-                /*Localisation de l'event*/
+                /* Localisation de l'event */
                 $localisation = new Localisation();
                 $localisation->setAdress($request->request->get('event')['localisation']['adress'])
                         ->setCityName($request->request->get('event')['localisation']['cityName'])
@@ -180,35 +168,35 @@ class EventCrudController extends AbstractController
                         ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
                 $this->em->persist($localisation);
 
-                //creation de l'event (grace a localisation)
+                // creation de l'event (grace a localisation)
                 $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
                     ->setLocalisation($localisation);
                 $this->em->persist($event);
 
                 $this->em->flush();
-                $this->addFlash('success', "Vous avez modifié votre évênement avec succés");
+                $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
+
                 return $this->redirectToRoute('eventcrud');
             } else {
-                $this->addFlash('danger', "Veuillez remplir tous les champs obligatoires");
+                $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
             }
         }
 
         return $this->render('admin/event/edit.html.twig', [
             'formView' => $form->createView(),
-            'event' => $event
+            'event' => $event,
 
         ]);
     }
-
 
     /**
      * @Route("/show/{id}", name="eventcrud_show")
      */
     public function show(Event $event, ParticipationRepository $participationRepository)
     {
-        
-        if (!$event) {
+        if (! $event) {
             $this->addFlash('warning', "L'évênement demandé n'existe pas");
+
             return $this->redirectToRoute('eventcrud');
         }
 
@@ -220,9 +208,9 @@ class EventCrudController extends AbstractController
         if ($user) {
             $participations = $participationRepository->findBy([
                 'user' => $user->getId(),
-                'event' => $event->getId()
+                'event' => $event->getId(),
             ]);
-            if (!empty($participations)) {
+            if (! empty($participations)) {
                 $isOnEvent = true;
             }
         }
@@ -234,23 +222,21 @@ class EventCrudController extends AbstractController
         return $this->render('admin/event/show.html.twig', [
             'event' => $event,
             'user' => $user,
-            'isOnEvent' => true, //c'est l'admin il a tous les pouvoirs
-            'countView' => $event->getCountViews()
+            'isOnEvent' => true, // c'est l'admin il a tous les pouvoirs
+            'countView' => $event->getCountViews(),
         ]);
     }
-
 
     /**
      * @Route("/delete/{id}", name="eventcrud_delete")
      */
     public function delete(Event $event, MailerInterface $mailer)
     {
-
-        if (!$event) {
+        if (! $event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
-      
+
 
         $transports = $event->getTransports();
         $transportManagerMails = [];
@@ -267,12 +253,12 @@ class EventCrudController extends AbstractController
         }
 
         $email = new TemplatedEmail();
-        $email->from(new Address("admin@gmail.com", "Admin"))
-        ->subject("Annulation de l'évênement : " . $event->getTitle())
+        $email->from(new Address('admin@gmail.com', 'Admin'))
+        ->subject("Annulation de l'évênement : ".$event->getTitle())
             ->to(...$transportManagerMails, ...$ticketUserMails)
-            ->htmlTemplate("emails/annulation_event.html.twig")
+            ->htmlTemplate('emails/annulation_event.html.twig')
             ->context([
-                'event' => $event
+                'event' => $event,
             ]);
         $mailer->send($email);
 
@@ -282,6 +268,7 @@ class EventCrudController extends AbstractController
         $this->em->flush();
 
         $this->addFlash('success', 'evenement supprimé');
+
         return $this->redirectToRoute('eventcrud');
     }
 }

@@ -10,17 +10,17 @@ class Participation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $addedAt;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "participations")]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'participations')]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: "participations")]
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'participations')]
     private ?Event $event = null;
 
     public function getId(): ?int
@@ -36,6 +36,7 @@ class Participation
     public function setAddedAt(\DateTimeInterface $addedAt): self
     {
         $this->addedAt = $addedAt;
+
         return $this;
     }
 
@@ -47,6 +48,7 @@ class Participation
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -58,6 +60,7 @@ class Participation
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
         return $this;
     }
 }

@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity(repositoryClass: EventGroupRepository::class)]
 class EventGroup
 {
@@ -73,7 +72,7 @@ class EventGroup
 
     public function addEvent(Event $event): self
     {
-        if (!$this->Events->contains($event)) {
+        if (! $this->Events->contains($event)) {
             $this->Events[] = $event;
             $event->setEventGroup($this);
         }

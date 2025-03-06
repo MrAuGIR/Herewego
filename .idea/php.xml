@@ -10,6 +10,11 @@
     <option name="highlightLevel" value="WARNING" />
     <option name="transferred" value="true" />
   </component>
+  <component name="PhpCSFixer">
+    <phpcsfixer_settings>
+      <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/sources/vendor/bin/php-cs-fixer" />
+    </phpcsfixer_settings>
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/sources/vendor/symfony/polyfill-intl-icu" />
@@ -120,6 +125,18 @@
       <path value="$PROJECT_DIR$/sources/vendor/symfony/password-hasher" />
       <path value="$PROJECT_DIR$/sources/vendor/psr/clock" />
       <path value="$PROJECT_DIR$/sources/vendor/symfony/clock" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/sources/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/child-process" />
+      <path value="$PROJECT_DIR$/sources/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/sources/vendor/friendsofphp/php-cs-fixer" />
+      <path value="$PROJECT_DIR$/sources/vendor/clue/ndjson-react" />
+      <path value="$PROJECT_DIR$/sources/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/sources/vendor/fidry/cpu-core-counter" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2">

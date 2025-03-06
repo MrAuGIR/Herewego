@@ -2,17 +2,16 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\Ticket;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TicketVoter extends Voter
 {
-
-    const CREATE = 'create';
-    const DELETE = 'delete';
-    const EDIT = 'edit';
+    public const CREATE = 'create';
+    public const DELETE = 'delete';
+    public const EDIT = 'edit';
 
     public function supports(string $attribute, $subject): bool
     {
@@ -23,7 +22,7 @@ class TicketVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             return false;
         }
 
@@ -39,6 +38,5 @@ class TicketVoter extends Voter
             self::DELETE, self::EDIT => $ticket->getUser() === $user,
             default => throw new \LogicException('This code should not be reached!')
         };
-
     }
 }

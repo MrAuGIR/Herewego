@@ -2,12 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class EditPassType extends AbstractType
 {
@@ -15,18 +13,18 @@ class EditPassType extends AbstractType
     {
         $builder
             ->add('newPassword', PasswordType::class, [
-                'label' => "Votre nouveau mot de passe",
+                'label' => 'Votre nouveau mot de passe',
                 'attr' => [
-                    'placeholder' => "Votre nouveau mot de passe"
+                    'placeholder' => 'Votre nouveau mot de passe',
                 ],
-                'required' => false
+                'required' => false,
             ])
             ->add('newPasswordRepeat', PasswordType::class, [
-                'label' => "Confirmez votre mot de passe",
+                'label' => 'Confirmez votre mot de passe',
                 'attr' => [
-                    'placeholder' => "Confirmez votre mot de passe"
+                    'placeholder' => 'Confirmez votre mot de passe',
                 ],
-                'required' => false
+                'required' => false,
             ])
         ;
     }
