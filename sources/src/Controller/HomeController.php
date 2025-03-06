@@ -19,7 +19,7 @@ class HomeController extends AbstractController
     {
         //derniers evenements créée
         $lastEvents = $eventRepository->findLast();
-dd($lastEvents);
+
         //les events les plus populaires
         $MostPopularityEvents =  $eventRepository->findByPopularity();
 

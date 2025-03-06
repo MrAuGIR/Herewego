@@ -118,9 +118,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/category/{category_id}", name="event_category")
-     */
+    #[Route("/category/{category_id}", name: "event_category", methods: [Request::METHOD_GET])]
     public function category($category_id, CategoryRepository $categoryRepository)
     {
         $category = $categoryRepository->find($category_id);
@@ -134,9 +132,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/group/{group_id}", name="event_group")
-     */
+    #[Route("/group/{group_id}", name: "event_group", methods: [Request::METHOD_GET])]
     public function group($group_id, EventGroupRepository $eventGroupRepository)
     {
         $eventGroup = $eventGroupRepository->find($group_id);
@@ -150,9 +146,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/participate/{event_id}", name="event_participate")
-     */
+    #[Route("/participate/{event_id}", name: "event_participate", methods: [Request::METHOD_GET])]
     public function participate($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository)
     {
         // recuperer l'event
@@ -210,10 +204,8 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/cancel/{event_id}", name="event_cancel")
-     */
-    public function cancel($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository)
+    #[Route("/cancel/{event_id}", name: "event_cancel", methods: [Request::METHOD_GET])]
+    public function cancel($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         // recuperer l'event
         $event = $eventRepository->find($event_id);
@@ -252,10 +244,8 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/create", name="event_create")
-     */
-    public function create(Request $request)
+    #[Route("/create", name: "event_create", methods: [Request::METHOD_POST])]
+    public function create(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         
         // verifier si c'est un ORGANIZER
@@ -336,12 +326,9 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/edit/{event_id}", name="event_edit")
-     */
-    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request)
+    #[Route("/edit/{event_id}", name: "event_edit", methods: [Request::METHOD_PUT])]
+    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
-
         $event = $eventRepository->find($event_id);
 
         if (!$event) {
@@ -414,10 +401,8 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/delete/{event_id}", name="event_delete")
-     */
-    public function delete($event_id, EventRepository $eventRepository)
+    #[Route("/delete/{event_id}", name: "event_delete", methods: [Request::METHOD_DELETE])]
+    public function delete($event_id, EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         // recuperer l'event_id passé en param
         $event = $eventRepository->find($event_id);
@@ -467,10 +452,8 @@ class EventController extends AbstractController
         return $this->redirectToRoute('event');
     }
 
-    /**
-     * @Route("/picture/delete/{id}", name="event_picture_delete", methods={"DELETE"})
-     */
-    public function deleteImage(Picture $picture, Request $request)
+    #[Route("/picture/delete/{id}", name: "event_picture_delete", methods: [Request::METHOD_DELETE])]
+    public function deleteImage(Picture $picture, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         
@@ -494,12 +477,9 @@ class EventController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/picture/order/{value}/{id}", name="event_picture_order")
-     */
-    public function changePicturePriority($value, $id, PictureRepository $pictureRepository)
+    #[Route("/picture/order/{value}/{id}", name: "event_picture_order", methods: [Request::METHOD_GET])]
+    public function changePicturePriority($value, $id, PictureRepository $pictureRepository): Response
     {
-
         $picture = $pictureRepository->find($id);        
         $picture->setOrderPriority($value);
 
