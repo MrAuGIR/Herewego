@@ -6,82 +6,82 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ["email"], message: "l'email est déjà utilisée")]
+#[UniqueEntity(fields: ['email'], message: "l'email est déjà utilisée")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 180, unique: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\Email]
     private string $email;
 
-    #[ORM\Column(type: "json")]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: 'string')]
     private string $password;
 
-    #[Assert\EqualTo(propertyPath: "password", message: "mot de passe non identique")]
+    #[Assert\EqualTo(propertyPath: 'password', message: 'mot de passe non identique')]
     public ?string $confirmPassword = null;
 
-    #[ORM\Column(type: "string", length: 50)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $lastname;
 
-    #[ORM\Column(type: "string", length: 50)]
+    #[ORM\Column(type: 'string', length: 50)]
     private string $firstname;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $companyName = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $siret = null;
 
-    #[ORM\Column(type: "string", length: 50, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(type: "boolean", nullable: true, options: ["default" => null])]
+    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => null])]
     private ?bool $isValidate = null;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $registerAt;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $validatedAt = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $pathAvatar = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $webSite = null;
 
-    #[ORM\Column(type: "boolean", options: ["default" => 0])]
+    #[ORM\Column(type: 'boolean', options: ['default' => 0])]
     private bool $isPremium = false;
 
-    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: "users", cascade: ["remove"])]
+    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'users', cascade: ['remove'])]
     private ?Localisation $localisation = null;
 
-    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "user", cascade: ["remove"])]
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $tickets;
 
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: "user", cascade: ["remove"])]
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $participations;
 
-    #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: "user", cascade: ["remove"])]
+    #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $questionUsers;
 
-    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: "user", cascade: ["remove"])]
+    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $transports;
 
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: "user", cascade: ["remove"])]
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $events;
 
     public function __construct()
@@ -328,7 +328,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTicket(Ticket $ticket): self
     {
-        if (!$this->tickets->contains($ticket)) {
+        if (! $this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
             $ticket->setUser($this);
         }
@@ -358,7 +358,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addParticipation(Participation $participation): self
     {
-        if (!$this->participations->contains($participation)) {
+        if (! $this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setUser($this);
         }
@@ -388,7 +388,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addQuestionUser(QuestionUser $questionUser): self
     {
-        if (!$this->questionUsers->contains($questionUser)) {
+        if (! $this->questionUsers->contains($questionUser)) {
             $this->questionUsers[] = $questionUser;
             $questionUser->setUser($this);
         }
@@ -418,7 +418,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTransport(Transport $transport): self
     {
-        if (!$this->transports->contains($transport)) {
+        if (! $this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setUser($this);
         }
@@ -438,9 +438,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getEvents(): Collection
     {
         return $this->events;
@@ -448,7 +445,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addEvent(Event $event): self
     {
-        if (!$this->events->contains($event)) {
+        if (! $this->events->contains($event)) {
             $this->events[] = $event;
             $event->setUser($this);
         }
@@ -470,8 +467,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __toString()
     {
-        return implode(',',$this->getRoles());
-        
+        return implode(',', $this->getRoles());
     }
 
     public function getUserIdentifier(): string

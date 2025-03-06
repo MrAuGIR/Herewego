@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\QuestionUser;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,18 +15,18 @@ class FaqType extends AbstractType
     {
         $builder
             ->add('subject', TextType::class, [
-                'label' => "Sujet de la question",
+                'label' => 'Sujet de la question',
                 'attr' => [
-                    'placeholder' => "Entrez le sujet de votre question en quelques mots"
+                    'placeholder' => 'Entrez le sujet de votre question en quelques mots',
                 ],
-                'required' => false
+                'required' => false,
             ])
             ->add('question', TextareaType::class, [
-                'label' => "Votre Question",
+                'label' => 'Votre Question',
                 'attr' => [
-                    'placeholder' => "Entrez votre question (255 caractères maximum)"
+                    'placeholder' => 'Entrez votre question (255 caractères maximum)',
                 ],
-                'required' => false
+                'required' => false,
             ])
         ;
     }

@@ -4,37 +4,35 @@ namespace App\Controller;
 
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'home' , methods: [Request::METHOD_GET])]
+    #[Route('/', name: 'home', methods: [Request::METHOD_GET])]
     public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
-        //derniers evenements créée
+        // derniers evenements créée
         $lastEvents = $eventRepository->findLast();
 
-        //les events les plus populaires
-        $MostPopularityEvents =  $eventRepository->findByPopularity();
+        // les events les plus populaires
+        $MostPopularityEvents = $eventRepository->findByPopularity();
 
-        //les catégories d'evenements
+        // les catégories d'evenements
         $categories = $categoryRepository->findAll();
 
-        //On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
+        // On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
         if ($request->get('ajax')) {
             return new JsonResponse([
-                'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page', 'order'))
+                'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page', 'order')),
             ]);
         }
 
         return $this->render('home/index.html.twig', [
-            'lastEvents'=> $lastEvents,
+            'lastEvents' => $lastEvents,
             'popularityEvents' => $MostPopularityEvents,
             'categories' => $categories,
             'controller_name' => 'HomeController',
@@ -68,7 +66,6 @@ class HomeController extends AbstractController
     #[Route('/privacy-Policy', name: 'privacyPolicy', methods: [Request::METHOD_GET])]
     public function privacyPolicy(): Response
     {
-
         return $this->render('home/privacyPolicy.html.twig', [
             'controller_name' => 'HomeController',
         ]);

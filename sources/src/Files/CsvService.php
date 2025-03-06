@@ -2,15 +2,12 @@
 
 namespace App\Files;
 
-use DateTime;
-
-
-class CsvService 
+class CsvService
 {
     /**
-     * Créé un fichier csv et retourne le chemin
+     * Créé un fichier csv et retourne le chemin.
      */
-    public static function createEventCsv($datas) : string
+    public static function createEventCsv($datas): string
     {
         $events = [];
         foreach ($datas as $event) {
@@ -21,18 +18,19 @@ class CsvService
                 $event->getCountViews(),
                 $event->getCategory()->getName(),
                 $event->getLocalisation()->getCityName(),
-                $event->getUser()->getLastName()
+                $event->getUser()->getLastName(),
             ];
             $events[] = $row;
         }
-        $date = new DateTime();
+        $date = new \DateTime();
         $timestamp = $date->getTimestamp();
-        $fileName = "file-".$timestamp.".csv";
-        $file = fopen('csv/'.$fileName, 'w');         
+        $fileName = 'file-'.$timestamp.'.csv';
+        $file = fopen('csv/'.$fileName, 'w');
         foreach ($events as $event) {
             fputcsv($file, $event);
-        }         
+        }
         fclose($file);
+
         return $fileName;
     }
 }

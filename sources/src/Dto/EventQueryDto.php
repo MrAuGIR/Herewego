@@ -10,5 +10,6 @@ class EventQueryDto
         public array $categories,
         public string $localisation,
         public string $q
-    ){}
+    ) {
+    }
 }

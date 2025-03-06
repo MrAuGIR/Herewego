@@ -8,18 +8,17 @@ use App\Form\EditPassType;
 use App\Form\EditProfilType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
 #[Route('/organizer')]
-#[IsGranted("ROLE_ADMIN", message: "Vous devez être organisateur pour accéder à cette partie du site.")]
+#[IsGranted('ROLE_ADMIN', message: 'Vous devez être organisateur pour accéder à cette partie du site.')]
 class OrganizerController extends AbstractController
 {
     public function __construct(
@@ -27,31 +26,31 @@ class OrganizerController extends AbstractController
         protected EntityManagerInterface $em,
         protected CsvService $csvService,
         protected TokenStorageInterface $tokenStorage
-    )
-    {
+    ) {
     }
 
-    #[Route("/profil", name: "organizer_profil", methods: [Request::METHOD_GET])]
+    #[Route('/profil', name: 'organizer_profil', methods: [Request::METHOD_GET])]
     public function profil(): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
-
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour accéder à votre profil.");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour accéder à votre profil.');
+
             return $this->redirectToRoute('app_login');
         }
 
         return $this->render('organizer/profil.html.twig', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
-    #[Route("/profil/edit", name: "organizer_edit", methods: [Request::METHOD_PUT])]
+    #[Route('/profil/edit', name: 'organizer_edit', methods: [Request::METHOD_PUT])]
     public function edit(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour modifier votre profil.");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour modifier votre profil.');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -59,10 +58,10 @@ class OrganizerController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
-
+        if ($form->isSubmitted()) {
             $this->em->flush();
-            $this->addFlash('success', "La modification du profil est un succés.");
+            $this->addFlash('success', 'La modification du profil est un succés.');
+
             return $this->redirectToRoute('organizer_profil');
         }
 
@@ -70,20 +69,20 @@ class OrganizerController extends AbstractController
 
         return $this->render('organizer/edit.html.twig', [
             'formView' => $formView,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
-    #[Route("/profil/password", name: "organizer_edit_password", methods: [Request::METHOD_POST])]
+    #[Route('/profil/password', name: 'organizer_edit_password', methods: [Request::METHOD_POST])]
     public function password(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
-
         /**
          * @var User $user
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour modifier votre mot de passe.");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour modifier votre mot de passe.');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -91,31 +90,32 @@ class OrganizerController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()) {
-
+        if ($form->isSubmitted()) {
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
-                $this->addFlash('warning', "Les mots de passe doivent correspondre.");
+                $this->addFlash('warning', 'Les mots de passe doivent correspondre.');
+
                 return $this->redirectToRoute('organizer_edit_password');
             }
 
             $user->setPassword($this->encoder->hashPassword($user, $data['newPassword']));
 
             $this->em->flush();
-            $this->addFlash('success', "La modification du mot de passe est un succés.");
+            $this->addFlash('success', 'La modification du mot de passe est un succés.');
+
             return $this->redirectToRoute('organizer_profil');
         }
 
         $formView = $form->createView();
-        
+
         return $this->render('organizer/pass.html.twig', [
             'formView' => $formView,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
-    #[Route("/profil/avatar/{path}", name: "organizer_edit_avatar", methods: [Request::METHOD_PUT])]
+    #[Route('/profil/avatar/{path}', name: 'organizer_edit_avatar', methods: [Request::METHOD_PUT])]
     public function avatar($path): JsonResponse
     {
         /**
@@ -129,15 +129,16 @@ class OrganizerController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    #[Route("/profil/delete", name: "organizer_delete", methods: [Request::METHOD_DELETE])]
+    #[Route('/profil/delete', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
     public function delete(SessionInterface $sessionInterface): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         /**
          * @var User
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('success', "Connectez-vous pour pouvoir supprimer votre compte");
+        if (! $user) {
+            $this->addFlash('success', 'Connectez-vous pour pouvoir supprimer votre compte');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -147,67 +148,70 @@ class OrganizerController extends AbstractController
         $this->em->remove($user);
         $this->em->flush();
 
-        $this->addFlash('success', "Votre compte a bien été supprimé");
+        $this->addFlash('success', 'Votre compte a bien été supprimé');
+
         return $this->redirectToRoute('home');
     }
 
-    #[Route("/events", name: "organizer_events", methods: [Request::METHOD_GET])]
+    #[Route('/events', name: 'organizer_events', methods: [Request::METHOD_GET])]
     public function events(EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         /**
          * @var User $user;
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('success', "Connectez-vous pour voir vos évênements");
+        if (! $user) {
+            $this->addFlash('success', 'Connectez-vous pour voir vos évênements');
+
             return $this->redirectToRoute('app_login');
         }
 
-        //recupère les events à venir
+        // recupère les events à venir
         $events = $eventRepository->findByDateAfterNow($user->getId());
 
-        //gestion CSV
+        // gestion CSV
         $fileName = $this->csvService->createEventCsv($events);
 
         return $this->render('organizer/events.html.twig', [
             'user' => $user,
-            'events' => $events, 
-            'fileName' => $fileName
+            'events' => $events,
+            'fileName' => $fileName,
         ]);
     }
 
-    #[Route("/history", name: "organizer_history", methods: [Request::METHOD_GET])]
+    #[Route('/history', name: 'organizer_history', methods: [Request::METHOD_GET])]
     public function history(EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         /**
          * @var User $user;
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('success', "Connectez-vous pour voir vos évênements passés");
+        if (! $user) {
+            $this->addFlash('success', 'Connectez-vous pour voir vos évênements passés');
+
             return $this->redirectToRoute('app_login');
         }
 
-        //recupère les events passés
+        // recupère les events passés
         $events = $eventRepository->findByDateBeforeNow($user->getId());
 
-        //gestion CSV
+        // gestion CSV
         $fileName = $this->csvService->createEventCsv($events);
 
         return $this->render('organizer/history.html.twig', [
             'user' => $user,
-            'events' => $events, 
-            'fileName' => $fileName
+            'events' => $events,
+            'fileName' => $fileName,
         ]);
     }
 
-    #[Route("/stats", name: "organizer_stats", methods: [Request::METHOD_GET])]
+    #[Route('/stats', name: 'organizer_stats', methods: [Request::METHOD_GET])]
     public function stats(): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
-
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('success', "Connectez-vous pour voir vos statistiques");
+        if (! $user) {
+            $this->addFlash('success', 'Connectez-vous pour voir vos statistiques');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -218,8 +222,7 @@ class OrganizerController extends AbstractController
 
         return $this->render('organizer/stats.html.twig', [
             'user' => $user,
-            'fileName' => $fileName
+            'fileName' => $fileName,
         ]);
     }
-
 }
