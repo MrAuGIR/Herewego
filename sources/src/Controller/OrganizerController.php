@@ -30,11 +30,9 @@ class OrganizerController extends AbstractController
     )
     {
     }
-    
-    /**
-     * @Route("/profil", name="organizer_profil")
-     */
-    public function profil()
+
+    #[Route("/profil", name: "organizer_profil", methods: [Request::METHOD_GET])]
+    public function profil(): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
 
         $user = $this->getUser();
@@ -47,19 +45,15 @@ class OrganizerController extends AbstractController
             'user' => $user
         ]);
     }
-    
-    /**
-     * @Route("/profil/edit", name="organizer_edit")
-     */
-    public function edit(Request $request)
+
+    #[Route("/profil/edit", name: "organizer_edit", methods: [Request::METHOD_PUT])]
+    public function edit(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', "Connectez-vous pour modifier votre profil.");
             return $this->redirectToRoute('app_login');
         }
-
-        
 
         $form = $this->createForm(EditProfilType::class, $user, ['chosen_role' => ['ROLE_ORGANIZER']]);
 
@@ -80,13 +74,12 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profil/password", name="organizer_edit_password")
-     */
-    public function password(Request $request)
+    #[Route("/profil/password", name: "organizer_edit_password", methods: [Request::METHOD_POST])]
+    public function password(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
+
         /**
-         * @var User
+         * @var User $user
          */
         $user = $this->getUser();
         if (!$user) {
@@ -107,7 +100,7 @@ class OrganizerController extends AbstractController
                 return $this->redirectToRoute('organizer_edit_password');
             }
 
-            $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
+            $user->setPassword($this->encoder->hashPassword($user, $data['newPassword']));
 
             $this->em->flush();
             $this->addFlash('success', "La modification du mot de passe est un succés.");
@@ -122,13 +115,11 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profil/avatar/{path}", name="organizer_edit_avatar")
-     */
-    public function avatar($path)
+    #[Route("/profil/avatar/{path}", name: "organizer_edit_avatar", methods: [Request::METHOD_PUT])]
+    public function avatar($path): JsonResponse
     {
         /**
-         * @var User
+         * @var User $user
          */
         $user = $this->getUser();
         $user->setPathAvatar($path);
@@ -138,10 +129,8 @@ class OrganizerController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    /**
-     * @Route("/profil/delete", name="organizer_delete")
-     */
-    public function delete(SessionInterface $sessionInterface)
+    #[Route("/profil/delete", name: "organizer_delete", methods: [Request::METHOD_DELETE])]
+    public function delete(SessionInterface $sessionInterface): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         /**
          * @var User
@@ -161,14 +150,12 @@ class OrganizerController extends AbstractController
         $this->addFlash('success', "Votre compte a bien été supprimé");
         return $this->redirectToRoute('home');
     }
-    
-    /**
-     * @Route("/events", name="organizer_events")
-     */
-    public function events(EventRepository $eventRepository)
+
+    #[Route("/events", name: "organizer_events", methods: [Request::METHOD_GET])]
+    public function events(EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         /**
-         * @var User;
+         * @var User $user;
          */
         $user = $this->getUser();
         if (!$user) {
@@ -189,13 +176,11 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/history", name="organizer_history")
-     */
-    public function history(EventRepository $eventRepository)
+    #[Route("/history", name: "organizer_history", methods: [Request::METHOD_GET])]
+    public function history(EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         /**
-         * @var User;
+         * @var User $user;
          */
         $user = $this->getUser();
         if (!$user) {
@@ -216,10 +201,8 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/stats", name="organizer_stats")
-     */
-    public function stats()
+    #[Route("/stats", name: "organizer_stats", methods: [Request::METHOD_GET])]
+    public function stats(): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
 
         $user = $this->getUser();
