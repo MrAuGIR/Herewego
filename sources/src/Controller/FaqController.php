@@ -10,15 +10,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-/**
- *  @Route("/faq", name="faq_")
- */
+#[Route("/faq", name: "faq_")]
 class FaqController extends AbstractController
 {
-    /**
-     * @Route("/", name="index")
-     */
-    public function index(QuestionAdminRepository $QuestionAdminRepository)
+    #[Route("/", name: "index", methods: [Request::METHOD_GET])]
+    public function index(QuestionAdminRepository $QuestionAdminRepository): \Symfony\Component\HttpFoundation\Response
     {
 
         $questions = $QuestionAdminRepository->findBy([], ['importance' => 'DESC']);
@@ -30,10 +26,8 @@ class FaqController extends AbstractController
     }
 
 
-    /**
-     * @Route("/question", name="question")
-     */
-    public function question(Request $request, EntityManagerInterface $em)
+    #[Route("/question", name: "question", methods: [Request::METHOD_POST])]
+    public function question(Request $request, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $question = new QuestionUser;
 
