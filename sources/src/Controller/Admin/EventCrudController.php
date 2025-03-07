@@ -10,7 +10,6 @@ use App\Repository\EventRepository;
 use App\Repository\ParticipationRepository;
 use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,22 +17,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
- *
- * @Route("/admin/event")
- */
+#[Route("/admin/event")]
+#[IsGranted("ROLE_ADMIN", statusCOde: 404, message: "404 page not found")]
 class EventCrudController extends AbstractController
 {
     public function __construct(protected EntityManagerInterface $em, protected SluggerInterface $slugger, protected TagService $tag)
     {
     }
 
-    /**
-     * @Route("/", name="eventcrud")
-     */
+    #[Route("/", name: "eventcrud", methods: [Request::METHOD_GET])]
     public function index(EventRepository $eventRepository): Response
     {
         $events = $eventRepository->findAll();
@@ -44,9 +39,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/create", name="eventcrud_create")
-     */
+    #[Route("/create", name: "eventcrud_create", methods: [Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         /* recupération de l'utilisateur, l'administrateur dans ce cas */
@@ -120,9 +113,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/edit/{id}", name="eventcrud_edit")
-     */
+    #[Route("/edit/{id}", name: "eventcrud_edit", methods: [Request::METHOD_PUT])]
     public function edit(Event $event, Request $request): Response
     {
         if (! $event) {
@@ -189,9 +180,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/show/{id}", name="eventcrud_show")
-     */
+    #[Route("/show/{id}", name: "eventcrud_show", methods: [Request::METHOD_GET])]
     public function show(Event $event, ParticipationRepository $participationRepository)
     {
         if (! $event) {
@@ -227,16 +216,12 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/delete/{id}", name="eventcrud_delete")
-     */
+    #[Route("/delete/{id}", name: "eventcrud_delete", methods: [Request::METHOD_DELETE])]
     public function delete(Event $event, MailerInterface $mailer)
     {
         if (! $event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
-
-
 
         $transports = $event->getTransports();
         $transportManagerMails = [];
