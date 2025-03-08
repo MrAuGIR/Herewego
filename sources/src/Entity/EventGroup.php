@@ -15,15 +15,12 @@ class EventGroup
     #[ORM\Column]
     private ?int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $pathImage;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $pathImage;
 
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'eventGroup')]
     private ArrayCollection $Events;
@@ -63,7 +60,7 @@ class EventGroup
     }
 
     /**
-     * @return Collection|Event[]
+     * @return Collection
      */
     public function getEvents(): Collection
     {

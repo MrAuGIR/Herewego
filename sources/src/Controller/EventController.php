@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -76,7 +77,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/show/{event_id}', name: 'event_show', methods: [Request::METHOD_GET])]
-    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, PictureRepository $pictureRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, PictureRepository $pictureRepository): RedirectResponse|Response
     {
         $event = $eventRepository->findOneBy([
             'id' => $event_id,
@@ -118,7 +119,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/category/{category_id}', name: 'event_category', methods: [Request::METHOD_GET])]
-    public function category($category_id, CategoryRepository $categoryRepository)
+    public function category($category_id, CategoryRepository $categoryRepository): RedirectResponse|Response
     {
         $category = $categoryRepository->find($category_id);
         if (! $category) {
@@ -133,7 +134,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/group/{group_id}', name: 'event_group', methods: [Request::METHOD_GET])]
-    public function group($group_id, EventGroupRepository $eventGroupRepository)
+    public function group($group_id, EventGroupRepository $eventGroupRepository): RedirectResponse|Response
     {
         $eventGroup = $eventGroupRepository->find($group_id);
         if (! $eventGroup) {
@@ -210,7 +211,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/cancel/{event_id}', name: 'event_cancel', methods: [Request::METHOD_GET])]
-    public function cancel($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function cancel($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository): RedirectResponse
     {
         // recuperer l'event
         $event = $eventRepository->find($event_id);
@@ -254,7 +255,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/create', name: 'event_create', methods: [Request::METHOD_POST])]
-    public function create(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function create(Request $request): RedirectResponse|Response
     {
         // verifier si c'est un ORGANIZER
         $user = $this->getUser();
@@ -336,7 +337,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/edit/{event_id}', name: 'event_edit', methods: [Request::METHOD_PUT])]
-    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): RedirectResponse|Response
     {
         $event = $eventRepository->find($event_id);
 
@@ -411,7 +412,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/delete/{event_id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
-    public function delete($event_id, EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function delete($event_id, EventRepository $eventRepository): RedirectResponse
     {
         // recuperer l'event_id passé en param
         $event = $eventRepository->find($event_id);
