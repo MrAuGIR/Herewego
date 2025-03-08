@@ -59,7 +59,7 @@ class Transport
     private ?Event $event;
 
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'transport', cascade: ['remove'])]
-    private ArrayCollection $tickets;
+    private $tickets;
 
     #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'transports')]
     private ?Localisation $localisation_start;

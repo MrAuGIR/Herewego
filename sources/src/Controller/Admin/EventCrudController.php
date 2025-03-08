@@ -21,7 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route("/admin/event")]
-#[IsGranted("ROLE_ADMIN", statusCOde: 404, message: "404 page not found")]
+#[IsGranted("ROLE_ADMIN", message: "404 page not found", statusCode: 404)]
 class EventCrudController extends AbstractController
 {
     public function __construct(protected EntityManagerInterface $em, protected SluggerInterface $slugger, protected TagService $tag)
@@ -39,7 +39,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/create", name: "eventcrud_create", methods: [Request::METHOD_POST])]
+    #[Route("/create", name: "eventcrud_create", methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         /* recupération de l'utilisateur, l'administrateur dans ce cas */
@@ -52,30 +52,24 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                // GESTION DES IMAGES
-                // on recupere les images transmise
                 $pictures = $form->get('pictures')->getData();
                 // on boucle sur les images
                 foreach ($pictures as $picture) {
-                    // on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                    $fichier = md5(uniqid()).'.'.$picture->guessExtension();
 
-                    // on copie le fichier dans le dossier uploads
-                    // 2 params (destination, fichier)
+                    $file = md5(uniqid()).'.'.$picture->guessExtension();
+
                     $picture->move(
                         $this->getParameter('images_directory'),
-                        $fichier
+                        $file
                     );
                     // on stock l'image dans la bdd (son nom)
                     $img = new Picture();
-                    $img->setPath($fichier)
+                    $img->setPath($file)
                         ->setTitle($event->getTitle())
                         ->setOrderPriority(1);
                     $event->addPicture($img);
                 }
-                // FIN GESTION DES IMAGES
 
-                /* Localisation de l'event */
                 $localisation = new Localisation();
                 $localisation->setAdress($request->request->get('event')['localisation']['adress'])
                     ->setCityName($request->request->get('event')['localisation']['cityName'])
