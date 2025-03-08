@@ -65,9 +65,7 @@ class TransportController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/transport/show/{transport_id}", name="transport_show")
-     */
+    #[Route("/transport/show/{transport_id}", name: 'transport_show', methods: [Request::METHOD_GET])]
     public function show($transport_id, TransportRepository $transportRepository, Security $security, Request $request, TicketRepository $ticketRepository, EntityManagerInterface $em): Response
     {
         // le user doit participer à l'event pour voir cette page
