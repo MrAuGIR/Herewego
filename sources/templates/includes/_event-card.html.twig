@@ -1,9 +1,12 @@
+{% set displayInCategory = displayInCategory is defined? displayInCategory : false %}
 <a href="{{ path('event_show', {event_id: event.id }) }}">
     <div class="card event-card">
         {% set color = event.category.color is defined? event.category.color : '#0000'%}
-        <div class="card-header" {{'style= background-color:'~ color }}  >
+        {% if displayInCategory == false %}
+            <div class="card-header" {{'style= background-color:'~ color }}  >
 
-        </div>
+            </div>
+        {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{ event.title }}</h5>
             <p>
@@ -11,7 +14,11 @@
                     {{ event.startedAt | date('d/m/Y') }}</em>
             </p>
             <div class="card-text event-card-desc">{{ event.description | u.truncate(90, "...") | raw}}</div>
-            <span style="border: 2px solid {{ event.category.color }};color: {{ event.category.color }}" class="badge">{{ event.category.name }}</span>
+            {% if displayInCategory == false %}
+                <span style="border: 2px solid {{ event.category.color }};color: {{ event.category.color }}" class="badge">{{ event.category.name }}</span>
+            {% else %}
+                <div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
+            {% endif %}
         </div>
         {% set images = [] %}
         {% for image in event.pictures|sort((a,b) => a.orderPriority >= b.orderPriority) %}
