@@ -15,13 +15,10 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home', methods: [Request::METHOD_GET])]
     public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
-        // derniers evenements créée
         $lastEvents = $eventRepository->findLast();
 
-        // les events les plus populaires
         $MostPopularityEvents = $eventRepository->findByPopularity();
 
-        // les catégories d'evenements
         $categories = $categoryRepository->findAll();
 
         // On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
