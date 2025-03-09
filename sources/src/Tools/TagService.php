@@ -2,8 +2,15 @@
 
 namespace App\Tools;
 
+use App\Entity\Event;
+
 class TagService
 {
+    public function makeTagCode(Event $event): string
+    {
+        return self::code().'-'.self::year($event->getStartedAt()).self::department($event->getLocalisation()->getCityCp());
+    }
+
     /**
      * genere un code.
      */
@@ -24,12 +31,12 @@ class TagService
         return substr($cp, 0, 2);
     }
 
-    public static function year(\DateTime $date)
+    public static function year(\DateTimeInterface $date)
     {
         return $date->format('y');
     }
 
-    public static function createTag(string $tagCode, string $eventId, string $eventTitle): string
+    public static function createHtmlTag(string $tagCode, string $eventId, string $eventTitle): string
     {
         return "<div style='border: 3px solid #054550; width: 120px;'>
                     <a style='text-decoration:none;color:black;' title='$eventTitle' href='https://herewego.aureliengirard.fr/event/show/$eventId'>

@@ -315,7 +315,7 @@ class EventController extends AbstractController
                 $this->em->persist($event);
                 $this->em->flush(); // obligé de flush pour avoir l'id (nécessaire pour le tag)
 
-                $event->setTag($this->tag->createTag($tagCode, $event->getId(), $event->getTitle()));
+                $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
                 $this->em->flush();
 
 
