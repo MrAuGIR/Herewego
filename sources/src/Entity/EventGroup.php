@@ -59,9 +59,6 @@ class EventGroup
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getEvents(): Collection
     {
         return $this->Events;

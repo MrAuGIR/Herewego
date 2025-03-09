@@ -25,7 +25,7 @@ class UserCrudController extends AbstractController
     ) {
     }
 
-    #[Route("/", name: 'usercrud', methods: [Request::METHOD_GET])]
+    #[Route('/', name: 'usercrud', methods: [Request::METHOD_GET])]
     public function index(UserRepository $userRepository, Request $request): Response
     {
         /* On recupère l'utilisateur */
@@ -51,7 +51,7 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/show/{id}", name: "usercrud_show", methods: [Request::METHOD_GET])]
+    #[Route('/show/{id}', name: 'usercrud_show', methods: [Request::METHOD_GET])]
     public function show(User $user): Response
     {
         return $this->render('admin/user/show.html.twig', [
@@ -60,7 +60,7 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/create", name: "usercrud_create", methods: [Request::METHOD_POST])]
+    #[Route('/create', name: 'usercrud_create', methods: [Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $user = new User();
@@ -104,7 +104,7 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/edit/{id}", name: "usercrud_edit", methods: [Request::METHOD_PUT])]
+    #[Route('/edit/{id}', name: 'usercrud_edit', methods: [Request::METHOD_PUT])]
     public function edit(User $user, Request $request): Response
     {
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_USER']]);
@@ -144,7 +144,7 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/delete/{id}", name: "usercrud_delete", methods: [Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_DELETE])]
     public function delete(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         // gerer les exceptions si utilisateur inexistant

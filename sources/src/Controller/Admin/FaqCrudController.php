@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/faq')]
-#[\Symfony\Component\Security\Http\Attribute\IsGranted("ROLE_ADMIN", message: "404 page not found", statusCode: 404)]
+#[\Symfony\Component\Security\Http\Attribute\IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
 class FaqCrudController extends AbstractController
 {
     public function __construct(
@@ -24,12 +24,10 @@ class FaqCrudController extends AbstractController
         protected SluggerInterface $slugger,
         protected QuestionUserRepository $qUserRepo,
         protected QuestionAdminRepository $qAdminRepo
-    )
-    {
+    ) {
     }
 
-
-    #[Route("/", name: "faqcrud")]
+    #[Route('/', name: 'faqcrud')]
     public function index(): Response
     {
         /* On recupère les questions des utilisateurs */
@@ -40,13 +38,12 @@ class FaqCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/show/qUser/{id}", name: "faqcrud_qUser_show", methods: ["GET"])]
+    #[Route('/show/qUser/{id}', name: 'faqcrud_qUser_show', methods: ['GET'])]
     public function show(QuestionUser $questionUser)
     {
     }
 
-
-    #[Route("/delete/qUser/{id}", name: "faqcrud_qUser_delete", methods: [Request::METHOD_DELETE])]
+    #[Route('/delete/qUser/{id}', name: 'faqcrud_qUser_delete', methods: [Request::METHOD_DELETE])]
     public function delete(QuestionUser $questionUser): RedirectResponse
     {
         if (! $questionUser) {
@@ -63,8 +60,7 @@ class FaqCrudController extends AbstractController
         return $this->redirectToRoute('faqcrud');
     }
 
-
-    #[Route("/liste", name: "faqcrud_qAdmin_liste", methods: [Request::METHOD_GET])]
+    #[Route('/liste', name: 'faqcrud_qAdmin_liste', methods: [Request::METHOD_GET])]
     public function liste(): Response
     {
         /* On recupère les questions rédigé par les administrateurs */
@@ -73,7 +69,7 @@ class FaqCrudController extends AbstractController
         return $this->render('admin/faq/liste.html.twig', compact('questionsAdmin'));
     }
 
-    #[Route("/create/qAdmin", name: "faqcrud_qAdmin_create", methods: [Request::METHOD_POST])]
+    #[Route('/create/qAdmin', name: 'faqcrud_qAdmin_create', methods: [Request::METHOD_POST])]
     public function create(Request $request): RedirectResponse|Response
     {
         $questionAdmin = new QuestionAdmin();
@@ -98,7 +94,7 @@ class FaqCrudController extends AbstractController
         return $this->render('admin/faq/create.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route("/edit/qAdmin/{id}", name: "faqcrud_qAdmin_edit", methods: [Request::METHOD_PUT])]
+    #[Route('/edit/qAdmin/{id}', name: 'faqcrud_qAdmin_edit', methods: [Request::METHOD_PUT])]
     public function edit(QuestionAdmin $questionAdmin, Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(QuestionAdminType::class, $questionAdmin);
@@ -121,7 +117,7 @@ class FaqCrudController extends AbstractController
         return $this->render('admin/faq/edit.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route("/delete/qAdmin/{id}", name: "faqcrud_qAdmin_delete", methods: [Request::METHOD_DELETE])]
+    #[Route('/delete/qAdmin/{id}', name: 'faqcrud_qAdmin_delete', methods: [Request::METHOD_DELETE])]
     public function deleteQAdmin(QuestionAdmin $questionAdmin): RedirectResponse
     {
         if (! $questionAdmin) {
@@ -138,7 +134,7 @@ class FaqCrudController extends AbstractController
         return $this->redirectToRoute('faqcrud_qAdmin_liste');
     }
 
-    #[Route("/show/qAdmin/{id}", name: "faqcrud_qAdmin_show", methods: [Request::METHOD_GET])]
+    #[Route('/show/qAdmin/{id}', name: 'faqcrud_qAdmin_show', methods: [Request::METHOD_GET])]
     public function showQAdmin(QuestionAdmin $questionAdmin): RedirectResponse
     {
         if (! $questionAdmin) {

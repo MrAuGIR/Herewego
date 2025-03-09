@@ -26,7 +26,6 @@ class OrganizerCrudController extends AbstractController
     ) {
     }
 
-
     #[Route('/', name: 'organizercrud', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function index(UserRepository $userRepository, Request $request): Response
     {
@@ -62,7 +61,7 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'organizercrud_create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
+    #[Route('/create', name: 'organizercrud_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $user = new User();

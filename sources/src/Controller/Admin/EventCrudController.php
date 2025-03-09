@@ -19,20 +19,19 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[Route("/admin/event")]
-#[IsGranted("ROLE_ADMIN", message: "404 page not found", statusCode: 404)]
+#[Route('/admin/event')]
+#[IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
 class EventCrudController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $em,
-        protected SluggerInterface       $slugger,
-        protected TagService             $tag,
-        private readonly PictureFactory  $pictureFactory,
-    )
-    {
+        protected SluggerInterface $slugger,
+        protected TagService $tag,
+        private readonly PictureFactory $pictureFactory,
+    ) {
     }
 
-    #[Route("/", name: "eventcrud", methods: [Request::METHOD_GET])]
+    #[Route('/', name: 'eventcrud', methods: [Request::METHOD_GET])]
     public function index(EventRepository $eventRepository): Response
     {
         return $this->render('admin/event/index.html.twig', [
@@ -40,7 +39,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/create", name: "eventcrud_create", methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/create', name: 'eventcrud_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $user = $this->getUser();
@@ -52,7 +51,6 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
                 foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
                     $picture->setTitle($event->getTitle());
                     $event->addPicture($picture);
@@ -62,7 +60,7 @@ class EventCrudController extends AbstractController
                         ->setTag('pro')
                         ->setCreatedAt(new \DateTime())
                         ->setUser($user)
-                        ;
+                ;
 
                 $this->em->persist($event);
                 $this->em->flush();
@@ -85,7 +83,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/edit/{id}", name: "eventcrud_edit", methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/edit/{id}', name: 'eventcrud_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(Event $event, Request $request): Response
     {
         $form = $this->createForm(EventType::class, $event);
@@ -93,7 +91,6 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
                 foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
                     $picture->setTitle($event->getTitle());
                     $event->addPicture($picture);
@@ -119,7 +116,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/show/{id}", name: "eventcrud_show", methods: [Request::METHOD_GET])]
+    #[Route('/show/{id}', name: 'eventcrud_show', methods: [Request::METHOD_GET])]
     public function show(Event $event, ParticipationRepository $participationRepository)
     {
         if (! $event) {
@@ -155,7 +152,7 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    #[Route("/delete/{id}", name: "eventcrud_delete", methods: [Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
     public function delete(Event $event, MailerInterface $mailer)
     {
         if (! $event) {
