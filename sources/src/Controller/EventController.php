@@ -7,6 +7,7 @@ use App\Entity\Localisation;
 use App\Entity\Participation;
 use App\Entity\Picture;
 use App\Entity\User;
+use App\Factory\EventFactory;
 use App\Factory\PictureFactory;
 use App\Form\EventType;
 use App\Repository\CategoryRepository;
@@ -35,7 +36,7 @@ class EventController extends AbstractController
         protected SluggerInterface $slugger,
         protected TagService $tag,
         protected MailerInterface $mailer,
-        private PictureFactory $pictureFactory,
+        private EventFactory $eventFactory,
     ) {
     }
 
@@ -275,24 +276,7 @@ class EventController extends AbstractController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
 
-                foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
-                    $picture->setTitle($event->getTitle());
-                    $event->addPicture($picture);
-                }
-
-                $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
-                    ->setTag('pro')
-                    ->setCreatedAt(new \DateTime())
-                    ->setUser($user)
-                ;
-
-                $this->em->persist($event);
-                $this->em->flush();
-
-                $tagCode = $this->tag->makeTagCode($event);
-                $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
-                $this->em->flush();
-
+                $this->eventFactory->create($form,$event,$user);
 
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
 
@@ -314,7 +298,7 @@ class EventController extends AbstractController
     {
         $event = $eventRepository->find($event_id);
 
-        if (! $event) {
+        if (!$event) {
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
@@ -326,17 +310,7 @@ class EventController extends AbstractController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
 
-                foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
-                    $picture->setTitle($event->getTitle());
-                    $event->addPicture($picture);
-                }
-
-                $event->setSlug(strtolower($slugger->slug($event->getTitle())));
-                $tagCode = $this->tag->makeTagCode($event);
-                $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
-
-                $this->em->persist($event);
-                $this->em->flush();
+                $this->eventFactory->edit($form, $event);
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
                 return $this->redirectToRoute('event_show', [
