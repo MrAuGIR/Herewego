@@ -3,11 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Event;
-use App\Factory\PictureFactory;
+use App\Entity\User;
+use App\Factory\EventFactory;
 use App\Form\EventType;
 use App\Repository\EventRepository;
 use App\Repository\ParticipationRepository;
-use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +17,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/event')]
 #[IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
@@ -25,9 +24,7 @@ class EventCrudController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $em,
-        protected SluggerInterface $slugger,
-        protected TagService $tag,
-        private readonly PictureFactory $pictureFactory,
+        private readonly EventFactory $eventFactory,
     ) {
     }
 
@@ -42,6 +39,7 @@ class EventCrudController extends AbstractController
     #[Route('/create', name: 'eventcrud_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
 
         $event = new Event();
@@ -51,27 +49,9 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
-                    $picture->setTitle($event->getTitle());
-                    $event->addPicture($picture);
-                }
-
-                $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
-                        ->setTag('pro')
-                        ->setCreatedAt(new \DateTime())
-                        ->setUser($user)
-                ;
-
-                $this->em->persist($event);
-                $this->em->flush();
-
-                $tagCode = $this->tag->makeTagCode($event);
-
-                $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
-                $this->em->flush();
+                $this->eventFactory->create($form,$event, $user);
 
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
-
                 return $this->redirectToRoute('eventcrud');
             }
         } else {
@@ -91,17 +71,7 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
-                    $picture->setTitle($event->getTitle());
-                    $event->addPicture($picture);
-                }
-
-                $event->setSlug(strtolower($this->slugger->slug($event->getTitle())));
-                $tagCode = $this->tag->makeTagCode($event);
-                $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
-
-                $this->em->persist($event);
-                $this->em->flush();
+                $this->eventFactory->edit($form,$event);
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
                 return $this->redirectToRoute('eventcrud');
@@ -119,16 +89,9 @@ class EventCrudController extends AbstractController
     #[Route('/show/{id}', name: 'eventcrud_show', methods: [Request::METHOD_GET])]
     public function show(Event $event, ParticipationRepository $participationRepository)
     {
-        if (! $event) {
-            $this->addFlash('warning', "L'évênement demandé n'existe pas");
 
-            return $this->redirectToRoute('eventcrud');
-        }
-
-        // recuperer l'id du user connecté // si pas connecté $user = Null
         $user = $this->getUser();
 
-        // si user connecté, on regarde si il participe à l'event en cours
         $isOnEvent = false;
         if ($user) {
             $participations = $participationRepository->findBy([
@@ -140,7 +103,6 @@ class EventCrudController extends AbstractController
             }
         }
 
-        // incrémente le nombre de vues
         $event->setCountViews($event->getCountViews() + 1);
         $this->em->flush();
 
