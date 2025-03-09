@@ -6,6 +6,8 @@ use App\Entity\Event;
 use App\Entity\Localisation;
 use App\Entity\Participation;
 use App\Entity\Picture;
+use App\Entity\User;
+use App\Factory\PictureFactory;
 use App\Form\EventType;
 use App\Repository\CategoryRepository;
 use App\Repository\EventGroupRepository;
@@ -32,7 +34,8 @@ class EventController extends AbstractController
         protected EntityManagerInterface $em,
         protected SluggerInterface $slugger,
         protected TagService $tag,
-        protected MailerInterface $mailer
+        protected MailerInterface $mailer,
+        private PictureFactory $pictureFactory,
     ) {
     }
 
@@ -254,10 +257,10 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'event_create', methods: [Request::METHOD_POST])]
+    #[Route('/create', name: 'event_create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
     public function create(Request $request): RedirectResponse|Response
     {
-        // verifier si c'est un ORGANIZER
+        /** @var User $user */
         $user = $this->getUser();
         if (! $user) {
             $this->addFlash('warning', 'Connectez-vous pour creer un évênement.');
@@ -271,50 +274,22 @@ class EventController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                // GESTION DES IMAGES
-                // on recupere les images transmise
-                $pictures = $form->get('pictures')->getData();
-                // on boucle sur les images
-                foreach ($pictures as $picture) {
-                    // on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                    $fichier = md5(uniqid()).'.'.$picture->guessExtension();
 
-                    // on copie le fichier dans le dossier uploads
-                    // 2 params (destination, fichier)
-                    $picture->move(
-                        $this->getParameter('images_directory'),
-                        $fichier
-                    );
-                    // on stock l'image dans la bdd (son nom)
-                    $img = new Picture();
-                    $img->setPath($fichier)
-                        ->setTitle($event->getTitle())
-                        ->setOrderPriority(1);
-                    $event->addPicture($img);
+                foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
+                    $picture->setTitle($event->getTitle());
+                    $event->addPicture($picture);
                 }
-                // FIN GESTION DES IMAGES
 
-                /* Localisation de l'event */
-                $localisation = new Localisation();
-                $localisation->setAdress($request->request->get('event')['localisation']['adress'])
-                    ->setCityName($request->request->get('event')['localisation']['cityName'])
-                    ->setCityCp($request->request->get('event')['localisation']['cityCp'])
-                    ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
-                    ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
-                $this->em->persist($localisation);
-
-                // creation de l'event (grace a localisation)
                 $event->setSlug(strtolower($this->slugger->slug($event->getTitle())))
                     ->setTag('pro')
                     ->setCreatedAt(new \DateTime())
                     ->setUser($user)
-                    ->setLocalisation($localisation);
-
-                $tagCode = $this->tag->code().'-'.$this->tag->year($event->getStartedAt()).$this->tag->department($localisation->getCityCp());
+                ;
 
                 $this->em->persist($event);
-                $this->em->flush(); // obligé de flush pour avoir l'id (nécessaire pour le tag)
+                $this->em->flush();
 
+                $tagCode = $this->tag->makeTagCode($event);
                 $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
                 $this->em->flush();
 
@@ -329,14 +304,12 @@ class EventController extends AbstractController
             }
         }
 
-        $formView = $form->createView();
-
         return $this->render('event/create.html.twig', [
-            'formView' => $formView,
+            'formView' => $form->createView(),
         ]);
     }
 
-    #[Route('/edit/{event_id}', name: 'event_edit', methods: [Request::METHOD_PUT])]
+    #[Route('/edit/{event_id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): RedirectResponse|Response
     {
         $event = $eventRepository->find($event_id);
@@ -345,52 +318,24 @@ class EventController extends AbstractController
             throw $this->createNotFoundException("l'event demandé n'existe pas!");
         }
 
-        // ! GERER les droits par un return et un message
         $this->denyAccessUnlessGranted('CAN_EDIT', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas l'éditer");
-
 
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                // GESTION DES IMAGES
-                // on recupere les images transmise
-                $pictures = $form->get('pictures')->getData();
-                // on boucle sur les images
-                foreach ($pictures as $picture) {
-                    // on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                    $fichier = md5(uniqid()).'.'.$picture->guessExtension();
 
-                    // on copie le fichier dans le dossier uploads
-                    // 2 params (destination, fichier)
-                    $picture->move(
-                        $this->getParameter('images_directory'),
-                        $fichier
-                    );
-                    // on stock l'image dans la bdd (son nom)
-                    $img = new Picture();
-                    $img->setPath($fichier)
-                        ->setTitle($event->getTitle())
-                        ->setOrderPriority(1);
-                    $event->addPicture($img);
+                foreach ($this->pictureFactory->handleFromForm($form) as $picture) {
+                    $picture->setTitle($event->getTitle());
+                    $event->addPicture($picture);
                 }
-                // FIN GESTION DES IMAGES
 
-                /* Localisation de l'event */
-                $localisation = new Localisation();
-                $localisation->setAdress($request->request->get('event')['localisation']['adress'])
-                             ->setCityName($request->request->get('event')['localisation']['cityName'])
-                             ->setCityCp($request->request->get('event')['localisation']['cityCp'])
-                             ->setCoordonneesX($request->request->get('event')['localisation']['coordonneesX'])
-                             ->setCoordonneesY($request->request->get('event')['localisation']['coordonneesY']);
-                $this->em->persist($localisation);
+                $event->setSlug(strtolower($slugger->slug($event->getTitle())));
+                $tagCode = $this->tag->makeTagCode($event);
+                $event->setTag($this->tag->createHtmlTag($tagCode, $event->getId(), $event->getTitle()));
 
-                // creation de l'event (grace a localisation)
-                $event->setSlug(strtolower($slugger->slug($event->getTitle())))
-                    ->setLocalisation($localisation);
                 $this->em->persist($event);
-
                 $this->em->flush();
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
@@ -402,10 +347,8 @@ class EventController extends AbstractController
             }
         }
 
-        $formView = $form->createView();
-
         return $this->render('event/update.html.twig', [
-            'formView' => $formView,
+            'formView' => $form->createView(),
             'event' => $event,
 
         ]);
