@@ -71,7 +71,7 @@ class Event
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $participations;
 
-    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'events', cascade: ['remove'])]
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist','remove'], inversedBy: 'events')]
     private ?Localisation $localisation;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
