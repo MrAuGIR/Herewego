@@ -9,19 +9,16 @@ use Symfony\Component\Form\FormInterface;
 class PictureFactory
 {
     public function __construct(
-        #[Autowire(param: 'images_directory')] private string $imagesDirectory
-    ){}
+        #[Autowire(param: 'images_directory')]
+        private string $imagesDirectory
+    ) {
+    }
 
-    /**
-     * @param FormInterface $form
-     * @return iterable
-     */
     public function handleFromForm(FormInterface $form): iterable
     {
         $pictures = $form->get('pictures')->getData();
 
         foreach ($pictures as $picture) {
-
             $file = md5(uniqid()).'.'.$picture->guessExtension();
 
             $picture->move(
