@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Factory\UserFactory;
 use App\Form\EditPassType;
 use App\Form\EditProfilType;
 use App\Repository\ParticipationRepository;
@@ -30,7 +31,7 @@ class UserController extends AbstractController
     public function __construct(
         protected UserPasswordHasherInterface $encoder,
         protected EntityManagerInterface $em,
-        protected TokenStorageInterface $tokenStorage
+        protected TokenStorageInterface $tokenStorage,
     ) {
     }
 
@@ -64,7 +65,7 @@ class UserController extends AbstractController
     public function edit(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
-         * @var User
+         * @var User $user
          */
         $user = $this->getUser();
         if (! $user) {
@@ -152,7 +153,7 @@ class UserController extends AbstractController
     public function delete(SessionInterface $sessionInterface): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         /**
-         * @var User
+         * @var User $user
          */
         $user = $this->getUser();
 
@@ -177,7 +178,7 @@ class UserController extends AbstractController
     public function events(ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
     {
         /**
-         * @var User;
+         * @var User $user
          */
         $user = $this->getUser();
         if (! $user) {

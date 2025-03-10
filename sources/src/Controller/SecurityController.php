@@ -15,6 +15,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(
+        private UserFactory $userFactory
+    ){}
+
     #[Route('/register', name: 'app_register')]
     public function register(): Response
     {
@@ -29,30 +33,9 @@ class SecurityController extends AbstractController
 
         $form->handleRequest($request);
 
-        // soumission du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Localisation de l'utilisateur */
-            $localisation = new Localisation();
-            $localisation->setAdress($request->request->get('register')['localisation']['adress'])
-                         ->setCityName($request->request->get('register')['localisation']['cityName'])
-                         ->setCityCp($request->request->get('register')['localisation']['cityCp'])
-                         ->setCoordonneesX($request->request->get('register')['localisation']['coordonneesX'])
-                         ->setCoordonneesY($request->request->get('register')['localisation']['coordonneesY']);
 
-            $manager->persist($localisation);
-
-            /* creation de l'organisateur */
-            $hash = $encoder->hashPassword($user, $user->getPassword());
-            $user->setPassword($hash)
-                ->setIsPremium(false)
-                ->setRoles(['ROLE_USER'])
-                ->setRegisterAt(new \DateTime())
-                ->setLocalisation($localisation)
-                ->setPathAvatar(0);
-
-            $manager->persist($user);
-
-            $manager->flush();
+            $this->userFactory->createUser($user);
 
             $this->addFlash('success', 'Utilisateur créé, en attente de validation par l\'administration');
 

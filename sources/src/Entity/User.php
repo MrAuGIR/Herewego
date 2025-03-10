@@ -66,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', options: ['default' => 0])]
     private bool $isPremium = false;
 
-    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'users', cascade: ['remove'])]
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'users')]
     private ?Localisation $localisation = null;
 
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', cascade: ['remove'])]
