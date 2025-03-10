@@ -13,6 +13,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
@@ -87,7 +88,7 @@ class EventCrudController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'eventcrud_show', methods: [Request::METHOD_GET])]
-    public function show(Event $event, ParticipationRepository $participationRepository)
+    public function show(Event $event, ParticipationRepository $participationRepository): Response
     {
 
         $user = $this->getUser();
@@ -109,18 +110,17 @@ class EventCrudController extends AbstractController
         return $this->render('admin/event/show.html.twig', [
             'event' => $event,
             'user' => $user,
-            'isOnEvent' => true, // c'est l'admin il a tous les pouvoirs
+            'isOnEvent' => true,
             'countView' => $event->getCountViews(),
         ]);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
     public function delete(Event $event, MailerInterface $mailer)
     {
-        if (! $event) {
-            throw $this->createNotFoundException("l'event demandé n'existe pas!");
-        }
-
         $transports = $event->getTransports();
         $transportManagerMails = [];
 
@@ -145,8 +145,6 @@ class EventCrudController extends AbstractController
             ]);
         $mailer->send($email);
 
-
-        // traitement de la suppression
         $this->em->remove($event);
         $this->em->flush();
 
