@@ -105,7 +105,7 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'organizer_delete', methods: [Request::METHOD_GET, Request::METHOD_DELETE])]
     public function delete(User $user, Request $request): RedirectResponse
     {
         $this->em->remove($user);
