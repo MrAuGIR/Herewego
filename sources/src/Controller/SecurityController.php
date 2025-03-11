@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Localisation;
 use App\Entity\User;
+use App\Factory\UserFactory;
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     public function __construct(
-        private UserFactory $userFactory
+        private readonly UserFactory $userFactory
     ){}
 
     #[Route('/register', name: 'app_register')]
@@ -55,7 +56,6 @@ class SecurityController extends AbstractController
 
         $form->handleRequest($request);
 
-        // soumission du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
             /* Localisation de l'organisateur */
             $localisation = new Localisation();

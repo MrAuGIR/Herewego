@@ -10,7 +10,9 @@ use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +32,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/profil', name: 'organizer_profil', methods: [Request::METHOD_GET])]
-    public function profil(): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function profil(): RedirectResponse|Response
     {
         $user = $this->getUser();
         if (! $user) {
@@ -45,7 +47,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/profil/edit', name: 'organizer_edit', methods: [Request::METHOD_PUT])]
-    public function edit(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function edit(Request $request): RedirectResponse|Response
     {
         $user = $this->getUser();
         if (! $user) {
@@ -74,7 +76,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/profil/password', name: 'organizer_edit_password', methods: [Request::METHOD_POST])]
-    public function password(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function password(Request $request): RedirectResponse|Response
     {
         /**
          * @var User $user
@@ -130,7 +132,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/profil/delete', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(SessionInterface $sessionInterface): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function delete(SessionInterface $sessionInterface): RedirectResponse
     {
         /**
          * @var User
@@ -154,7 +156,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/events', name: 'organizer_events', methods: [Request::METHOD_GET])]
-    public function events(EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function events(EventRepository $eventRepository): RedirectResponse|Response
     {
         /**
          * @var User $user;
@@ -180,7 +182,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/history', name: 'organizer_history', methods: [Request::METHOD_GET])]
-    public function history(EventRepository $eventRepository): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function history(EventRepository $eventRepository): RedirectResponse|Response
     {
         /**
          * @var User $user;
@@ -206,7 +208,7 @@ class OrganizerController extends AbstractController
     }
 
     #[Route('/stats', name: 'organizer_stats', methods: [Request::METHOD_GET])]
-    public function stats(): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function stats(): RedirectResponse|Response
     {
         $user = $this->getUser();
         if (! $user) {
