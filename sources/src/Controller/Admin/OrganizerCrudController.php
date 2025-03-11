@@ -2,14 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Localisation;
 use App\Entity\User;
 use App\Factory\OrganizerFactory;
 use App\Form\RegisterType;
 use App\Repository\UserRepository;
+use App\Service\Organizer\Siret\ApiCheckSiret;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 #[Route('/admin/organizer', name: 'admin_')]
 #[IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
@@ -117,53 +117,23 @@ class OrganizerCrudController extends AbstractController
     }
 
     #[Route('/verifySiret/{id}', name: 'organizer_check_siret', methods: [Request::METHOD_GET])]
-    public function verifySiret(User $user): RedirectResponse
+    public function verifySiret(User $user, ApiCheckSiret $apiCheckSiret): RedirectResponse
     {
-        /*
-         * @todo extraire dans un service
-         */
-        if (! empty($user->getSiret())) {
+        if (!empty($siret = $user->getSiret())) {
             // siret isfac 49098556100011
-            $client = new CurlHttpClient(['base_uri' => 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/']);
-
             try {
-                $response = $client->request('GET', $user->getSiret(), [
-                    'curl' => [
-                        CURLOPT_CAINFO => dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'certificat64.cer',
-                    ],
-                ]);
 
-                $code = $response->getStatusCode();
+                match ($apiCheckSiret->check($siret)) {
+                    true => $this->addFlash('success', 'Siret trouvé dans la base de donnée externe'),
+                    false => $this->addFlash('danger', 'SIRET inconnue')
+                };
 
-                if (200 == $code) {
-                    // le siret a été trouvé
-                    // echo $response->getBody();
-                    $this->addFlash('success', 'Siret trouvé dans la base de donnée externe');
-
-                    return $this->redirectToRoute('admin_organizer_edit', ['id' => $user->getId()]);
-                }
-
-                if (500 == $code) {
-                    $this->addFlash('warning', 'Base de donnée externe en maintenance');
-
-                    return $this->redirectToRoute('admin_organizer_edit', ['id' => $user->getId()]);
-                }
-
-                if (400 == $code) {
-                    $this->addFlash('danger', 'SIRET inconnue');
-
-                    return $this->redirectToRoute('admin_organizer_edit', ['id' => $user->getId()]);
-                }
-            } catch (\Exception $e) {
-                $error = $e->getMessage();
+            } catch (\Exception|TransportExceptionInterface $e) {
+                $this->addFlash('warning', 'Base de donnée externe en maintenance '.$e->getMessage());
             }
-
-            $this->addFlash('danger', 'Siret invalide');
 
             return $this->redirectToRoute('admin_organizer_edit', ['id' => $user->getId()]);
         }
-
-        $this->addFlash('danger', 'Siret null ou vide');
 
         return $this->redirectToRoute('admin_organizer_edit');
     }
