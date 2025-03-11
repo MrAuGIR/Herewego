@@ -100,7 +100,7 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_GET, Request::METHOD_DELETE])]
     public function delete(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $this->em->remove($user);

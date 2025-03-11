@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $participations;
 
-    #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: 'user', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: 'user')]
     private Collection $questionUsers;
 
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'user', cascade: ['remove'])]
