@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-readonly class UserFactory
+class UserFactory
 {
     public function __construct(
-        private UserPasswordHasherInterface $encoder,
-        private EntityManagerInterface      $em
+        protected readonly UserPasswordHasherInterface $encoder,
+        protected readonly EntityManagerInterface $em
     ) {
     }
 
@@ -29,7 +29,7 @@ readonly class UserFactory
         $this->persist($form,$user);
     }
 
-    private function persist(FormInterface $form, User $user): void
+    protected function persist(FormInterface $form, User $user): void
     {
         $hash = $this->encoder->hashPassword($user, $user->getPassword());
         $user->setPassword($hash)

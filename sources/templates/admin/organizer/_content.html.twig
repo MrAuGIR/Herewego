@@ -32,8 +32,8 @@
                     <th>{{user.registerAt | date('Y-m-d H:i') }}</th>
                     <th>quelque chose</th>
                     <th>
-                        <a href="{{path('organizercrud_edit',{id:user.id})}}">Editer</a>
-                        <a href="{{path('organizercrud_delete',{id:user.id})}}">Supprimer</a>
+                        <a href="{{path('admin_organizer_edit',{id:user.id})}}">Editer</a>
+                        <a href="{{path('admin_organizer_delete',{id:user.id})}}">Supprimer</a>
                     </th>
                 </tr>
                 {% endfor %}

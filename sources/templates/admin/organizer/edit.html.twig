@@ -32,7 +32,7 @@
             <h3>Verification du siret</h3>
         </div>
         <div class="col-12">
-            <p>{{user.siret}}</p><a class="btn btn-primary" href="{{path('verifySiret',{id:user.id})}}">Verifier Siret</a>
+            <p>{{user.siret}}</p><a class="btn btn-primary" href="{{path('admin_organizer_check_siret',{id:user.id})}}">Verifier Siret</a>
         </div>
     </div>
 {% endblock %}
