@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use App\Factory\LogoFactory;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +22,8 @@ class CategoryCrudController extends AbstractController
     public function __construct(
         protected UserPasswordHasherInterface $encoder,
         protected EntityManagerInterface $em,
-        protected SluggerInterface $slugger
+        protected SluggerInterface $slugger,
+        private LogoFactory $logoFactory,
     ) {
     }
 
@@ -53,18 +55,9 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* gestion du logo */
-            $logo = $form->get('pathLogo')->getData();
 
-            if (null != $logo) {
-                // on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                $fichier = md5(uniqid()).'.'.$logo->guessExtension();
-
-                // on copie le fichier dans le dossier uploads
-                // 2 params (destination, fichier)
-                $logo->move($this->getParameter('logo_directory'), $fichier);
-                // on stock l'image dans la bdd (son nom)
-                $category->setPathLogo($fichier);
+            if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
+                $category->setPathLogo($file);
             }
 
             $category->setName($request->request->get('category')['name'])
@@ -93,20 +86,9 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logo = $form->get('pathLogo')->getData();
-            if (null != $logo) {
-                // on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                $fichier = md5(uniqid()).'.'.$logo->guessExtension();
 
-                // on copie le fichier dans le dossier uploads
-                // 2 params (destination, fichier)
-                $logo->move($this->getParameter('logo_directory'), $fichier);
-
-                /* Penser a supprimer les ancien fichiers */
-                unlink($this->getParameter('logo_directory').'/'.$category->getPathLogo()); // ici je supprime le fichier
-
-                // on stock l'image dans la bdd (son nom)
-                $category->setPathLogo($fichier);
+            if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
+                $category->setPathLogo($file);
             }
 
 
