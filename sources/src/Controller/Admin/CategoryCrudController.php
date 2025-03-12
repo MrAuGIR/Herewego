@@ -8,6 +8,7 @@ use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,18 +17,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
-#[Route('/admin/category')]
+#[Route('/admin/category',  name: 'admin_category_')]
 class CategoryCrudController extends AbstractController
 {
     public function __construct(
         protected UserPasswordHasherInterface $encoder,
-        protected EntityManagerInterface $em,
-        protected SluggerInterface $slugger,
-        private LogoFactory $logoFactory,
+        protected EntityManagerInterface      $em,
+        protected SluggerInterface            $slugger,
+        private readonly LogoFactory          $logoFactory,
     ) {
     }
 
-    #[Route('/', name: 'categorycrud', methods: [Request::METHOD_GET])]
+    #[Route('/', name: 'list', methods: [Request::METHOD_GET])]
     public function index(CategoryRepository $categoryRepository): Response
     {
         $categories = $categoryRepository->findAll();
@@ -37,7 +38,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/show/{id}', name:'categorycrud_show', methods: [Request::METHOD_GET])]
+    #[Route('/show/{id}', name:'show', methods: [Request::METHOD_GET])]
     public function show(Category $category): Response
     {
         return $this->render('admin/category/show.html.twig', [
@@ -45,7 +46,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name:'categorycrud_create', methods: [Request::METHOD_POST])]
+    #[Route('/create', name:'create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $category = new Category();
@@ -59,11 +60,7 @@ class CategoryCrudController extends AbstractController
             if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
                 $category->setPathLogo($file);
             }
-
-            $category->setName($request->request->get('category')['name'])
-                ->setSlug(strtolower($this->slugger->slug($category->getName())))
-                ->setColor($request->request->get('category')['color']);
-
+            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
 
             $this->em->persist($category);
             $this->em->flush();
@@ -78,7 +75,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'categorycrud_edit', methods: [Request::METHOD_PUT])]
+    #[Route('/edit/{id}', name: 'edit', methods: [Request::METHOD_GET,Request::METHOD_PUT])]
     public function edit(Category $category, Request $request): Response
     {
         $form = $this->createForm(CategoryType::class, $category);
@@ -91,10 +88,7 @@ class CategoryCrudController extends AbstractController
                 $category->setPathLogo($file);
             }
 
-
-            $category->setName($request->request->get('category')['name'])
-                ->setSlug(strtolower($this->slugger->slug($category->getName())))
-                ->setColor($request->request->get('category')['color']);
+            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
 
             $this->em->persist($category);
             $this->em->flush();
@@ -110,8 +104,8 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete', name: 'categorycrud_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(Category $category, Request $request)
+    #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_GET,Request::METHOD_DELETE])]
+    public function delete(Category $category, Request $request): RedirectResponse
     {
         $this->em->remove($category);
         $this->em->flush();
