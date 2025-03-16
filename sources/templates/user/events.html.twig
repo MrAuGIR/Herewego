@@ -127,7 +127,7 @@
 																				<p class="text-center">demande effectué le {{ ticket.askedAt | date('Y-m-d') }} auprès de {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
 																			</div>
 																			<div>
-																				<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir le transport</a>
+																				<a class="btn btn-primary" href="{{ path('transport_show', {id: transport.id}) }}" role="button">Voir le transport</a>
 																			</div>
 																		</div>
 																	</div>
