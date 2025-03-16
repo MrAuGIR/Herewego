@@ -478,9 +478,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function countValidatedTickets(): int
     {
         $validatedTickets = array_filter($this->getTickets()->toArray(), function (Ticket $ticket) {
-            return $ticket->isValidated();
+            return $ticket->getIsValidate();
         });
 
         return count($validatedTickets);
+    }
+
+    public function allowCreateTransport(Event $event): bool
+    {
+        if ($this->isParticipating($event)) {
+            if (!$this->alreadyManageTransport($event)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isParticipating(Event $event): bool
+    {
+        foreach ($this->getParticipations() as $participation) {
+            if ($participation->getEvent()->getId() == $event->getId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function alreadyManageTransport(Event $event): bool
+    {
+        foreach ($event->getTransports() as $transport) {
+            if ($transport->getUser()->getId() == $this->getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

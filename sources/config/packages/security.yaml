@@ -21,6 +21,7 @@ security:
                 check_path: app_login
             logout:
                 path: /logout
+            access_denied_handler: App\Security\AccessDeniedHandler
 
 
             # activate different ways to authenticate
