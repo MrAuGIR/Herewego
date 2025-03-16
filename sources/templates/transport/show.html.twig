@@ -4,30 +4,6 @@
 
 {% block body %}
 <div class="container">
-    <!-- <h2>Transport : {{ transport.id }} / de l'event : {{ transport.event.title }}</h2>
-    <div>
-        <h3>Recap du transport</h3>
-        <p>manager : {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
-        <p>Infos Aller : </p>
-        <ul>
-            <li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
-            <li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
-            <hr>
-            <li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
-            <li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
-        </ul>
-        <p>infos Retour : </p>
-        <ul>
-            <li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
-            <li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
-            <hr>
-            <li>Arrivée : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
-            <li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
-        </ul>
-        <p>commentaires : {{ transport.commentary }}</p>
-        <p>Places disponibles : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
-        <p>Prix du billet : {{ transport.placePrice }} €</p>
-    </div> -->
     <div class="row py-3">
         <div class="col-12 d-flex justify-content-center my-1">
             <h5>{{transport.event.title}}</h5>
@@ -119,7 +95,7 @@
         <div class="row">
             <div class="col-12 py-3">
                 <p>Vous êtes le manager de ce Transport pour cet événement</p>
-                <a class="btn btn-primary" href="{{path('transport_manage',{transport_id:transport.id})}}">Gérer votre transport</a>
+                <a class="btn btn-primary" href="{{path('transport_manage',{id:transport.id})}}">Gérer votre transport</a>
             </div>
         </div>
         {% else %}

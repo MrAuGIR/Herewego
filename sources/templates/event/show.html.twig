@@ -46,10 +46,10 @@
 					</div>
 					{% if isOnEvent %}
 						<div class="col-12 col-md-6 mt-4 mb-4">
-							<a href="{{ path('transport', {event_id: event.id }) }}" class="btn btn-primary">Les transports</a>
+							<a href="{{ path('transport', {id: event.id }) }}" class="btn btn-primary">Les transports</a>
 						</div>
 						<div class="col-12 col-md-6 mt-4 mb-4">
-							<a href="{{ path('transport_create', {event_id: event.id }) }}" class="btn btn-primary">Proposer un transport</a>
+							<a href="{{ path('transport_create', {id: event.id }) }}" class="btn btn-primary">Proposer un transport</a>
 						</div>
 					{% endif %}
 				</div>

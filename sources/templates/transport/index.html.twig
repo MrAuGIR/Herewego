@@ -122,9 +122,9 @@
 								</div>
 							</div>
 							<div class="col-12 col-md-4 d-flex justify-content-center">
-								<a class="mx-2 btn btn-outline-primary" href="{{ path('transport_show', {transport_id: transport.id }) }}">vers la page détail du transport</a>
+								<a class="mx-2 btn btn-outline-primary" href="{{ path('transport_show', {id: transport.id }) }}">vers la page détail du transport</a>
 								{% if user.id == transport.user.id %}
-								<a class="mx-2 btn btn-outline-primary" href="{{ path('transport_manage',{transport_id:transport.id}) }}">Gérer votre transport</a>
+								<a class="mx-2 btn btn-outline-primary" href="{{ path('transport_manage',{id:transport.id}) }}">Gérer votre transport</a>
 								{% endif %}
 							</div>
 						</div>

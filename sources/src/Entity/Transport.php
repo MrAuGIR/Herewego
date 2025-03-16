@@ -61,10 +61,10 @@ class Transport
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'transport', cascade: ['remove'])]
     private $tickets;
 
-    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'transports')]
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
     private ?Localisation $localisation_start;
 
-    #[ORM\ManyToOne(targetEntity: Localisation::class, inversedBy: 'transports')]
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
     private ?Localisation $localisation_return;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transports')]
