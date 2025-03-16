@@ -474,4 +474,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+
+    public function countValidatedTickets(): int
+    {
+        $validatedTickets = array_filter($this->getTickets()->toArray(), function (Ticket $ticket) {
+            return $ticket->isValidated();
+        });
+
+        return count($validatedTickets);
+    }
 }
