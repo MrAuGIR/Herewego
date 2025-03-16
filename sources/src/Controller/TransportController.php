@@ -54,16 +54,14 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route('/show/{id}', name: '_show', methods: [Request::METHOD_GET])]
+    #[Route('/show/{id}', name: '_show', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function show(Transport $transport, Request $request, TicketRepository $ticketRepository, EntityManagerInterface $em): Response
     {
-        // le user doit participer à l'event pour voir cette page
         /** @var User $user */
         $user = $this->getUser();
 
-        /* Verification si l'utilisateur a déjà un ticket sur ce transport */
         $ticket = $ticketRepository->findOneByUserAndTransport($user, $transport);
-        if (! $ticket) {
+        if (!$ticket) {
             $ticket = new Ticket();
         }
 
@@ -72,14 +70,12 @@ class TransportController extends AbstractController
 
         $form->handleRequest($request);
 
-        /* Soumission du formulaire demande de ticket */
         if ($form->isSubmitted() && $form->isValid()) {
+
             $ticket->setAskedAt(new \DateTime('now'))
                 ->setTransport($transport)
                 ->setUser($user)
-                ->setCountPlaces($request->request->get('ticket')['countPlaces'])
-                ->setCommentary($request->request->get('ticket')['commentary']);
-
+                ;
 
             $em->persist($ticket);
             $em->flush();
@@ -88,7 +84,7 @@ class TransportController extends AbstractController
             $this->addFlash('success', 'Demande de transport effectué');
 
             return $this->redirectToRoute('transport_show', [
-                'transport_id' => $transport_id,
+                'id' => $transport->getId(),
             ]);
         }
 
@@ -100,8 +96,8 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/{transport_id}/cancelTicket/{id}", name: "cancel_ticket")]
-    public function cancelTicket(int $transport_id,Ticket $ticket): RedirectResponse
+    #[Route("/{transport_id}/cancelTicket/{id}", name: "_cancel_ticket")]
+    public function cancelTicket(int $transport_id,Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -109,36 +105,28 @@ class TransportController extends AbstractController
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
-        if (! $user) {
-            // rediriger vers la page de connection
+        if (!$user) {
             $this->redirectToRoute('app_login');
         }
 
-        /* on verifie que l'utilisateur connecté est le 'proprietaire' du ticket */
         if (! $this->isGranted('delete', $ticket)) {
             $this->addFlash('danger', 'action non autorisé');
-
             return $this->redirectToRoute('transport_show', ['transport_id' => $transport_id]);
         }
 
-        /* on met a jour le nombre de place restante du transport */
-        $manager = $this->getDoctrine()->getManager();
         /* on met a jour le nombre de place uniquement si le ticket avait un status validé */
-        if (true == $ticket->getIsValidate()) {
+        if ($ticket->getIsValidate()) {
             $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
         }
 
-        $manager->persist($transport);
+        $em->persist($transport);
+        $em->remove($ticket);
+        $em->flush();
 
-        $manager->remove($ticket);
-        $manager->flush();
-
-
-        // rediriger vers la page du transport (avec message success)
         $this->addFlash('info', 'votre ticket est annulé');
 
         return $this->redirectToRoute('transport_show', [
-            'transport_id' => $transport_id,
+            'id' => $transport_id,
         ]);
     }
 
@@ -160,13 +148,10 @@ class TransportController extends AbstractController
     #[Route("/manage/accept/{id}", name: "_accept_ticket", methods: [Request::METHOD_GET])]
     public function accept(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
-
-        /* on verifie le nombre de places restantes */
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
-        /* si le nombre de place est suffisant on met a jour (et si le ticket n'est pas déjà validé) */
-        if (($transport->getRemainingPlace() >= $ticket->getCountPlaces()) && (true != $ticket->getIsValidate())) {
+        if (($transport->getRemainingPlace() >= $ticket->getCountPlaces()) && !$ticket->getIsValidate()) {
             $ticket->setIsValidate(true);
             $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
             $ticket->setValidateAt(new \DateTime());
@@ -178,29 +163,26 @@ class TransportController extends AbstractController
             $this->addFlash('success', 'ticket validé');
 
             return $this->redirectToRoute('transport_manage', [
-                'transport_id' => $ticket->getTransport()->getId(),
+                'id' => $ticket->getTransport()->getId(),
             ]);
         }
 
         return $this->redirectToRoute('transport_manage', [
-            'transport_id' => $ticket->getTransport()->getId(),
+            'id' => $ticket->getTransport()->getId(),
         ]);
     }
 
     #[Route("/manage/decline/{id}", name: "_decline_ticket")]
     public function decline(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
-        /* on recupère le transport lié au ticket */
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
-        /* si le proprietaire du transport n'est pas l'utilisateur connecté on redirige */
         if (! $this->isGranted('manage', $transport)) {
             return $this->redirectToRoute('transport_show', ['transport_id' => $transport->getId()]);
         }
 
-        /* si le ticket a precedement été validé alors dans ce cas la on remet a jour le nombre de place */
-        if (false != $ticket->getIsValidate()) {
+        if ($ticket->getIsValidate()) {
             $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
             $em->persist($transport);
         }
@@ -209,17 +191,13 @@ class TransportController extends AbstractController
         $em->persist($ticket);
         $em->flush();
 
-
         $this->addFlash('success', 'ticket annulé');
 
         return $this->redirectToRoute('transport_manage', [
-            'transport_id' => $ticket->getTransport()->getId(),
+            'id' => $ticket->getTransport()->getId(),
         ]);
     }
 
-    /**
-     * @throws \DateMalformedStringException
-     */
     #[Route("/create/{id}", name: "_create", methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Event $event,Request $request, EntityManagerInterface $em): RedirectResponse|Response
     {
@@ -341,9 +319,7 @@ class TransportController extends AbstractController
      */
     public function allowCreateTransport(User $user, Event $event): bool
     {
-        $participating = $this->isParticipating($user, $event);
-        /* L'utilisateur participe a l'event */
-        if ($participating) {
+        if ($this->isParticipating($user, $event)) {
             if (! $this->alreadyManageTransport($user, $event)) {
                 return true;
             }
@@ -363,9 +339,7 @@ class TransportController extends AbstractController
      */
     public function isParticipating(User $user, Event $event): bool
     {
-        $participations = $user->getParticipations();
-
-        foreach ($participations as $participation) {
+        foreach ($user->getParticipations() as $participation) {
             if ($participation->getEvent()->getId() == $event->getId()) {
                 return true;
             }
@@ -386,14 +360,11 @@ class TransportController extends AbstractController
      */
     public function alreadyManageTransport(User $user, Event $event): bool
     {
-        $transports = $event->getTransports();
-
-        foreach ($transports as $transport) {
+        foreach ($event->getTransports() as $transport) {
             if ($transport->getUser()->getId() == $user->getId()) {
                 return true;
             }
         }
-
         return false;
     }
 }

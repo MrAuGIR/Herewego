@@ -125,7 +125,7 @@
                     {% else %}
                         <span> Votre demande n'a pas été accepté</span><br>
                     {% endif %}
-                    <a class="btn btn-primary" href="{{path('cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
+                    <a class="btn btn-primary" href="{{path('transport_cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
                 </div>
             </div>
             {% endif %}
