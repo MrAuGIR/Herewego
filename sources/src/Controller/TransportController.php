@@ -158,21 +158,11 @@ class TransportController extends AbstractController
     }
 
     #[Route("/create/{id}", name: "_create", methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[IsGranted(EventVoter::CREATE_TRANSPORT, 'event')]
     public function create(Event $event,Request $request, EntityManagerInterface $em): RedirectResponse|Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         /** @var User $user */
         $user = $this->getUser();
-
-        if (!$user) {
-            $this->redirectToRoute('app_login');
-        }
-
-        if (!$user->allowCreateTransport($event)) {
-            $this->addFlash('warning', 'Pour créer un transport vous devez être participant et ne pas avoir déjà créé de  précédent transport sur cet event');
-
-            return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
-        }
 
         $transport = new Transport();
 
@@ -207,13 +197,6 @@ class TransportController extends AbstractController
     #[IsGranted(TransportVoter::EDIT, 'transport')]
     public function edit(Transport $transport, Request $request, EntityManagerInterface $em): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if (!$user) {
-            $this->redirectToRoute('home');
-        }
-
         $form = $this->createForm(TransportType::class, $transport);
         $form->handleRequest($request);
 
@@ -230,7 +213,7 @@ class TransportController extends AbstractController
         return $this->render('transport/edit.html.twig', [
             'transport' => $transport,
             'event' => $transport->getEvent(),
-            'user' => $user,
+            'user' => $this->getUser(),
             'form' => $form->createView(),
 
         ]);

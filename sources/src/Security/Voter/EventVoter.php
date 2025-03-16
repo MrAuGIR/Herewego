@@ -15,10 +15,12 @@ class EventVoter extends Voter
     public const CAN_DELETE = 'CAN_DELETE';
     public const CAN_EDIT = 'CAN_EDIT';
 
+    public const CREATE_TRANSPORT = 'CREATE_TRANSPORT';
+
     protected function supports($attribute, $subject): bool
     {
-        return in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT])
-            && $subject instanceof \App\Entity\Event;
+        return in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CREATE_TRANSPORT])
+            && $subject instanceof Event;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
@@ -39,6 +41,7 @@ class EventVoter extends Voter
 
         return match ($attribute) {
             self::VIEW => $user->isParticipating($event),
+            self::CREATE_TRANSPORT => $user->allowCreateTransport($event),
             self::CAN_DELETE, self::CAN_EDIT => $event->getUser() === $user,
             default => false,
         };
