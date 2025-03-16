@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\TicketType;
 use App\Form\TransportType;
 use App\Repository\TicketRepository;
+use App\Security\Voter\EventVoter;
 use App\Security\Voter\TicketVoter;
 use App\Security\Voter\TransportVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,32 +25,11 @@ class TransportController extends AbstractController
 {
 
     #[Route("/event/{id}", name: '', methods: [Request::METHOD_GET])]
+    #[IsGranted(EventVoter::VIEW, 'event')]
     public function index(Event $event): RedirectResponse|Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         /** @var User $user */
         $user = $this->getUser();
-
-        $participationsUser = $user->getParticipations();
-        $participating = false;
-        foreach ($participationsUser as $participation) {
-            /** @var Event $eventUser */
-            $eventUser = $participation->getEvent();
-            if ($eventUser->getId() == $event->getId()) {
-                $participating = true;
-                break;
-            }
-        }
-
-        if (! $participating) {
-            $this->addFlash('warning', 'Vous devez participer a l\'event pour voir ses transports');
-
-            return $this->redirectToRoute('event_show', [
-                'id' => $event->getId(),
-            ]);
-        }
-
 
         return $this->render('transport/index.html.twig', [
             'user' => $user,
@@ -155,14 +135,11 @@ class TransportController extends AbstractController
     }
 
     #[Route("/manage/decline/{id}", name: "_decline_ticket")]
+    #[IsGranted(TransportVoter::MANAGE, 'transport')]
     public function decline(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
-
-        if (! $this->isGranted('manage', $transport)) {
-            return $this->redirectToRoute('transport_show', ['transport_id' => $transport->getId()]);
-        }
 
         if ($ticket->getIsValidate()) {
             $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
