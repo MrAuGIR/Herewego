@@ -36,7 +36,8 @@ class TransportVoter extends Voter
         $transport = $subject;
 
         return match ($attribute) {
-            self::CREATE, self::VIEW => true,
+            self::CREATE => true,
+            self::VIEW => $user->isParticipating($transport->getEvent()),
             self::MANAGE, self::DELETE, self::EDIT => $transport->getUser() === $user,
             default => false,
         };
