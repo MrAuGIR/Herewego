@@ -80,24 +80,14 @@ class EventController extends AbstractController
         return $this->render('event/index.html.twig', compact('events', 'categories', 'total', 'limit', 'page'));
     }
 
-    #[Route('/show/{event_id}', name: 'event_show', methods: [Request::METHOD_GET])]
-    public function show($event_id, ParticipationRepository $participationRepository, EventRepository $eventRepository, PictureRepository $pictureRepository): RedirectResponse|Response
+    #[Route('/show/{id}', name: 'event_show', methods: [Request::METHOD_GET])]
+    public function show(Event $event, ParticipationRepository $participationRepository, PictureRepository $pictureRepository): RedirectResponse|Response
     {
-        $event = $eventRepository->findOneBy([
-            'id' => $event_id,
-        ]);
-        if (! $event) {
-            $this->addFlash('warning', "L'évênement demandé n'existe pas");
+        $pictures = $pictureRepository->findBy(['event' => $event->getId()], ['orderPriority' => 'DESC']);
 
-            return $this->redirectToRoute('event');
-        }
-
-        $pictures = $pictureRepository->findBy(['event' => $event_id], ['orderPriority' => 'DESC']);
-
-        // recuperer l'id du user connecté // si pas connecté $user = Null
+        /** @var User $user */
         $user = $this->getUser();
 
-        // si user connecté, on regarde si il participe à l'event en cours
         $isOnEvent = false;
         if ($user) {
             $participations = $participationRepository->findBy([
@@ -109,7 +99,6 @@ class EventController extends AbstractController
             }
         }
 
-        // incrémente le nombre de vues
         $event->setCountViews($event->getCountViews() + 1);
         $this->em->flush();
 
@@ -180,7 +169,7 @@ class EventController extends AbstractController
             $this->addFlash('warning', 'Vous participez déjà à cet évênement');
 
             return $this->redirectToRoute('event_show', [
-                'event_id' => $event_id,
+                'id' => $event_id,
             ]);
         }
 
@@ -210,7 +199,7 @@ class EventController extends AbstractController
         $this->addFlash('success', 'Vous participez desormais à cet évênement');
 
         return $this->redirectToRoute('event_show', [
-            'event_id' => $event_id,
+            'id' => $event_id,
         ]);
     }
 
@@ -242,7 +231,7 @@ class EventController extends AbstractController
             $this->addFlash('warning', 'Vous ne participez pas encore à cet évênement.');
 
             return $this->redirectToRoute('event_show', [
-                'event_id' => $event_id,
+                'id' => $event_id,
             ]);
         }
 
@@ -254,7 +243,7 @@ class EventController extends AbstractController
         $this->addFlash('success', 'Vous avez annulé votre participation à cet évênement');
 
         return $this->redirectToRoute('event_show', [
-            'event_id' => $event_id,
+            'id' => $event_id,
         ]);
     }
 
@@ -281,7 +270,7 @@ class EventController extends AbstractController
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
 
                 return $this->redirectToRoute('event_show', [
-                    'event_id' => $event->getId(),
+                    'id' => $event->getId(),
                 ]);
             } else {
                 $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
@@ -314,7 +303,7 @@ class EventController extends AbstractController
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
                 return $this->redirectToRoute('event_show', [
-                    'event_id' => $event->getId(),
+                    'id' => $event->getId(),
                 ]);
             } else {
                 $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');

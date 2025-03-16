@@ -1,5 +1,5 @@
 {% set displayInCategory = displayInCategory is defined? displayInCategory : false %}
-<a href="{{ path('event_show', {event_id: event.id }) }}">
+<a href="{{ path('event_show', {id: event.id }) }}">
     <div class="card event-card">
         {% set color = event.category.color is defined? event.category.color : '#0000'%}
         {% if displayInCategory == false %}

@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Factory\UserFactory;
 use App\Form\EditPassType;
 use App\Form\EditProfilType;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -19,11 +19,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/user")
- *
- * @IsGranted("ROLE_USER", message="Vous devez être utilisateur classique pour accéder à cette partie du site.")
- */
 #[Route('/user')]
 #[IsGranted('ROLE_USER', message: 'Vous devez être utilisateur classique pour accéder a cette partie du site')]
 class UserController extends AbstractController
@@ -35,34 +30,25 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/profil', name: 'user_profil', methods: [Request::METHOD_POST])]
-    public function profil(): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    #[Route('/profil', name: 'user_profil', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function profil(): RedirectResponse|Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        if (! $user) {
+        if (!$user) {
             $this->addFlash('warning', 'Connectez-vous pour accéder à votre profil.');
 
             return $this->redirectToRoute('app_login');
         }
 
-        // ! creer un Service pour gerer les stats utilisateur
-        // calcul du nombre de ticket validé = donc du nombre de transport effectué : perfectible (possible par findBy() surement)
-        $tickets = $user->getTickets();
-        $validatedTickets = 0;
-        foreach ($tickets as $ticket) {
-            if ($ticket->getIsValidate()) {
-                ++$validatedTickets;
-            }
-        }
-
         return $this->render('user/profil.html.twig', [
             'user' => $user,
-            'validatedTickets' => $validatedTickets,
+            'validatedTickets' => $user->countValidatedTickets()
         ]);
     }
 
     #[Route('/profil/edit', name: 'user_edit', methods: [Request::METHOD_PUT])]
-    public function edit(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function edit(Request $request): RedirectResponse|Response
     {
         /**
          * @var User $user
@@ -94,7 +80,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/profil/password', name: 'user_edit_password', methods: [Request::METHOD_PUT])]
-    public function password(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function password(Request $request): RedirectResponse|Response
     {
         /**
          * @var PasswordAuthenticatedUserInterface $user
@@ -150,7 +136,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/profil/delete', name: 'user_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(SessionInterface $sessionInterface): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function delete(SessionInterface $sessionInterface): RedirectResponse
     {
         /**
          * @var User $user
@@ -175,7 +161,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/events', name: 'user_events', methods: [Request::METHOD_GET])]
-    public function events(ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function events(ParticipationRepository $participationRepository): RedirectResponse|Response
     {
         /**
          * @var User $user
@@ -198,7 +184,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/history', name: 'user_history', methods: [Request::METHOD_GET])]
-    public function history(ParticipationRepository $participationRepository): \Symfony\Component\HttpFoundation\RedirectResponse|Response
+    public function history(ParticipationRepository $participationRepository): RedirectResponse|Response
     {
         /**
          * @var User;

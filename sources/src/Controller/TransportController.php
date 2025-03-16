@@ -9,12 +9,14 @@ use App\Entity\User;
 use App\Form\TicketType;
 use App\Form\TransportType;
 use App\Repository\TicketRepository;
+use App\Security\Voter\TransportVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/transport', name: 'transport')]
 class TransportController extends AbstractController
@@ -211,7 +213,7 @@ class TransportController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (! $user) {
+        if (!$user) {
             $this->redirectToRoute('app_login');
         }
 
@@ -220,7 +222,7 @@ class TransportController extends AbstractController
         if (!$allow) {
             $this->addFlash('warning', 'Pour créer un transport vous devez être participant et ne pas avoir déjà créé de  précédent transport sur cet event');
 
-            return $this->redirectToRoute('event_show', ['event_id' => $event->getId()]);
+            return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
         }
 
         $transport = new Transport();
@@ -242,7 +244,7 @@ class TransportController extends AbstractController
 
             $this->addFlash('success', 'Transport créé');
 
-            return $this->redirectToRoute('transport', ['event_id' => $event->getId()]);
+            return $this->redirectToRoute('transport', ['id' => $event->getId()]);
         }
 
         return $this->render('transport/create.html.twig', [
@@ -253,18 +255,13 @@ class TransportController extends AbstractController
     }
 
     #[Route("/edit/{id}", name: "_edit", methods: [Request::METHOD_POST, Request::METHOD_GET])]
+    #[IsGranted(TransportVoter::EDIT, 'transport')]
     public function edit(Transport $transport, Request $request, EntityManagerInterface $em): Response
     {
-        if (! $this->isGranted('edit', $transport)) {
-            $this->addFlash('danger', 'action non autorisé');
-
-            return $this->redirectToRoute('transport_show', ['transport_id' => $transport->getId()]);
-        }
-
         /** @var User $user */
         $user = $this->getUser();
 
-        if (! $user) {
+        if (!$user) {
             $this->redirectToRoute('home');
         }
 
@@ -291,16 +288,10 @@ class TransportController extends AbstractController
     }
 
     #[Route("/delete/{id}", name: "_delete", methods: [Request::METHOD_DELETE, Request::METHOD_GET])]
+    #[IsGranted(TransportVoter::DELETE, 'transport')]
     public function delete(Transport $transport, EntityManagerInterface $em): Response
     {
-
         $event_id = $transport->getEvent()->getId();
-
-        if (! $this->isGranted('delete', $transport)) {
-            $this->addFlash('danger', 'Action non autorisé');
-
-            return $this->redirectToRoute('home');
-        }
 
         $em->remove($transport);
         $em->flush();
