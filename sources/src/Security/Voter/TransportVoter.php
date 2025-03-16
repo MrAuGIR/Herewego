@@ -17,7 +17,7 @@ class TransportVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::VIEW, self::EDIT, self::CREATE, self::DELETE, self::MANAGE]) && ($subject instanceof Transport);
+        return \in_array($attribute, [self::VIEW,self::EDIT, self::CREATE, self::DELETE, self::MANAGE]) && ($subject instanceof Transport);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -36,9 +36,9 @@ class TransportVoter extends Voter
         $transport = $subject;
 
         return match ($attribute) {
-            self::CREATE => true,
             self::VIEW => $user->isParticipating($transport->getEvent()),
             self::MANAGE, self::DELETE, self::EDIT => $transport->getUser() === $user,
+            self::CREATE => true,
             default => false,
         };
     }
