@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Files\CsvService;
 use App\Form\EditPassType;
 use App\Form\EditProfilType;
 use App\Repository\EventRepository;
+use App\Service\Files\CsvService;
+use App\Service\Files\Exception\CsvException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/organizer')]
-#[IsGranted('ROLE_ADMIN', message: 'Vous devez être organisateur pour accéder à cette partie du site.')]
+#[IsGranted('ROLE_ORGANIZER', message: 'Vous devez être organisateur pour accéder à cette partie du site.')]
 class OrganizerController extends AbstractController
 {
     public function __construct(
@@ -34,29 +35,15 @@ class OrganizerController extends AbstractController
     #[Route('/profil', name: 'organizer_profil', methods: [Request::METHOD_GET])]
     public function profil(): RedirectResponse|Response
     {
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour accéder à votre profil.');
-
-            return $this->redirectToRoute('app_login');
-        }
-
         return $this->render('organizer/profil.html.twig', [
-            'user' => $user,
+            'user' => $this->getUser(),
         ]);
     }
 
-    #[Route('/profil/edit', name: 'organizer_edit', methods: [Request::METHOD_PUT])]
+    #[Route('/profil/edit', name: 'organizer_edit', methods: [Request::METHOD_GET, Request::METHOD_POST, Request::METHOD_PUT])]
     public function edit(Request $request): RedirectResponse|Response
     {
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour modifier votre profil.');
-
-            return $this->redirectToRoute('app_login');
-        }
-
-        $form = $this->createForm(EditProfilType::class, $user, ['chosen_role' => ['ROLE_ORGANIZER']]);
+        $form = $this->createForm(EditProfilType::class, $this->getUser(), ['chosen_role' => ['ROLE_ORGANIZER']]);
 
         $form->handleRequest($request);
 
@@ -71,7 +58,7 @@ class OrganizerController extends AbstractController
 
         return $this->render('organizer/edit.html.twig', [
             'formView' => $formView,
-            'user' => $user,
+            'user' => $this->getUser(),
         ]);
     }
 
@@ -82,11 +69,6 @@ class OrganizerController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour modifier votre mot de passe.');
-
-            return $this->redirectToRoute('app_login');
-        }
 
         $form = $this->createForm(EditPassType::class);
 
@@ -134,20 +116,10 @@ class OrganizerController extends AbstractController
     #[Route('/profil/delete', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
     public function delete(SessionInterface $sessionInterface): RedirectResponse
     {
-        /**
-         * @var User
-         */
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('success', 'Connectez-vous pour pouvoir supprimer votre compte');
-
-            return $this->redirectToRoute('app_login');
-        }
-
         $this->tokenStorage->setToken(null);
         $sessionInterface->invalidate();
 
-        $this->em->remove($user);
+        $this->em->remove($this->getUser());
         $this->em->flush();
 
         $this->addFlash('success', 'Votre compte a bien été supprimé');
@@ -155,72 +127,50 @@ class OrganizerController extends AbstractController
         return $this->redirectToRoute('home');
     }
 
+    /**
+     * @throws CsvException
+     */
     #[Route('/events', name: 'organizer_events', methods: [Request::METHOD_GET])]
     public function events(EventRepository $eventRepository): RedirectResponse|Response
     {
-        /**
-         * @var User $user;
-         */
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('success', 'Connectez-vous pour voir vos évênements');
+        $events = $eventRepository->findByDateAfterNow($this->getUser()->getId());
 
-            return $this->redirectToRoute('app_login');
-        }
-
-        // recupère les events à venir
-        $events = $eventRepository->findByDateAfterNow($user->getId());
-
-        // gestion CSV
         $fileName = $this->csvService->createEventCsv($events);
 
         return $this->render('organizer/events.html.twig', [
-            'user' => $user,
+            'user' => $this->getUser(),
             'events' => $events,
             'fileName' => $fileName,
         ]);
     }
 
+    /**
+     * @throws CsvException
+     */
     #[Route('/history', name: 'organizer_history', methods: [Request::METHOD_GET])]
     public function history(EventRepository $eventRepository): RedirectResponse|Response
     {
-        /**
-         * @var User $user;
-         */
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('success', 'Connectez-vous pour voir vos évênements passés');
+        $events = $eventRepository->findByDateBeforeNow($this->getUser()->getId());
 
-            return $this->redirectToRoute('app_login');
-        }
-
-        // recupère les events passés
-        $events = $eventRepository->findByDateBeforeNow($user->getId());
-
-        // gestion CSV
         $fileName = $this->csvService->createEventCsv($events);
 
         return $this->render('organizer/history.html.twig', [
-            'user' => $user,
+            'user' => $this->getUser(),
             'events' => $events,
             'fileName' => $fileName,
         ]);
     }
 
+    /**
+     * @throws CsvException
+     */
     #[Route('/stats', name: 'organizer_stats', methods: [Request::METHOD_GET])]
     public function stats(): RedirectResponse|Response
     {
+        /** @var User $user */
         $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('success', 'Connectez-vous pour voir vos statistiques');
 
-            return $this->redirectToRoute('app_login');
-        }
-
-        // gestion CSV
-        $datas = $user->getEvents();
-        $fileName = $this->csvService->createEventCsv($datas);
-
+        $fileName = $this->csvService->createEventCsv($user->getEvents()->toArray());
 
         return $this->render('organizer/stats.html.twig', [
             'user' => $user,

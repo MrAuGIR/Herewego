@@ -2,22 +2,21 @@
 
 namespace App\Controller;
 
-use App\Entity\Localisation;
 use App\Entity\User;
+use App\Factory\OrganizerFactory;
 use App\Factory\UserFactory;
 use App\Form\RegisterType;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
     public function __construct(
-        private readonly UserFactory $userFactory
+        private readonly UserFactory $userFactory,
+        private readonly OrganizerFactory $organizerFactory,
     ){}
 
     #[Route('/register', name: 'app_register')]
@@ -27,7 +26,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register/user', name: 'app_register_user')]
-    public function registerUser(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): Response
+    public function registerUser(Request $request): Response
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_USER']]);
@@ -36,7 +35,7 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->userFactory->createUser($user);
+            $this->userFactory->create($form,$user);
 
             $this->addFlash('success', 'Utilisateur créé, en attente de validation par l\'administration');
 
@@ -49,7 +48,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register/organizer', name: 'app_register_organizer', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function registerOrganizer(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): Response
+    public function registerOrganizer(Request $request): Response
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_ORGANIZER']]);
@@ -57,35 +56,8 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Localisation de l'organisateur */
-            $localisation = new Localisation();
-            $localisation->setAdress($request->request->get('register')['localisation']['adress'])
-                        ->setCityName($request->request->get('register')['localisation']['cityName'])
-                        ->setCityCp($request->request->get('register')['localisation']['cityCp'])
-                        ->setCoordonneesX($request->request->get('register')['localisation']['coordonneesX'])
-                        ->setCoordonneesY($request->request->get('register')['localisation']['coordonneesY']);
 
-
-            $manager->persist($localisation);
-
-            /* creation de l'organisateur */
-            $hash = $encoder->hashPassword($user, $user->getPassword());
-            $user->setPassword($hash)
-                 ->setIsPremium(false)
-                 ->setRoles(['ROLE_ORGANIZER'])
-                 ->setRegisterAt(new \DateTime())
-                 ->setLocalisation($localisation)
-                 ->setCompanyName($request->request->get('register')['companyName'])
-                 ->setSiret($request->request->get('register')['siret'])
-                 ->setPathAvatar(0);
-
-            if (! empty($request->request->get('regsiter')['webSite'])) {
-                $user->setWebSite($request->request->get('regsiter')['webSite']);
-            }
-
-            $manager->persist($user);
-
-            $manager->flush();
+            $this->organizerFactory->create($form,$user);
 
             $this->addFlash('success', 'Compte organisateur créé, en attente de validation par l\'administration');
 
@@ -100,13 +72,8 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
 
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
