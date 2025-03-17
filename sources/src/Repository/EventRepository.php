@@ -21,22 +21,6 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    // /**
-    //  * @return Event[] Returns an array of Event objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
     /**
      * Retourne les derniers évènements créés (général ou par catégorie).
      *
@@ -153,19 +137,11 @@ class EventRepository extends ServiceEntityRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    /*
-    public function findOneBySomeField($value): ?Event
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
-    public function findByDateAfterNow($organizerId)
+    /**
+     * @param $organizerId
+     * @return Event[]
+     */
+    public function findByDateAfterNow($organizerId): array
     {
         $date = new \DateTime();
 
@@ -180,7 +156,11 @@ class EventRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByDateBeforeNow($organizerId)
+    /**
+     * @param $organizerId
+     * @return Event[]
+     */
+    public function findByDateBeforeNow($organizerId): array
     {
         $date = new \DateTime();
 

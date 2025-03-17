@@ -21,7 +21,7 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
     public function handle(Request $request, AccessDeniedException $accessDeniedException): ?Response
     {
         $session = $request->getSession();
-        $session->getFlashBag()->add('warning', 'page not found');
+        $session->getFlashBag()->add('warning', 'page not found '.$accessDeniedException->getMessage());
 
         return new RedirectResponse($this->router->generate('home'));
     }
