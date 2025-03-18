@@ -101,18 +101,12 @@ class TransportController extends AbstractController
     }
 
     #[Route("/manage/accept/{id}", name: "_accept_ticket", methods: [Request::METHOD_GET])]
-    public function accept(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
+    public function accept(Ticket $ticket, TickerFactory $factory): RedirectResponse
     {
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
-        if (($transport->getRemainingPlace() >= $ticket->getCountPlaces()) && !$ticket->getIsValidate()) {
-            $ticket->setIsValidate(true);
-            $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
-            $ticket->setValidateAt(new \DateTime());
-            $em->persist($transport);
-            $em->persist($ticket);
-            $em->flush();
+        if ($factory->validTicket($transport, $ticket)) {
 
             $this->addFlash('success', 'ticket validé');
 

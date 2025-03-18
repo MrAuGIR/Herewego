@@ -23,4 +23,19 @@ readonly class TickerFactory
         $this->em->persist($ticket);
         $this->em->flush();
     }
+
+    public function validTicket(Transport $transport, Ticket $ticket) : bool
+    {
+        if (($transport->getRemainingPlace() >= $ticket->getCountPlaces()) && !$ticket->getIsValidate()) {
+            $ticket->setIsValidate(true);
+            $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
+            $ticket->setValidateAt(new \DateTime());
+            $this->em->persist($transport);
+            $this->em->persist($ticket);
+            $this->em->flush();
+
+            return true;
+        }
+        return false;
+    }
 }
