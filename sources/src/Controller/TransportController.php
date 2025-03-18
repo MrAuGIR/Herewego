@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Entity\Ticket;
 use App\Entity\Transport;
 use App\Entity\User;
+use App\Factory\TickerFactory;
 use App\Form\TicketType;
 use App\Form\TransportType;
 use App\Repository\TicketRepository;
@@ -38,13 +39,12 @@ class TransportController extends AbstractController
     }
 
     #[Route('/show/{id}', name: '_show', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function show(Transport $transport, Request $request, TicketRepository $ticketRepository, EntityManagerInterface $em): Response
+    public function show(Transport $transport, Request $request, TicketRepository $ticketRepository, TickerFactory $factory): Response
     {
         /** @var User $user */
         $user = $this->getUser();
 
-        $ticket = $ticketRepository->findOneByUserAndTransport($user, $transport);
-        if (!$ticket) {
+        if (empty($ticket = $ticketRepository->findOneByUserAndTransport($user, $transport))) {
             $ticket = new Ticket();
         }
 
@@ -54,15 +54,7 @@ class TransportController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $ticket->setAskedAt(new \DateTime('now'))
-                ->setTransport($transport)
-                ->setUser($user)
-                ;
-
-            $em->persist($ticket);
-            $em->flush();
-
-            $this->addFlash('success', 'Demande de transport effectué');
+            $factory->createFromRequest($transport, $ticket,$user);
 
             return $this->redirectToRoute('transport_show', [
                 'id' => $transport->getId(),
@@ -223,13 +215,11 @@ class TransportController extends AbstractController
     #[IsGranted(TransportVoter::DELETE, 'transport')]
     public function delete(Transport $transport, EntityManagerInterface $em): Response
     {
-        $event_id = $transport->getEvent()->getId();
-
         $em->remove($transport);
         $em->flush();
 
         $this->addFlash('success', 'transport supprimé');
 
-        return $this->redirectToRoute('event_show', ['id' => $event_id]);
+        return $this->redirectToRoute('event_show', ['id' => $transport->getEvent()->getId()]);
     }
 }
