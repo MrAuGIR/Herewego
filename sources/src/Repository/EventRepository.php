@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\EventQueryDto;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -58,62 +59,45 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Retourne les events en fonction des filtres de recherche.
-     *
-     * @param $page  numero de la page en cours
-     * @param $limit nombre d'event a afficher par page
-     *
-     * @return Event[]
-     */
-    public function findByFilters($page, $limit, $order, $filtersCat = null, $localisation = null, $keyWord = null): array
+    public function findByFilters(EventQueryDto $dto): array
     {
-        // date actuelle
         $date = new \DateTime();
 
-        // les events qui ne sont pas encore passé
         $query = $this->createQueryBuilder('e')
             ->andWhere('e.endedAt > :date')
             ->setParameter('date', $date);
 
 
-        // si les filtres ne sont pas null
-        if (null != $filtersCat) {
+        if (!empty($categories = $dto->categories)) {
             $query->andWhere('e.category in (:cats)')
-                ->setParameter('cats', array_values($filtersCat));
+                ->setParameter('cats', array_values($categories));
         }
 
-        // si le mot clé n'est pas null
-        if (null != $keyWord) {
+        if (!empty($keyWord = $dto->q)) {
             $query->andWhere('e.title LIKE :title')
             ->setParameter('title', $keyWord.'%');
         }
 
-        // si la localisation n'est pas null
-        if (null != $localisation) {
+        if (!empty($localisation = $dto->localisation)) {
             $query->innerJoin('e.localisation', 'l')
                 ->andWhere('l.cityName LIKE :localisation')
                 ->setParameter('localisation', $localisation.'%');
         }
 
-        // ordre d'affichage et gestion des resultat en fonction de la page en cours
-        if (null != $order) {
+        if (!empty($order = $dto->order)) {
             $query->orderBy('e.startedAt', $order)
-                ->setFirstResult(($page * $limit) - $limit)
-                ->setMaxResults($limit);
+                ->setFirstResult(($dto->page * $dto->limit) - $dto->limit)
+                ->setMaxResults($dto->limit);
         } else {
             $query->orderBy('e.startedAt', 'ASC')
-                ->setFirstResult(($page * $limit) - $limit)
-                ->setMaxResults($limit);
+                ->setFirstResult(($dto->page * $dto->limit) - $dto->limit)
+                ->setMaxResults($dto->limit);
         }
 
         return $query->getQuery()->getResult();
     }
 
-    /**
-     * Compte le nombre d'event retourné en fonction des filtres.
-     */
-    public function getCountEvent($filtersCat = null, $localisation = null)
+    public function getCountEvent(EventQueryDto $dto)
     {
         $date = new \DateTime();
 
@@ -122,12 +106,12 @@ class EventRepository extends ServiceEntityRepository
             ->where('c.endedAt > :date')
             ->setParameter('date', $date);
 
-        if (null != $filtersCat) {
+        if (!empty($categories = $dto->categories)) {
             $query->andWhere('c.category IN(:cats)')
-                ->setParameter(':cats', array_values($filtersCat));
+                ->setParameter(':cats', array_values($categories));
         }
 
-        if (null != $localisation) {
+        if (!empty($localisation = $dto->localisation)) {
             $query->innerJoin('c.localisation', 'l')
                 ->andWhere('l.cityName LIKE :localisation')
                 ->setParameter('localisation', $localisation.'%');
