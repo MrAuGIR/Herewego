@@ -137,6 +137,12 @@
       <path value="$PROJECT_DIR$/sources/vendor/clue/ndjson-react" />
       <path value="$PROJECT_DIR$/sources/vendor/evenement/evenement" />
       <path value="$PROJECT_DIR$/sources/vendor/fidry/cpu-core-counter" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/sources/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/sources/vendor/symfony/serializer" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
