@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %}Événements du groupe
+	{{ eventGroup.name }}
+{% endblock %}
+
+
+{% block body %}
+	<h1 class="text-center">Groupe :
+		{{ eventGroup.name }}
+	</h1>
+	<div class="container">
+		<div class="row my-5" id="content">
+			{% if eventGroup.events is empty %}
+				<div class="col-12">
+					<div class="alert alert-info">
+						<p>Pas d'événements pour ce groupe</p>
+					</div>
+				</div>
+			{% else %}
+				{% for event in eventGroup.events %}
+					<div class="col-12 col-sm-6 col-lg-4 mb-3">
+						{% include '/includes/_event-card.html.twig' with {"event": event, "displayInCategory": true} %}
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+
+{% endblock %}

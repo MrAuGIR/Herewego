@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}transports de l'event :
+	{{ event.title }}
+{% endblock %}
+
+{% block body %}
+
+	<div class="container">
+		<div class="row by-4">
+			<div class="col-12 my-3">
+				<h1>Transports de l'event :<a class="nav-link" href="{{path('event_show',{id:event.id})}}" title="vers page de l'event">{{event.title }}</a></h1>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="accordion  w-100 my-5" id="accordionExample">
+		{% for transport in event.transports %}
+			<div class="accordion-item my-1">
+				<div class="accordion-header  " id="heading{{ transport.id }}">
+					<button class="accordion-button d-flex flex-column " type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ transport.id }}" aria-expanded="true" aria-controls="collapse{{ transport.id }}">
+						<div class="row w-100 py-2">
+							{% if transport.user.id == user.id %}
+								<div class="col-1"><i class="fas fa-user-shield fa-w"></i></div>
+								<div class="col-2">Départ : {{ transport.localisationStart.cityName }}</div>
+							{% else %}
+								<div class="col-3">Départ : {{ transport.localisationStart.cityName }}</div>
+							{% endif %}
+							<div class="col-3">Retour : {{ transport.localisationReturn.cityName }}</div>
+							<div class="col-3">Départ à
+								<strong>{{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</strong>
+							</div>
+							<div class="col-3">Retour à
+								<strong>{{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</strong>
+							</div>
+						</div>
+						<div class="row w-100 py-2">
+							<div class="col-3">
+								<strong>{{ transport.remainingPlace }} places</strong>
+								restantes
+							</div>
+						</div>
+					</button>
+				</div>
+				<div id="collapse{{ transport.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ transport.id }}" data-bs-parent="#accordionExample">
+					<div class="accordion-body">
+						<div class="row py-1">
+							<div class="col-12 d-flex justify-content-center my-1">
+								<h5>{{event.title}}</h5>
+							</div>
+							<div class="col-12 d-flex justify-content-center my-1">
+								<h5><span class="badge tag-manager">manager</span> : {{ transport.user.firstName }} {{ transport.user.lastName }}</h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 px-0">
+								<span class="badge tag-aller">Aller : </span>
+							</div>
+							<div class="col-12 col-md-5 block-aller-1 px-2 ">
+								<ul>
+									<li>Départ : {{ transport.localisationStart.adress }}, {{ transport.localisationStart.cityCp }}, {{ transport.localisationStart.cityName }}</li>
+									<li>Horaires : {{ transport.goStartedAt | date('H:i') }} le {{ transport.goStartedAt | date('Y-m-d')}}</li>
+								</ul>
+							</div>
+							<div class="col-12 col-md-1 d-flex justify-content-center align-items-center block-aller-2">
+								<i class="fas fa-arrow-right fa-2x"></i>
+							</div>
+							<div class="col-12 col-md-5 px-0 block-aller-3">
+								<ul>
+									<li>Arrivée : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+									<li>Horaires : {{ transport.goEndedAt | date('H:i') }} le {{ transport.goEndedAt | date('Y-m-d')}}</li>
+								</ul>
+							</div>
+						</div>
+						<div class="row my-2">
+							<div class="col-12 px-0">
+								<span class="badge tag-retour">Retour : </span>
+							</div>
+							<div class="col-12 col-md-5 block-retour-1 px-2">
+								<ul>
+									<li>Départ : {{ transport.getEvent.localisation.adress }}, {{ transport.getEvent.localisation.cityCp }}, {{ transport.getEvent.localisation.cityName }}</li>
+									<li>Horaires : {{ transport.returnStartedAt | date('H:i') }} le {{ transport.returnStartedAt | date('Y-m-d')}}</li>
+								</ul>
+							</div>
+							<div class="col-12 col-md-1 d-flex justify-content-center align-items-center block-retour-2 px-0">
+								<i class="fas fa-arrow-right fa-2x"></i>
+							</div>
+							<div class="col-12 col-md-5 block-retour-3 px-0">
+								<ul>
+									<li>Arrivée : {{ transport.localisationReturn.adress }}, {{ transport.localisationReturn.cityCp }}, {{ transport.localisationReturn.cityName }}</li>
+									<li>Horaires : {{ transport.returnEndedAt | date('H:i') }} le {{ transport.returnEndedAt | date('Y-m-d')}}</li>
+								</ul>
+							</div>
+						</div>
+						<div class="row my-2">
+							<div class="col-12 px-0">
+								<span class="badge tag-commentaire">commentaires : </span>
+							</div>
+							<div class="col-12 px-0 transport-comment">
+								<p>{{ transport.commentary }}</p>
+							</div>
+						</div>
+						<div class="row my-2">
+							<div class="col-12 col-md-4 d-flex justify-content-center">
+								<div class="row">
+									<div class="col-12 d-flex justify-content-center">
+										<h6 class="bottom-accordeon">Places disponibles </h6>
+									</div>
+									<div class="col-12 d-flex justify-content-center">
+										<span class="bottom-accordeon">{{ transport.remainingPlace }} / {{ transport.totalPlace }}</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-4 d-flex justify-content-center">
+								<div class="row">
+									<div class="col-12">
+										<h6 class="bottom-accordeon">Prix du billet</h6>
+									</div>
+									<div class="col-12">
+										<span class="bottom-accordeon">{{ transport.placePrice }} €</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-4 d-flex justify-content-center">
+								<a class="mx-2 btn btn-outline-primary" href="{{ path('transport_show', {id: transport.id }) }}">vers la page détail du transport</a>
+								{% if user.id == transport.user.id %}
+								<a class="mx-2 btn btn-outline-primary" href="{{ path('transport_manage',{id:transport.id}) }}">Gérer votre transport</a>
+								{% endif %}
+							</div>
+						</div>
+						
+						
+						
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
+	</div>
+
+	
+	
+{% endblock %}

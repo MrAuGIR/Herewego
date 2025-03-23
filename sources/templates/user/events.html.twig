@@ -1,0 +1,218 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Évènement {{ user.firstName }} {{ user.lastName }}{% endblock %}
+
+{% block body %}
+<div class="container">
+	<div class="card text-center my-3">
+		<div class="card-header mb-5">
+			<ul class="nav nav-tabs card-header-tabs">
+				<li class="nav-item w-25">
+					<a class="nav-link" aria-current="true" href="{{path('user_profil')}}">Profil</a>
+				</li>
+				<li class="nav-item w-50">
+					<a class="nav-link active" href="{{path('user_events')}}">Participations</a>
+				</li>
+				<li class="nav-item w-25">
+					<a class="nav-link" href="{{path('user_history')}}">Historique</a>
+				</li>
+			</ul>
+		</div>
+		<div class="card-body mb-3">
+			<h1 class="mb-5 text-center">Mes participations aux Êvenements à venir</h1>
+		
+			{% if participations | length == 0 %}
+				<h4>Aucune participations à ce jour</h4>
+			{% else %}		
+				<div class="accordion" id="accordionExample">
+					{% for p in participations %}		
+						{% set break = false %}
+						{% if p.event.transports is not empty %}
+							{% for transport in p.event.transports %}
+								{% if not break %}											
+									{% if transport.user.id == user.id %}
+										{# mon accordion item : vous proposez un transport #}
+										<div class="accordion-item">
+											<h2 class="accordion-header" id="heading{{p.id}}">
+												<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+													<div class="row w-100">
+														<div class="col-5"><strong>{{p.event.title}}</strong></div>
+														<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+														<div class="col-3">
+															<span class="btn btn-info"><i class="fas fa-address-card text-light"></i> <i class="fas fa-car text-light"></i></span>
+														</div>
+													</div>
+												</button>
+											</h2>
+											<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+												<div class="accordion-body">
+													<div class="row">
+														<div class="col-12 col-md-6">
+															{% include "shared/_infos_event_user.html.twig" %}    
+														</div>
+														<div class="col-12 col-md-6">
+															<div>
+																<p class="text-center"><strong>Vous avez proposé un transport pour cet évènement</strong></p>
+																<p class="text-center">Places restantes : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
+															</div>
+															<div>
+																<a class="btn btn-primary" href="{{ path('transport_manage', {id: transport.id}) }}" role="button">Gerer mon transport</a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										{% set break = true %}									
+									{% else %}
+										{% for ticket in transport.tickets %}
+											{% if not break %}		
+												{% if ticket.user.id == user.id %}
+													{% if ticket.isValidate %}
+														{# mon accordion item : Vous avez un transport #}
+														<div class="accordion-item">
+															<h2 class="accordion-header" id="heading{{p.id}}">
+																<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+																	<div class="row w-100">
+																		<div class="col-5"><strong>{{p.event.title}}</strong></div>
+																		<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+																		<div class="col-3">
+																			<span class="btn btn-success"><i class="fas fa-car text-light"></i></span>														
+																		</div>
+																	</div>
+																</button>
+															</h2>
+															<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+																<div class="accordion-body">
+																	<div class="row">
+																		<div class="col-12 col-md-6">
+																			{% include "shared/_infos_event_user.html.twig" %}    
+																		</div>
+																		<div class="col-12 col-md-6">
+																			<div>
+																				<p class="text-center"><strong>Vous faites partis d'un transport</strong></p>
+																			</div>
+																			<div>
+																				<a class="btn btn-primary" href="{{ path('transport_show', {id: transport.id}) }}" role="button">Voir mon transport</a>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														{% set break = true %}	
+													{% else %}
+														{# mon accordion item : Vous avez une demande de transport en cours #}
+														<div class="accordion-item">
+															<h2 class="accordion-header" id="heading{{p.id}}">
+																<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+																	<div class="row w-100">
+																		<div class="col-5"><strong>{{p.event.title}}</strong></div>
+																		<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+																		<div class="col-3">
+																			<span class="btn btn-warning"><i class="far fa-question-circle text-light"></i> <i class="fas fa-car text-light"></i></span>														
+																		</div>
+																	</div>
+																</button>
+															</h2>
+															<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+																<div class="accordion-body">
+																	<div class="row">
+																		<div class="col-12 col-md-6">
+																			{% include "shared/_infos_event_user.html.twig" %}    
+																		</div>
+																		<div class="col-12 col-md-6">
+																			<div>
+																				<p class="text-center"><strong>Vous avez fait une demande pour rejoindre un transport</strong></p>
+																				<p class="text-center">demande effectué le {{ ticket.askedAt | date('Y-m-d') }} auprès de {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
+																			</div>
+																			<div>
+																				<a class="btn btn-primary" href="{{ path('transport_show', {id: transport.id}) }}" role="button">Voir le transport</a>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														{% set break = true %}	
+													{% endif %}
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+										{% if not break %}													
+											{# mon accordion item : Sans transport #}
+											<div class="accordion-item">
+												<h2 class="accordion-header" id="heading{{p.id}}">
+													<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+														<div class="row w-100">
+															<div class="col-5"><strong>{{p.event.title}}</strong></div>
+															<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+															<div class="col-3">
+																<span class="btn btn-danger"><i class="fas fa-car text-light"></i></span>														
+															</div>
+														</div>
+													</button>
+												</h2>
+												<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+													<div class="accordion-body">
+														<div class="row">
+															<div class="col-12 col-md-6">
+																{% include "shared/_infos_event_user.html.twig" %}
+															</div>
+															<div class="col-12 col-md-6">
+																<div>
+																	<p class="text-center"><strong>Vous n'avez pas de transport pour cet évènement !</strong></p>
+																</div>
+																<div>
+																	<a class="btn btn-primary mb-2" href="{{ path('transport', {event_id: p.event.id}) }}" role="button">Rejoindre un transport existant</a> <a class="btn btn-primary mb-2" href="{{ path('transport_create', {event_id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
+																</div>
+															</div>													
+														</div>
+													</div>
+												</div>
+											</div>
+											{% set break = true %}	
+										{% endif %}
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						{% else %}
+							{# mon accordion item : il n'existe pas de transport pour cet event #}
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="heading{{p.id}}">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{p.id}}" aria-expanded="true" aria-controls="collapse{{p.id}}">
+										<div class="row w-100">
+											<div class="col-5"><strong>{{p.event.title}}</strong></div>
+											<div class="col-4">Commence le {{ p.event.startedAt | date('d/m/Y') }}</div>
+											<div class="col-3">
+												<span class="btn btn-danger"><i class="fas fa-car text-light"></i></span>														
+											</div>
+										</div>
+									</button>
+								</h2>
+								<div id="collapse{{p.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{p.id}}" data-bs-parent="#accordionExample">
+									<div class="accordion-body">
+										<div class="row">
+											<div class="col-12 col-md-6">
+												{% include "shared/_infos_event_user.html.twig" %}
+											</div>
+											<div class="col-12 col-md-6">
+												<div>
+													<p class="text-center"><strong>Il n'existe pas de transport pour cet évènement</strong></p>
+												</div>
+												<div>
+													<a class="btn btn-primary mb-2" href="{{ path('transport_create', {id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
+												</div>
+											</div>													
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endif %}	
+					{% endfor %}				
+				</div>
+			{% endif %}							
+		</div>
+	</div>
+</div>
+{% endblock %}

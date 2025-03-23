@@ -1,0 +1,46 @@
+{% extends "base.admin.html.twig" %}
+
+    {% block body %}
+
+        <h3>Catégorie d'évenements du site</h3>
+        <div class="col-12 d-flex justify-content-center">
+            <a class="btn btn-primary" href="{{ path('admin_category_create')}}">Ajouter une catégorie</a>
+        </div>
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nom</th>
+                        <th>Couleur</th>
+                        <th>logo</th>
+                        <th>slug</th>
+                        <th>Détail</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <th>{{category.id}}</th>
+                        <th>{{category.name}}</th>
+                        <th>{{category.color}}</th>
+                        <th><img class="illustration" src="{{ asset('logo/' ~ category.pathLogo)  }}"></th>
+                        <th>{{category.slug}}</th>
+                        <th>quelque chose</th>
+                        <th>
+                            <a href="{{path('admin_category_edit',{id:category.id})}}">Editer</a>
+                            <a href="{{path('admin_category_delete',{id:category.id})}}">Supprimer</a>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{parent()}}
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+        <script type="text/javascript" src="/script/renderTable.js"></script>
+    {% endblock %}
+

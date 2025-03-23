@@ -1,0 +1,47 @@
+    {# On crée des variables personnalisées #}
+    {% set queryParams = app.request.query.all %} {# on recupère les paramètres en url #}
+    {% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajax")|url_encode %}
+    
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center mb-5">
+        <ul class="pagination">
+            <li class="{{ (page == 1) ? 'disabled' : '' }} page-item">
+                <a href="?page=1&{{queryString}}" class="page-link">
+                    <i class="fas fa-step-backward"></i>
+                </a>
+            </li>    
+            <li class="{{ (page == 1) ? 'disabled' : '' }} page-item">
+                <a href="{{ (page > 1) ? '?page=' ~ (page - 1) : '' }}&{{queryString}}" class="page-link">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+            {% set pages = (total / limit)|round(0, 'ceil') %}
+            {% for item in 1..pages %}
+                <li class="{{ (page == item) ? 'active' : '' }} page-item">
+                    <a href="?page={{ item }}&{{queryString}}" class="page-link">{{ item }}</a>
+                </li>
+            {% endfor %}
+            <li class="{{ (page == pages) ? 'disabled' : '' }} page-item">
+                <a href="{{ (page < pages) ? '?page=' ~ (page + 1) : '' }}&{{queryString}}" class="page-link">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="{{ (page == pages) ? 'disabled' : '' }} page-item">
+                <a href="?page={{ pages }}&{{queryString}}" class="page-link">
+                    <i class="fas fa-step-forward"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% if events is empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <p>Votre recherche ne retourne aucun événements</p>
+        </div>
+    </div>
+{% else %}
+    {% for event in events %}	
+        <div class="col-12 col-sm-6 col-lg-4 mb-3">   
+            {% include "/includes/_event-card.html.twig" with {"event": event} %}
+        </div>  
+    {% endfor %}
+{% endif %}

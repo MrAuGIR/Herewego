@@ -1,0 +1,17 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+    <h3>Modifier l'évènement</h3>
+    <div class="row">
+        {% include '/admin/event/_form.html.twig' with { button_label: 'Modifier l\'évènement', method: 'PUT', event: event } %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('script/apiAdress.js') }}"></script>
+    <script src="{{ asset('script/images/deleteImage.js') }}"></script>
+    <script src="{{ asset('script/images/orderImage.js') }}"></script>
+	<script>
+		envoieAjax('adressEvent','Event');
+	</script>
+{% endblock %}
