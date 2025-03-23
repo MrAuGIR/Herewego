@@ -2,13 +2,12 @@
 
 namespace App\Controller;
 
+use App\Dto\EventQueryDto;
 use App\Entity\Event;
-use App\Entity\Localisation;
 use App\Entity\Participation;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Factory\EventFactory;
-use App\Factory\PictureFactory;
 use App\Form\EventType;
 use App\Repository\CategoryRepository;
 use App\Repository\EventGroupRepository;
@@ -23,6 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,51 +33,41 @@ class EventController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $em,
-        protected SluggerInterface $slugger,
-        protected TagService $tag,
-        protected MailerInterface $mailer,
-        private EventFactory $eventFactory,
+        protected SluggerInterface       $slugger,
+        protected TagService             $tag,
+        protected MailerInterface        $mailer,
+        private readonly EventFactory    $eventFactory,
     ) {
     }
 
     #[Route('/', name: 'event', methods: [Request::METHOD_POST, Request::METHOD_GET])]
-    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): JsonResponse|Response
+    public function index(#[MapQueryString] EventQueryDto $dto,EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): JsonResponse|Response
     {
-        /* nombre d'évenements par page */
-        $limit = 12;
+        $events = $eventRepository->findByFilters($dto);
 
-        /* on recupère le numero de la page en cours pour la pagination */
-        $page = (int) $request->query->get('page', 1);
+        $total = $eventRepository->getCountEvent($dto);
 
-        /* On recupère l'ordre d'affichage */
-        $order = $request->get('order');
-
-        /* On récupère les filtres catgéories passé dans la requete ajax */
-        $filtersCat = $request->get('categories');
-
-        /* On recupère la localisation */
-        $localisation = $request->get('localisation');
-
-        /* On recupère le mot clé saisie */
-        $keyWord = $request->get('q');
-
-        /* on filtres les events en fonction des filtres */
-        $events = $eventRepository->findByFilters($page, $limit, $order, $filtersCat, $localisation, $keyWord);
-
-        /* On recupère le nombre total d'events : nécéssaire pour la pagination en fonction des filtres */
-        $total = $eventRepository->getCountEvent($filtersCat, $localisation);
-
-        // On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
         if ($request->get('ajax')) {
             return new JsonResponse([
-                'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page', 'order')),
+                'content' => $this->renderView('event/_content.html.twig', [
+                    'events' => $events,
+                    'total' => $total,
+                    'limit' => $dto->limit,
+                    'page' => $dto->page,
+                    'order' => $dto->order,
+                ])
             ]);
         }
 
-        /* On recupère les catgéories */
         $categories = $categoryRepository->findAll();
 
-        return $this->render('event/index.html.twig', compact('events', 'categories', 'total', 'limit', 'page'));
+        return $this->render('event/index.html.twig',[
+            'events' => $events,
+            'categories' => $categories,
+            'total' => $total,
+            'limit' => $dto->limit,
+            'page' => $dto->page,
+        ]);
     }
 
     #[Route('/show/{id}', name: 'event_show', methods: [Request::METHOD_GET])]
@@ -142,7 +132,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/participate/{event_id}', name: 'event_participate', methods: [Request::METHOD_GET])]
-    public function participate($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository)
+    public function participate($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository): RedirectResponse
     {
         // recuperer l'event
         $event = $eventRepository->find($event_id);
