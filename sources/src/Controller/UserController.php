@@ -95,7 +95,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/avatar/{path}', name: 'user_edit_avatar', methods: [Request::METHOD_PUT])]
+    #[Route('/profile/avatar/{path}', name: 'user_edit_avatar', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function avatar($path): JsonResponse
     {
         $user = $this->getCurrentUser();
@@ -106,7 +106,7 @@ class UserController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    #[Route('/profile/delete', name: 'user_delete', methods: [Request::METHOD_DELETE])]
+    #[Route('/profile/delete', name: 'user_delete', methods: [Request::METHOD_GET, Request::METHOD_DELETE])]
     public function delete(SessionInterface $sessionInterface): RedirectResponse
     {
         $user = $this->getCurrentUser();
