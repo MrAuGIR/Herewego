@@ -121,7 +121,7 @@ class TransportController extends AbstractController
     }
 
     #[Route("/manage/decline/{id}", name: "_decline_ticket")]
-    #[IsGranted(TransportVoter::MANAGE, 'transport')]
+    #[IsGranted(TicketVoter::DECLINE, 'ticket')]
     public function decline(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
         /** @var Transport $transport */

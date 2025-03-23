@@ -32,15 +32,15 @@ class OrganizerController extends AbstractController
     ) {
     }
 
-    #[Route('/profil', name: 'organizer_profil', methods: [Request::METHOD_GET])]
-    public function profil(): RedirectResponse|Response
+    #[Route('/profile', name: 'organizer_profile', methods: [Request::METHOD_GET])]
+    public function profile(): RedirectResponse|Response
     {
-        return $this->render('organizer/profil.html.twig', [
+        return $this->render('organizer/profile.html.twig', [
             'user' => $this->getUser(),
         ]);
     }
 
-    #[Route('/profil/edit', name: 'organizer_edit', methods: [Request::METHOD_GET, Request::METHOD_POST, Request::METHOD_PUT])]
+    #[Route('/profile/edit', name: 'organizer_edit', methods: [Request::METHOD_GET, Request::METHOD_POST, Request::METHOD_PUT])]
     public function edit(Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(EditProfilType::class, $this->getUser(), ['chosen_role' => ['ROLE_ORGANIZER']]);
@@ -51,7 +51,7 @@ class OrganizerController extends AbstractController
             $this->em->flush();
             $this->addFlash('success', 'La modification du profil est un succés.');
 
-            return $this->redirectToRoute('organizer_profil');
+            return $this->redirectToRoute('organizer_profile');
         }
 
         $formView = $form->createView();
@@ -62,7 +62,7 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    #[Route('/profil/password', name: 'organizer_edit_password', methods: [Request::METHOD_POST])]
+    #[Route('/profile/password', name: 'organizer_edit_password', methods: [Request::METHOD_POST])]
     public function password(Request $request): RedirectResponse|Response
     {
         /**
@@ -88,7 +88,7 @@ class OrganizerController extends AbstractController
             $this->em->flush();
             $this->addFlash('success', 'La modification du mot de passe est un succés.');
 
-            return $this->redirectToRoute('organizer_profil');
+            return $this->redirectToRoute('organizer_profile');
         }
 
         $formView = $form->createView();
@@ -99,7 +99,7 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    #[Route('/profil/avatar/{path}', name: 'organizer_edit_avatar', methods: [Request::METHOD_PUT])]
+    #[Route('/profile/avatar/{path}', name: 'organizer_edit_avatar', methods: [Request::METHOD_PUT])]
     public function avatar($path): JsonResponse
     {
         /**
@@ -113,7 +113,7 @@ class OrganizerController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    #[Route('/profil/delete', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
+    #[Route('/profile/delete', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
     public function delete(SessionInterface $sessionInterface): RedirectResponse
     {
         $this->tokenStorage->setToken(null);

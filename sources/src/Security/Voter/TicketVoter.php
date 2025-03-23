@@ -13,9 +13,11 @@ class TicketVoter extends Voter
     public const DELETE = 'delete';
     public const EDIT = 'edit';
 
+    public const DECLINE = 'decline';
+
     public function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::CREATE, self::DELETE]) && ($subject instanceof Ticket);
+        return \in_array($attribute, [self::EDIT, self::CREATE, self::DELETE, self::DECLINE]) && ($subject instanceof Ticket);
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -36,6 +38,7 @@ class TicketVoter extends Voter
         return match ($attribute) {
             self::CREATE => true,
             self::DELETE, self::EDIT => $ticket->getUser() === $user,
+            self::DECLINE => $ticket->getTransport()->getUser() === $user,
             default => throw new \LogicException('This code should not be reached!')
         };
     }
