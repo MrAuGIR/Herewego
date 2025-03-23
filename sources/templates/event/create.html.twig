@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}creation event
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="card text-center mt-3 mb-5">
+			<div class="card-header mb-5">
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item w-25">
+						<a class="nav-link" aria-current="true" href="{{path('organizer_profil')}}">Profil</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link active" href="{{path('organizer_events')}}">Évênement</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('organizer_history')}}">Historique</a>
+					</li>
+					<li class="nav-item w-25">
+						<a class="nav-link" href="{{path('organizer_stats')}}">Statistiques</a>
+					</li>
+				</ul>
+			</div>
+			<div class="card-body mb-3">
+				<h1 class="text-center">Creation d'un event</h1>
+				{% include "event/_form.html.twig" with {"event": null} %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{parent()}}
+	<script src="/script/apiAdress.js">
+
+	</script>
+	<script>
+		fetchAddress('adressEvent', 'Event')
+	</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.admin.html.twig" %}
+
+{% block body %}
+    <h3>Modifier organisateur : {{user.firstname}} - {{user.lastname}}</h3>
+    <div class="row">
+        {{form_start(form)}}
+        {% include "shared/_form.register.html.twig" %}
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.companyName)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.siret)}}
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 my-4">
+            <div class="form-group">
+                {{form_row(form.webSite)}}
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Inscription</button>
+            </div>
+        </div>
+        {{form_end(form)}}
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h3>Verification du siret</h3>
+        </div>
+        <div class="col-12">
+            <p>{{user.siret}}</p><a class="btn btn-primary" href="{{path('admin_organizer_check_siret',{id:user.id})}}">Verifier Siret</a>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+    <script src="/script/apiAdress.js"></script>
+    <script>
+        envoieAjax('adressUser','User');
+    </script>
+{% endblock %}

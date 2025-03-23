@@ -1,12 +1,2 @@
-
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/public/logo/
-/public/csv/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
+/sources_old
+/sources/public/uploads
