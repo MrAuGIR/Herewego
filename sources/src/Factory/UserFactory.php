@@ -29,6 +29,12 @@ class UserFactory
         $this->persist($form,$user);
     }
 
+    public function updatePassword(array $data, User $user): void
+    {
+        $user->setPassword($this->encoder->hashPassword($user, $data['newPassword']));
+        $this->em->flush();
+    }
+
     protected function persist(FormInterface $form, User $user): void
     {
         $hash = $this->encoder->hashPassword($user, $user->getPassword());
@@ -40,4 +46,6 @@ class UserFactory
         $this->em->persist($user);
         $this->em->flush();
     }
+
+
 }
