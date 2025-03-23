@@ -17,7 +17,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">                        
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('user_profil')}}">Profil</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_profile')}}">Profil</a>
                                 </li>  
                                 <li>
                                     <a class="dropdown-item" aria-current="page" href="{{path('user_events')}}">Participations / Transports</a>
@@ -32,7 +32,7 @@
                         </li>   
                         <li>
                             {# <a class="navbar-brand" href="#" title="Profil"><i class="bi bi-person-circle fs-3"></i></a> #}
-                            <a href="{{path('user_profil')}}" title="Profil">          
+                            <a href="{{path('user_profile')}}" title="Profil">
                                 <img class="avatar-navbar" src="{{ asset('/img/avatar/' ~ app.user.pathAvatar ~ '.png') }}" alt="avatar {{ app.user.firstName }} {{ app.user.lastName }}">
                             </a>
                         </li>    
@@ -43,7 +43,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_profil')}}">Profil</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_profile')}}">Profil</a>
                                 </li>  
                                 <li>
                                     <a class="dropdown-item" aria-current="page" href="{{path('organizer_events')}}">Évènements</a>
@@ -60,7 +60,7 @@
                             </ul>
                         </li>   
                         <li>
-                            <a href="{{path('organizer_profil')}}" title="Profil">                            
+                            <a href="{{path('organizer_profile')}}" title="Profil">
                                 <img class="avatar-navbar" src="{{ asset('/img/avatar/' ~ app.user.pathAvatar ~ '.png') }}" alt="avatar {{ app.user.firstName }} {{ app.user.lastName }}">
                             </a>
                         </li>    

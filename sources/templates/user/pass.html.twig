@@ -9,17 +9,7 @@
 	<div class="container">
 		<div class="card text-center">
 			<div class="card-header mb-5">
-				<ul class="nav nav-tabs card-header-tabs">
-					<li class="nav-item w-50">
-						<a class="nav-link active" aria-current="true" href="{{path('user_profil')}}">Profil</a>
-					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('user_events')}}">Participations</a>
-					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('user_history')}}">Historique</a>
-					</li>
-				</ul>
+				{% include "user/_tab-header.html.twig" with {"active_tab": "profile"} %}
 			</div>
 					
 			<div class="card-body mb-3">

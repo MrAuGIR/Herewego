@@ -9,20 +9,7 @@
 	<div class="container">
 		<div class="card text-center mt-3">
 			<div class="card-header mb-5">
-				<ul class="nav nav-tabs card-header-tabs">
-					<li class="nav-item w-25">
-						<a class="nav-link" aria-current="true" href="{{path('organizer_profil')}}">Profil</a>
-					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link active" href="{{path('organizer_events')}}">Évènements</a>
-					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('organizer_history')}}">Historique</a>
-					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('organizer_stats')}}">Statistiques</a>
-					</li>
-				</ul>
+				{% include 'organizer/_tab-header.html.twig' with {"active_tab": "events"} %}
 			</div>
 			<div class="card-body">
 				<a class="btn btn-success d-block w-50 m-auto mb-5" href="{{ path('event_create') }}" role="button">Créer un Évènement</a>
