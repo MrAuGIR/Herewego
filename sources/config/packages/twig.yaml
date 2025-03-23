@@ -1,4 +1,7 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
+    file_name_pattern: '*.twig'
     form_themes:
         - bootstrap_4_layout.html.twig
+when@test:
+    twig:
+        strict_variables: true

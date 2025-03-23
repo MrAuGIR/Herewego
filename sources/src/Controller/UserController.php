@@ -4,81 +4,59 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\EditPassType;
-use App\Form\RegisterType;
 use App\Form\EditProfilType;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ParticipationRepository;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * @Route("/user")
- * @IsGranted("ROLE_USER", message="Vous devez être utilisateur classique pour accéder à cette partie du site.")
- */
+#[Route('/user')]
+#[IsGranted('ROLE_USER', message: 'Vous devez être utilisateur classique pour accéder a cette partie du site')]
 class UserController extends AbstractController
 {
-    protected $encoder;
-    protected $em;
-    protected $tokenStorage;
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
-    {
-        $this->em = $em;
-        $this->encoder = $encoder;
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface $em,
+        protected TokenStorageInterface $tokenStorage,
+    ) {
     }
 
-    /**
-     * @Route("/profil", name="user_profil")
-     */
-    public function profil()
+    #[Route('/profil', name: 'user_profil', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function profil(): RedirectResponse|Response
     {
-        /**
-         * @var User
-         */
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour accéder à votre profil.");
-            return $this->redirectToRoute('app_login');
-        }
+            $this->addFlash('warning', 'Connectez-vous pour accéder à votre profil.');
 
-        // ! creer un Service pour gerer les stats utilisateur
-        // calcul du nombre de ticket validé = donc du nombre de transport effectué : perfectible (possible par findBy() surement)
-        $tickets = $user->getTickets();
-        $validatedTickets = 0;
-        foreach ($tickets as $ticket) {
-            if ($ticket->getIsValidate()) {
-                $validatedTickets++;
-            }
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('user/profil.html.twig', [
             'user' => $user,
-            'validatedTickets' => $validatedTickets
+            'validatedTickets' => $user->countValidatedTickets()
         ]);
     }
 
-    /**
-     * @Route("/profil/edit", name="user_edit")
-     */
-    public function edit(Request $request)
+    #[Route('/profil/edit', name: 'user_edit', methods: [Request::METHOD_PUT])]
+    public function edit(Request $request): RedirectResponse|Response
     {
         /**
-         * @var User
+         * @var User $user
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour modifier votre profil.");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour modifier votre profil.');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -87,9 +65,9 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-
             $this->em->flush();
-            $this->addFlash('success', "Profil modifié avec succés.");
+            $this->addFlash('success', 'Profil modifié avec succés.');
+
             return $this->redirectToRoute('user_profil');
         }
 
@@ -97,21 +75,20 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'formView' => $formView,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
-    /**
-     * @Route("/profil/password", name="user_edit_password")
-     */
-    public function password(Request $request)
+    #[Route('/profil/password', name: 'user_edit_password', methods: [Request::METHOD_PUT])]
+    public function password(Request $request): RedirectResponse|Response
     {
         /**
-         * @var User
+         * @var PasswordAuthenticatedUserInterface $user
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour modifier votre mot de passe.");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour modifier votre mot de passe.');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -119,19 +96,20 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
-                $this->addFlash('warning', "Les mots de passe doivent correspondre.");
+                $this->addFlash('warning', 'Les mots de passe doivent correspondre.');
+
                 return $this->redirectToRoute('user_edit_password');
             }
 
-            $user->setPassword($this->encoder->encodePassword($user, $data['newPassword']));
+            $user->setPassword($this->encoder->hashPassword($user, $data['newPassword']));
 
             $this->em->flush();
 
-            $this->addFlash('success', "La modification du mot de passe est un succés.");
+            $this->addFlash('success', 'La modification du mot de passe est un succés.');
+
             return $this->redirectToRoute('user_profil');
         }
 
@@ -139,14 +117,12 @@ class UserController extends AbstractController
 
         return $this->render('user/pass.html.twig', [
             'formView' => $formView,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
-    /**
-     * @Route("/profil/avatar/{path}", name="user_edit_avatar")
-     */
-    public function avatar($path)
+    #[Route('/profil/avatar/{path}', name: 'user_edit_avatar', methods: [Request::METHOD_PUT])]
+    public function avatar($path): JsonResponse
     {
         /**
          * @var User
@@ -159,18 +135,17 @@ class UserController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    /**
-     * @Route("/profil/delete", name="user_delete")
-     */
-    public function delete(SessionInterface $sessionInterface)
+    #[Route('/profil/delete', name: 'user_delete', methods: [Request::METHOD_DELETE])]
+    public function delete(SessionInterface $sessionInterface): RedirectResponse
     {
         /**
-         * @var User
+         * @var User $user
          */
         $user = $this->getUser();
 
-        if (!$user) {
-            $this->addFlash('success', "Connectez-vous pour pouvoir supprimer votre compte");
+        if (! $user) {
+            $this->addFlash('success', 'Connectez-vous pour pouvoir supprimer votre compte');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -180,54 +155,53 @@ class UserController extends AbstractController
         $this->em->remove($user);
         $this->em->flush();
 
-        $this->addFlash('success', "Votre compte a bien été supprimé");
+        $this->addFlash('success', 'Votre compte a bien été supprimé');
+
         return $this->redirectToRoute('home');
     }
 
-    /**
-     * @Route("/events", name="user_events")
-     */
-    public function events(ParticipationRepository $participationRepository)
+    #[Route('/events', name: 'user_events', methods: [Request::METHOD_GET])]
+    public function events(ParticipationRepository $participationRepository): RedirectResponse|Response
     {
         /**
-         * @var User;
+         * @var User $user
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour voir vos participations aux évênements");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour voir vos participations aux évênements');
+
             return $this->redirectToRoute('app_login');
         }
 
-        //recupère les participations à venir
+        // recupère les participations à venir
         $participations = $participationRepository->findByDateAfterNow($user->getId());
 
 
         return $this->render('user/events.html.twig', [
             'user' => $user,
-            'participations' => $participations
+            'participations' => $participations,
         ]);
     }
 
-    /**
-     * @Route("/history", name="user_history")
-     */
-    public function history(ParticipationRepository $participationRepository)
+    #[Route('/history', name: 'user_history', methods: [Request::METHOD_GET])]
+    public function history(ParticipationRepository $participationRepository): RedirectResponse|Response
     {
         /**
          * @var User;
          */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', "Connectez-vous pour voir vos participations passées");
+        if (! $user) {
+            $this->addFlash('warning', 'Connectez-vous pour voir vos participations passées');
+
             return $this->redirectToRoute('app_login');
         }
 
-        //recupère les participations passées
+        // recupère les participations passées
         $participations = $participationRepository->findByDateBeforeNow($user->getId());
 
         return $this->render('user/history.html.twig', [
             'user' => $user,
-            'participations' => $participations
+            'participations' => $participations,
         ]);
     }
 }

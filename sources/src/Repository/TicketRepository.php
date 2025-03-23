@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Ticket;
-use App\Entity\User;
 use App\Entity\Transport;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,6 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Ticket|null findOneBy(array $criteria, array $orderBy = null)
  * @method Ticket[]    findAll()
  * @method Ticket[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @extends ServiceEntityRepository<Ticket>
  */
 class TicketRepository extends ServiceEntityRepository
 {
@@ -27,7 +29,7 @@ class TicketRepository extends ServiceEntityRepository
             ->where('ticket.user = :user')
             ->andWhere('ticket.transport = :transport')
             ->setParameter('user', $user)
-            ->setParameter('transport',$transport)
+            ->setParameter('transport', $transport)
             ->getQuery()
             ->getOneOrNullResult();
     }

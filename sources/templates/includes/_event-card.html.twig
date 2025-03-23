@@ -1,0 +1,35 @@
+{% set displayInCategory = displayInCategory is defined? displayInCategory : false %}
+<a href="{{ path('event_show', {id: event.id }) }}">
+    <div class="card event-card">
+        {% set color = event.category.color is defined? event.category.color : '#0000'%}
+        {% if displayInCategory == false %}
+            <div class="card-header" {{'style= background-color:'~ color }}  >
+
+            </div>
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ event.title }}</h5>
+            <p>
+                <em>Le
+                    {{ event.startedAt | date('d/m/Y') }}</em>
+            </p>
+            <div class="card-text event-card-desc">{{ event.description | u.truncate(90, "...") | raw}}</div>
+            {% if displayInCategory == false %}
+                <span style="border: 2px solid {{ event.category.color }};color: {{ event.category.color }}" class="badge">{{ event.category.name }}</span>
+            {% else %}
+                <div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
+            {% endif %}
+        </div>
+        {% set images = [] %}
+        {% for image in event.pictures|sort((a,b) => a.orderPriority >= b.orderPriority) %}
+            {% set images = images|merge([image]) %}
+        {% endfor %}
+        <div class="picture">
+            {% if event.pictures is not empty %}
+                <img src="{{ asset('uploads/' ~ images[0].path) }}" class="card-img-top" alt="{{ event.title }}">
+            {% else %}
+                <img src="{{ asset('img/image_event_default.jpg') }}" class="card-img-top" alt="{{ event.title }}">
+            {% endif %}
+        </div>
+    </div>
+</a>

@@ -7,32 +7,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=EventGroupRepository::class)
- */
+#[ORM\Entity(repositoryClass: EventGroupRepository::class)]
 class EventGroup
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $pathImage;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="eventGroup")
-     */
-    private $Events;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $pathImage;
+
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'eventGroup')]
+    private ArrayCollection $Events;
 
     public function __construct()
     {
@@ -68,9 +59,6 @@ class EventGroup
         return $this;
     }
 
-    /**
-     * @return Collection|Event[]
-     */
     public function getEvents(): Collection
     {
         return $this->Events;
@@ -78,7 +66,7 @@ class EventGroup
 
     public function addEvent(Event $event): self
     {
-        if (!$this->Events->contains($event)) {
+        if (! $this->Events->contains($event)) {
             $this->Events[] = $event;
             $event->setEventGroup($this);
         }

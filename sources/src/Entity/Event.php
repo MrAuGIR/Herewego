@@ -2,136 +2,89 @@
 
 namespace App\Entity;
 
-use App\Tools\TagService;
 use App\Repository\EventRepository;
+use App\Tools\TagService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=EventRepository::class)
- */
+#[ORM\Entity(repositoryClass: EventRepository::class)]
 class Event
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message = "Le titre est obligatoire.")
-     * @Assert\Length(min=5, max=255, minMessage="La question doit faire au moins 5 caractères", maxMessage="Le titre doit faire moins de 255 caractères")
-     */
-    private $title;
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Length(min: 5, max: 255, minMessage: 'La question doit faire au moins 5 caractères', maxMessage: 'Le titre doit faire moins de 255 caractères')]
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $title;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank(message = "La description est obligatoire.")
-     */
-    private $description;
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
+    #[ORM\Column(type: 'text')]
+    private ?string $description;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message = "La date de début d'évênement est obligatoire.")
-     */
-    private $startedAt;
+    #[Assert\NotBlank(message: "La date de début d'événement est obligatoire.")]
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $startedAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotBlank(message = "La date de fin d'évênement est obligatoire.")
-     */
-    private $endedAt;
+    #[Assert\NotBlank(message: "La date de fin d'événement est obligatoire.")]
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $endedAt;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $email;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $email;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $website;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $website;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $phone;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $phone;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $countViews;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $countViews;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $tag;
+    #[ORM\Column(type: 'text')]
+    private ?string $tag;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $createdAt;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $slug;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $slug;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EventGroup::class, inversedBy="Events")
-     */
-    private $eventGroup;
+    #[ORM\ManyToOne(targetEntity: EventGroup::class, inversedBy: 'Events')]
+    private ?EventGroup $eventGroup;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="events")
-     * @Assert\NotBlank(message = "La catégorie est obligatoire.")
-     */
-    private $category;
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'events')]
+    #[Assert\NotBlank(message: 'La catégorie est obligatoire.')]
+    private ?Category $category;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="event", cascade={"persist","remove"})
-     */
-    private $pictures;
+    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
+    private Collection $pictures;
 
+    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'event', cascade: ['remove'])]
+    private Collection $transports;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="event", cascade={"remove"})
-     */
-    private $transports;
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
+    private Collection $participations;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Participation::class, mappedBy="event", cascade={"remove"})
-     */
-    private $participations;
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'events')]
+    private ?Localisation $localisation;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="events", cascade={"remove"})
-     */
-    private $localisation;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $facebookLink;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $facebookLink;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $instagramLink;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $instagramLink;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $twitterLink;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $twitterLink;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="events")
-     */
-    private $user;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'events')]
+    private ?User $user;
 
     public function __construct()
     {
@@ -301,9 +254,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection|Picture[]
-     */
     public function getPictures(): Collection
     {
         return $this->pictures;
@@ -311,7 +261,7 @@ class Event
 
     public function addPicture(Picture $picture): self
     {
-        if (!$this->pictures->contains($picture)) {
+        if (! $this->pictures->contains($picture)) {
             $this->pictures[] = $picture;
             $picture->setEvent($this);
         }
@@ -331,10 +281,6 @@ class Event
         return $this;
     }
 
-
-    /**
-     * @return Collection|Transport[]
-     */
     public function getTransports(): Collection
     {
         return $this->transports;
@@ -342,7 +288,7 @@ class Event
 
     public function addTransport(Transport $transport): self
     {
-        if (!$this->transports->contains($transport)) {
+        if (! $this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setEvent($this);
         }
@@ -362,9 +308,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection|Participation[]
-     */
     public function getParticipations(): Collection
     {
         return $this->participations;
@@ -372,7 +315,7 @@ class Event
 
     public function addParticipation(Participation $participation): self
     {
-        if (!$this->participations->contains($participation)) {
+        if (! $this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setEvent($this);
         }
@@ -451,17 +394,17 @@ class Event
 
         return $this;
     }
-    
+
     /**
      * getTagCode
-     *Retour le code de l'event pour son tag html
-     * @return string
+     *Retour le code de l'event pour son tag html.
      */
-    public function getTagCode():string
+    public function getTagCode(): string
     {
-        $tagCode ="";
+        $tagCode = '';
         $tagService = new TagService();
-        $tagCode = $tagService->code() . '-' . $tagService->year($this->getStartedAt()) . $tagService->department($this->getLocalisation()->getCityCp());
+        $tagCode = $tagService->code().'-'.$tagService->year($this->getStartedAt()).$tagService->department($this->getLocalisation()->getCityCp());
+
         return $tagCode;
     }
 }

@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/sources/src" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/sources/tests" isTestSource="true" packagePrefix="App\Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/sources_old/tests" isTestSource="true" packagePrefix="App\Tests\" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/psr/clock" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/clock" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/password-hasher" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/polyfill-php83" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/process" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/runtime" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/type-info" />
+      <excludeFolder url="file://$MODULE_DIR$/sources_old" />
+      <excludeFolder url="file://$MODULE_DIR$/sources_old/src" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/clue/ndjson-react" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/evenement/evenement" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/fidry/cpu-core-counter" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/friendsofphp/php-cs-fixer" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/child-process" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/dns" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/event-loop" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/promise" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/socket" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/stream" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/sebastian/diff" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
