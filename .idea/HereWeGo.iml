@@ -26,6 +26,12 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/socket" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/react/stream" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/sebastian/diff" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpdocumentor/reflection-common" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpdocumentor/reflection-docblock" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpdocumentor/type-resolver" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpstan/phpdoc-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/serializer" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/webmozart/assert" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
