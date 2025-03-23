@@ -3,15 +3,14 @@
 namespace App\DataFixtures;
 
 use App\Entity\QuestionUser;
-use Faker\Factory;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserFixtures extends Fixture
 {
-
     private $passwordEncoder;
 
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
@@ -34,12 +33,12 @@ class UserFixtures extends Fixture
         //     ->setRegisterAt(new \DateTime())
         //     ->setValidatedAt(new \DateTime())
         //     ->setRoles(['ROLE_ADMIN']);
-        
+
         // $admin->setPassword($this->passwordEncoder->encodePassword(
         //     $admin,
         //     'admin'
         // ));
-        
+
         // $manager->persist($admin);
 
         // for($i=0; $i<10; $i++){
@@ -69,7 +68,7 @@ class UserFixtures extends Fixture
         //         $questionUser->setQuestion($faker->text(250))
         //             ->setSubject($faker->text(99))
         //             ->setUser($user);
-                    
+
         //         $manager->persist($questionUser);
         //     }
 

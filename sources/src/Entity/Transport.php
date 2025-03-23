@@ -8,100 +8,67 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=TransportRepository::class)
- */
+#[ORM\Entity(repositoryClass: TransportRepository::class)]
 class Transport
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\NotNull(message: ' Veuillez saisir la date de départ allé ')]
+    private ?\DateTimeInterface $goStartedAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\NotNull(message =" Veuillez saisir la date de départ allé ")
-     */
-    private $goStartedAt;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\GreaterThan(message: "la date d'arriver allé doit etre après la date de départ allé", propertyPath: 'goStartedAt')]
+    #[Assert\NotNull(message:  "Veuillez saisir la date d'arrivé' allé ")]
+    private ?\DateTimeInterface $goEndedAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\GreaterThan(message="la date d'arriver allé doit etre après la date de départ allé", propertyPath="goStartedAt")
-     * @Assert\NotNull(message =" Veuillez saisir la date d'arrivé' allé ")
-     */
-    private $goEndedAt;
+    #[ORM\Column(type: 'datetime')]
+    #[Assert\GreaterThan(message: "la date de départ retour doit être après la date d'arrivé allé", propertyPath: 'goEndedAt')]
+    #[Assert\NotNull(message: 'Veuillez saisir la date départ au retour')]
+    private ?\DateTimeInterface $returnStartedAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\GreaterThan(message="la date de départ retour doit être après la date d'arrivé allé", propertyPath="goEndedAt")
-     * @Assert\NotNull(message =" Veuillez saisir la date départ au retour ")
-     */
-    private $returnStartedAt;
+    #[ORM\Column(type: 'datetime')]
+    #[Assert\GreaterThan(message: "la date de d'arrivé retour doit être après la date de depart retour", propertyPath: 'returnStartedAt')]
+    #[Assert\NotNull(message: "Veuillez saisir la date d'arrivé au retour")]
+    private ?\DateTimeInterface $returnEndedAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\GreaterThan(message="la date de d'arrivé retour doit être après la date de depart retour", propertyPath="returnStartedAt")
-     * @Assert\NotNull(message =" Veuillez saisir la date d'arrivé au retour ")
-     */
-    private $returnEndedAt;
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
+    #[Assert\Positive(message: 'le prix doit être positif')]
+    private ?string $placePrice;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     * Assert\Positive(message="le prix doit être positif")
-     */
-    private $placePrice;
+    #[ORM\Column(type: 'integer')]
+    #[Assert\Positive(message: 'nombre doit être positif')]
+    #[Assert\GreaterThan(value: 0)]
+    #[Assert\NotNull(message: 'veuillez saisir un nombre de place')]
+    private ?int $totalPlace;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\Positive(message="nombre doit être positif")
-     * @Assert\GreaterThan( value = 0)
-     * @Assert\NotNull(message="veuillez saisir un nombre de place")
-     */
-    private $totalPlace;
+    #[ORM\Column(type: 'integer')]
+    private ?int $remainingPlace;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $remainingPlace;
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'Le champs commentaire est obligatoire')]
+    private ?string $commentary;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     * @Assert\NotBlank(message="Le champs commentaire est obligatoire")
-     */
-    private $commentary;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'transports')]
+    private ?Event $event;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="transports")
-     */
-    private $event;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="transport", cascade={"remove"})
-     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'transport', cascade: ['remove'])]
     private $tickets;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="transports")
-     */
-    private $localisation_start;
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
+    private ?Localisation $localisation_start;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Localisation::class, inversedBy="transports")
-     */
-    private $localisation_return;
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
+    private ?Localisation $localisation_return;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transports")
-     */
-    private $user;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transports')]
+    private ?User $user;
 
     public function __construct()
     {
@@ -192,9 +159,9 @@ class Transport
 
     public function setRemainingPlace(int $remainingPlace): self
     {
-        // securité sur le nombre de place 
-        $remainingPlace = ($remainingPlace > $this->getTotalPlace())? $this->getTotalPlace() : $remainingPlace;
-        $remainingPlace = ($remainingPlace<0)? 0 : $remainingPlace;
+        // securité sur le nombre de place
+        $remainingPlace = ($remainingPlace > $this->getTotalPlace()) ? $this->getTotalPlace() : $remainingPlace;
+        $remainingPlace = ($remainingPlace < 0) ? 0 : $remainingPlace;
         $this->remainingPlace = $remainingPlace;
 
         return $this;
@@ -246,7 +213,7 @@ class Transport
 
     public function addTicket(Ticket $ticket): self
     {
-        if (!$this->tickets->contains($ticket)) {
+        if (! $this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
             $ticket->setTransport($this);
         }

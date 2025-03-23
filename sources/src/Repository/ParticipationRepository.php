@@ -2,16 +2,17 @@
 
 namespace App\Repository;
 
-use DateTime;
 use App\Entity\Participation;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Participation|null find($id, $lockMode = null, $lockVersion = null)
  * @method Participation|null findOneBy(array $criteria, array $orderBy = null)
  * @method Participation[]    findAll()
  * @method Participation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ *
+ * @extends ServiceEntityRepository<Participation>
  */
 class ParticipationRepository extends ServiceEntityRepository
 {
@@ -39,7 +40,8 @@ class ParticipationRepository extends ServiceEntityRepository
 
     public function findByDateBeforeNow($userId)
     {
-        $date = new DateTime;
+        $date = new \DateTime();
+
         return $this->createQueryBuilder('p')
             ->innerJoin('p.event', 'e')
             ->where('p.user = :userId')
@@ -54,7 +56,8 @@ class ParticipationRepository extends ServiceEntityRepository
 
     public function findByDateAfterNow($userId)
     {
-        $date = new DateTime;
+        $date = new \DateTime();
+
         return $this->createQueryBuilder('p')
             ->innerJoin('p.event', 'e')
             ->where('p.user = :userId')
@@ -67,7 +70,7 @@ class ParticipationRepository extends ServiceEntityRepository
         ;
     }
 
-    
+
 
     // $qb->select('c')
     // ->innerJoin('c.phones', 'p', 'WITH', 'p.phone = :phone')

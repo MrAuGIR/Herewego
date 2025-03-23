@@ -8,68 +8,45 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=LocalisationRepository::class)
- */
+#[ORM\Entity(repositoryClass: LocalisationRepository::class)]
 class Localisation
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message =" Veuillez saisir l'adresse de départ")
-     */
-    private $adress;
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: "Veuillez saisir l'adresse de départ")]
+    private string $adress;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=City::class, inversedBy="localisations")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $city;
+    #[ORM\ManyToOne(targetEntity: City::class, inversedBy: 'localisations')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?City $city = null;
 
-    /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="localisation")
-     */
-    private $users;
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'localisation')]
+    private Collection $users;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="localisation")
-     */
-    private $events;
+    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'localisation')]
+    private Collection $events;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Transport::class, mappedBy="localisation_start")
-     */
-    private $transports;
+    #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'localisation_start')]
+    private Collection $transports;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message ="le nom de la ville ne peut pas être vide")
-     */
-    private $cityName;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Le nom de la ville ne peut pas être vide')]
+    private ?string $cityName = null;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     * @Assert\NotBlank(message ="le code postal de la ville ne peut pas être vide")
-     */
-    private $cityCp;
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'Le code postal de la ville ne peut pas être vide')]
+    private ?string $cityCp = null;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $coordonneesX;
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $coordonneesX = null;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $coordonneesY;
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $coordonneesY = null;
 
-   
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -94,7 +71,6 @@ class Localisation
         return $this;
     }
 
-
     public function getCity(): ?City
     {
         return $this->city;
@@ -107,9 +83,6 @@ class Localisation
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
     public function getUsers(): Collection
     {
         return $this->users;
@@ -117,7 +90,7 @@ class Localisation
 
     public function addUser(User $user): self
     {
-        if (!$this->users->contains($user)) {
+        if (! $this->users->contains($user)) {
             $this->users[] = $user;
             $user->setLocalisation($this);
         }
@@ -137,9 +110,6 @@ class Localisation
         return $this;
     }
 
-    /**
-     * @return Collection|Event[]
-     */
     public function getEvents(): Collection
     {
         return $this->events;
@@ -147,7 +117,7 @@ class Localisation
 
     public function addEvent(Event $event): self
     {
-        if (!$this->events->contains($event)) {
+        if (! $this->events->contains($event)) {
             $this->events[] = $event;
             $event->setLocalisation($this);
         }
@@ -177,7 +147,7 @@ class Localisation
 
     public function addTransport(Transport $transport): self
     {
-        if (!$this->transports->contains($transport)) {
+        if (! $this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setLocalisationStart($this);
         }
@@ -244,5 +214,4 @@ class Localisation
 
         return $this;
     }
-
 }

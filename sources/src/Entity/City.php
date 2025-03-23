@@ -7,32 +7,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CityRepository::class)
- */
+#[ORM\Entity(repositoryClass: CityRepository::class)]
 class City
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $cityName;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $cityName;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $cityCp;
+    #[ORM\Column(type: 'string', length: 50)]
+    private ?string $cityCp;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Localisation::class, mappedBy="city")
-     */
-    private $localisations;
+    #[ORM\OneToMany(targetEntity: Localisation::class, mappedBy: 'city')]
+    private ArrayCollection $localisations;
 
     public function __construct()
     {
@@ -78,7 +68,7 @@ class City
 
     public function addLocalisation(Localisation $localisation): self
     {
-        if (!$this->localisations->contains($localisation)) {
+        if (! $this->localisations->contains($localisation)) {
             $this->localisations[] = $localisation;
             $localisation->setCity($this);
         }

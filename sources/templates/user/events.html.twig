@@ -56,7 +56,7 @@
 																<p class="text-center">Places restantes : {{ transport.remainingPlace }} / {{ transport.totalPlace }}</p>
 															</div>
 															<div>
-																<a class="btn btn-primary" href="{{ path('transport_manage', {transport_id: transport.id}) }}" role="button">Gerer mon transport</a>
+																<a class="btn btn-primary" href="{{ path('transport_manage', {id: transport.id}) }}" role="button">Gerer mon transport</a>
 															</div>
 														</div>
 													</div>
@@ -93,7 +93,7 @@
 																				<p class="text-center"><strong>Vous faites partis d'un transport</strong></p>
 																			</div>
 																			<div>
-																				<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir mon transport</a>
+																				<a class="btn btn-primary" href="{{ path('transport_show', {id: transport.id}) }}" role="button">Voir mon transport</a>
 																			</div>
 																		</div>
 																	</div>
@@ -127,7 +127,7 @@
 																				<p class="text-center">demande effectué le {{ ticket.askedAt | date('Y-m-d') }} auprès de {{ transport.user.firstName }} {{ transport.user.lastName }}</p>
 																			</div>
 																			<div>
-																				<a class="btn btn-primary" href="{{ path('transport_show', {transport_id: transport.id}) }}" role="button">Voir le transport</a>
+																				<a class="btn btn-primary" href="{{ path('transport_show', {id: transport.id}) }}" role="button">Voir le transport</a>
 																			</div>
 																		</div>
 																	</div>
@@ -201,7 +201,7 @@
 													<p class="text-center"><strong>Il n'existe pas de transport pour cet évènement</strong></p>
 												</div>
 												<div>
-													<a class="btn btn-primary mb-2" href="{{ path('transport_create', {event_id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
+													<a class="btn btn-primary mb-2" href="{{ path('transport_create', {id: p.event.id}) }}" role="button">Organiser vous-même un transport</a>
 												</div>
 											</div>													
 										</div>

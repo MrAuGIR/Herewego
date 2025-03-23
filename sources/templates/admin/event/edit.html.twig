@@ -2,146 +2,16 @@
 
 {% block body %}
     <h3>Modifier l'évènement</h3>
-    
     <div class="row">
-        {{form_start(formView)}}
-
-        {{ form_errors(formView) }}
-
-        <div class="row">
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.title)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.description)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.startedAt)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.endedAt)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.email)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.website)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.phone)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.category)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.eventGroup)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.facebookLink)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.instagramLink)}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.twitterLink)}}
-                </div>
-            </div>
-
-            <div class="col-12">
-                <p>Recherchez une adresse <i class="fas fa-search"></i></p>
-                <div class="form-group mb-3">
-                    <input class="form-control" type="text" id="adressEvent" name="adressEvent" placeholder="saisissez l'adresse de l'évênement">
-                </div>
-                <div>
-                    <nav id="resultatApiEvent"></nav>
-                </div>
-            </div>
-            
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.localisation.cityName, {'id':'cityEvent'}) }}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.localisation.cityCp, {'id':'postcodeEvent'})}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.localisation.adress, {'id':'nameAddEvent'})}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.localisation.coordonneesX, {'id':'xEvent'})}}
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.localisation.coordonneesY, {'id':'yEvent'})}}
-                </div>
-            </div>
-            <h2>Les photos de l'évênement :</h2>
-                {% for picture in event.pictures %}
-                    <div>
-                        <img src="{{ asset('/uploads/' ~ picture.path) }}" alt="Photo de l'event" width="50">
-                        {# data-select va servir en js #}
-                        {# data-token generé par symfony #}
-
-                        
-                        <a href="{{ path('event_picture_delete', {id: picture.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ picture.id) }}">Supprimer</a>
-
-
-                        <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-order>
-                    </div>
-                {% endfor %}
-            <div class="col-12 col-lg-6 my-4">
-                <div class="form-group">
-                    {{form_row(formView.pictures)}}
-                </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i>
-                Modifier l'évent
-            </button>
-        </div>
-        {{form_end(formView)}}
+        {% include '/admin/event/_form.html.twig' with { button_label: 'Modifier l\'évènement', method: 'PUT', event: event } %}
     </div>
 {% endblock %}
 {% block javascripts %}
-{{parent()}}
+    {{ parent() }}
     <script src="{{ asset('script/apiAdress.js') }}"></script>
     <script src="{{ asset('script/images/deleteImage.js') }}"></script>
     <script src="{{ asset('script/images/orderImage.js') }}"></script>
 	<script>
-		//pour les formulaires d'adress
 		envoieAjax('adressEvent','Event');
-        
 	</script>
-    
 {% endblock %}

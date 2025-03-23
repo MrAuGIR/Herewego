@@ -3,70 +3,50 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
-use GuzzleHttp\Client;
-use App\Entity\Localisation;
-use App\Entity\User;
+use App\Factory\LogoFactory;
 use App\Form\CategoryType;
-use App\Form\RegisterType;
 use App\Repository\CategoryRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Flex\Path;
 
-/**
- * @isGranted("ROLE_ADMIN", statusCode=404, message="404 page not found")
- * @Route("/admin/category")
- */
+#[IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
+#[Route('/admin/category',  name: 'admin_category_')]
 class CategoryCrudController extends AbstractController
 {
-    protected $encoder;
-    protected $em;
-    protected $slugger;
-
-
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, SluggerInterface $slugger)
-    {
-        $this->encoder = $encoder;
-        $this->em = $em;
-        $this->slugger = $slugger;
+    public function __construct(
+        protected UserPasswordHasherInterface $encoder,
+        protected EntityManagerInterface      $em,
+        protected SluggerInterface            $slugger,
+        private readonly LogoFactory          $logoFactory,
+    ) {
     }
 
-    /**
-     * @Route("/", name="categorycrud")
-     */
+    #[Route('/', name: 'list', methods: [Request::METHOD_GET])]
     public function index(CategoryRepository $categoryRepository): Response
     {
-
         $categories = $categoryRepository->findAll();
-
 
         return $this->render('admin/category/index.html.twig', [
             'categories' => $categories,
         ]);
     }
 
-    /**
-     * @Route("/show/{id}", name="categorycrud_show")
-     */
-    public function show(Category $category)
+    #[Route('/show/{id}', name:'show', methods: [Request::METHOD_GET])]
+    public function show(Category $category): Response
     {
-
         return $this->render('admin/category/show.html.twig', [
             'category' => $category,
         ]);
     }
 
-    /**
-     * @Route("/create", name="categorycrud_create")
-     */
+    #[Route('/create', name:'create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $category = new Category();
@@ -77,29 +57,16 @@ class CategoryCrudController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /*gestion du logo */
-            $logo = $form->get('pathLogo')->getData();
-
-            if($logo != null){
-                //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                $fichier = md5(uniqid()) . '.' . $logo->guessExtension();
-
-                // on copie le fichier dans le dossier uploads
-                // 2 params (destination, fichier)
-                $logo->move($this->getParameter('logo_directory'), $fichier);
-                // on stock l'image dans la bdd (son nom)
-                $category->setPathLogo($fichier);
+            if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
+                $category->setPathLogo($file);
             }
-
-            $category->setName($request->request->get('category')['name'])
-                ->setSlug(strtolower($this->slugger->slug($category->getName())))
-                ->setColor($request->request->get('category')['color']);
-
+            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
 
             $this->em->persist($category);
             $this->em->flush();
 
             $this->addFlash('success', 'categorie ajouté');
+
             return $this->redirectToRoute('categorycrud');
         }
 
@@ -108,44 +75,26 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/edit/{id}", name="categorycrud_edit")
-     */
+    #[Route('/edit/{id}', name: 'edit', methods: [Request::METHOD_GET,Request::METHOD_PUT])]
     public function edit(Category $category, Request $request): Response
     {
-        
-        $form = $this->createForm(CategoryType::class,$category);
+        $form = $this->createForm(CategoryType::class, $category);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $logo = $form->get('pathLogo')->getData();
-            if($logo != null){
-                //on genere un nouveau nom de fichier (codé) et on rajoute son extension
-                $fichier = md5(uniqid()) . '.' . $logo->guessExtension();
-
-                // on copie le fichier dans le dossier uploads
-                // 2 params (destination, fichier)
-                $logo->move($this->getParameter('logo_directory'), $fichier);
-
-                /* Penser a supprimer les ancien fichiers  */
-                unlink($this->getParameter('logo_directory') . '/' . $category->getPathLogo()); //ici je supprime le fichier
-
-                // on stock l'image dans la bdd (son nom)
-                $category->setPathLogo($fichier);
+            if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
+                $category->setPathLogo($file);
             }
-            
 
-            $category->setName($request->request->get('category')['name'])
-                ->setSlug(strtolower($this->slugger->slug($category->getName())))
-                ->setColor($request->request->get('category')['color']);
-            
+            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
+
             $this->em->persist($category);
             $this->em->flush();
 
             $this->addFlash('success', 'categorie modifié');
+
             return $this->redirectToRoute('categorycrud');
         }
 
@@ -155,21 +104,14 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/delete/{id}", name="categorycrud_delete")
-     */
-    public function delete(Category $category, Request $request)
+    #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_GET,Request::METHOD_DELETE])]
+    public function delete(Category $category, Request $request): RedirectResponse
     {
-
-        //gerer les exceptions si organisateur inexistant
-        //gerer la suppression en cascade event de l'organisateur
-
-
         $this->em->remove($category);
         $this->em->flush();
 
-        $this->addFlash('success', "Category supprimé");
+        $this->addFlash('success', 'Category supprimé');
+
         return $this->redirectToRoute('categorycrud');
     }
-
 }

@@ -1,0 +1,121 @@
+{{ form_start(formView, { method: method|default('POST')})}}
+{{ form_errors(formView) }}
+<div class="row">
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.title)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.description)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.startedAt)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.endedAt)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.email)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.website)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.phone)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.category)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.eventGroup)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.facebookLink)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.instagramLink)}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.twitterLink)}}
+        </div>
+    </div>
+
+    <div class="col-12">
+        <p>Recherchez une adresse <i class="fas fa-search"></i></p>
+        <div class="form-group mb-3">
+            <input class="form-control" type="text" id="adressEvent" name="adressEvent" placeholder="saisissez l'adresse de l'évênement">
+        </div>
+        <div>
+            <nav id="resultatApiEvent"></nav>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.localisation.cityName, {'id':'cityEvent'}) }}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.localisation.cityCp, {'id':'postcodeEvent'})}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.localisation.adress, {'id':'nameAddEvent'})}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.localisation.coordonneesX, {'id':'xEvent'})}}
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.localisation.coordonneesY, {'id':'yEvent'})}}
+        </div>
+    </div>
+    {% if event is defined and event.pictures is not empty %}
+        <h2>Les photos de l'évênement :</h2>
+        {% for picture in event.pictures %}
+            <div>
+                <img src="{{ asset('/uploads/' ~ picture.path) }}" alt="Photo de l'event" width="50">
+                <a href="{{ path('event_picture_delete', {id: picture.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ picture.id) }}">Supprimer</a>
+                <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-order>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="col-12 col-lg-6 my-4">
+        <div class="form-group">
+            {{form_row(formView.pictures)}}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save"></i>
+        {{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+{{form_end(formView)}}

@@ -99,14 +99,14 @@
 							<td>{{ ticket.commentary | raw }}</td>
 							<td>
 								{% if transport.remainingPlace > 0 and ticket.isValidate != true %}
-								<a href="{{ path('transport_accept_ticket', {ticket_id: ticket.id }) }}">Valider</a>
+								<a href="{{ path('transport_accept_ticket', {id: ticket.id }) }}">Valider</a>
 								{% else %}
 								<span style="color:grey">valider</span>
 								{% endif %}
 							</td>
 							<td>
 								{% if ticket.isValidate is null or ticket.isValidate == true %}
-								<a href="{{ path('transport_decline_ticket', {ticket_id: ticket.id }) }}">Annuler</a>
+								<a href="{{ path('transport_decline_ticket', {id: ticket.id }) }}">Annuler</a>
 								{% else %}
 								<span style="color:grey">annuler</span>
 								{% endif %}

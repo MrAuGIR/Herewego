@@ -19,58 +19,11 @@
 			{% else %}
 				{% for event in category.events %}
 					<div class="col-12 col-sm-6 col-lg-4 mb-3">
-						<a href="{{ path('event_show', {event_id: event.id }) }}">
-							<div class="card event-card">
-								<div class="card-body">
-									<h5 class="card-title">{{ event.title }}</h5>
-									<p>
-										<em>Le
-											{{ event.startedAt | date('d/m/Y') }}</em>
-									</p>
-									<div class="card-text event-card-desc">{{ event.description | u.truncate(90, "...") | raw}}</div>
-									<div class="btn btn-sm bg-secondary text-light">{{ event.category.name }}</div>
-								</div>
-								{% set images = [] %}
-								{% for image in event.pictures|sort((a,b) => a.orderPriority >= b.orderPriority) %}
-									{% set images = images|merge([image]) %}
-								{% endfor %}
-								<div class="picture">
-									{% if event.pictures is not empty %}
-										<img src="{{ asset('uploads/' ~ images[0].path) }}" class="card-img-top" alt="{{ event.title }}">
-									{% else %}
-										<img src="{{ asset('img/image_event_default.jpg') }}" class="card-img-top" alt="{{ event.title }}">
-									{% endif %}
-								</div>
-							</div>
-						</a>
+						{% include '/includes/_event-card.html.twig' with {"event": event, "displayInCategory": true} %}
 					</div>
 				{% endfor %}
 			{% endif %}
 		</div>
 	</div>
-	{# <div class="row my-5">
-		{% for event in category.events %}
-			<div class="col-12 col-md-8 col-lg-4 my-1">
-				<div class="card bg-dark text-white">
-					{% if event.pictures is not empty %}
-						<div class="picture">
-							<img src="{{ event.pictures[0].path }}" class="card-img" alt="{{ event.title }}">
-						</div>
-					{% endif %}
-					<div class="card-img-overlay">
-						<h5 class="card-title">{{ event.title }}</h5>
-						<p class="card-text">{{ event.description }}</p>
-						<p>{{ event.category.name }}</p>
-						<p>{{ event.startedAt | date('Y-m-d') }}
-							à
-							{{ event.startedAt | date('H:i:s')}}</p>
-						<p class="card-text bg-text-card">
-							<a href="{{ path('event_show', {event_id: event.id }) }}">Voir</a>
-						</p>
-					</div>
-				</div>
-			</div>
-		{% endfor %}
-	</div> #}
 
 {% endblock %}
