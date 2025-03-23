@@ -6,37 +6,11 @@
 	<div class="container">
 		<div class="card text-center mt-3">
 			<div class="card-header mb-5">
-				<ul class="nav nav-tabs card-header-tabs">
-					<li class="nav-item w-25">
-						<a class="nav-link" aria-current="true" href="{{path('user_profile')}}">Profil</a>
-					</li>
-					<li class="nav-item w-25">
-						<a class="nav-link" href="{{path('user_events')}}">Participations</a>
-					</li>
-					<li class="nav-item w-50">
-						<a class="nav-link active" href="{{path('user_history')}}">Historique</a>
-					</li>
-				</ul>
+				{% include "user/_tab-header.html.twig" with {"active_tab": "history"} %}
 			</div>
 			<div class="card-body mb-3">
 				<h1 class="mb-5 text-center">Liste des Évènements auquels j'ai participé</h1>
 				<p class="text-center">En construction</p>
-				{# <div class="accordion" id="accordionExample">
-					{% for p in participations %}				
-						<div class="accordion-item">
-							<h2 class="accordion-header" id="heading{{ p.event.id }}">
-								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ p.event.id }}" aria-expanded="false" aria-controls="collapse{{ p.event.id }}">
-									Event #{{ p.event.id }} - {{ p.event.title }} - {{ p.event.startedAt | date('Y-m-d') }}
-								</button>
-							</h2>
-							<div id="collapse{{ p.event.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ p.event.id }}" data-bs-parent="#accordionExample">
-								<div class="accordion-body">
-									{{ p.event.title }}
-								</div>
-							</div>
-						</div>
-					{% endfor %}
-				</div> #}
 			</div>
 		</div>
 	</div>
