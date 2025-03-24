@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Dto\EventQueryDto;
 use App\Entity\Event;
-use App\Entity\Participation;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Factory\EventFactory;
@@ -19,7 +18,6 @@ use App\Security\Voter\EventVoter;
 use App\Service\Mail\Sender;
 use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -78,7 +75,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'event_show', methods: [Request::METHOD_GET])]
-    public function show(Event $event, ParticipationRepository $participationRepository, PictureRepository $pictureRepository): RedirectResponse|Response
+    public function show(Event $event, PictureRepository $pictureRepository): RedirectResponse|Response
     {
         $pictures = $pictureRepository->findBy(['event' => $event->getId()], ['orderPriority' => 'DESC']);
 
@@ -196,7 +193,7 @@ class EventController extends AbstractController
 
     #[Route('/edit/{id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     #[IsGranted(EventVoter::CAN_EDIT,'event')]
-    public function edit(Event $event, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): RedirectResponse|Response
+    public function edit(Event $event, Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
@@ -225,18 +222,10 @@ class EventController extends AbstractController
     /**
      * @throws TransportExceptionInterface
      */
-    #[Route('/delete/{event_id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
-    public function delete($event_id, EventRepository $eventRepository): RedirectResponse
+    #[Route('/delete/{id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
+    #[IsGranted(EventVoter::CAN_DELETE,'event')]
+    public function delete(Event $event): RedirectResponse
     {
-        // recuperer l'event_id passé en param
-        $event = $eventRepository->find($event_id);
-
-        if (! $event) {
-            throw $this->createNotFoundException("l'event demandé n'existe pas!");
-        }
-
-        $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
-
         $this->sender->sendDeleteTransports($event,$this->getCurrentUser());
 
         $this->em->remove($event);
