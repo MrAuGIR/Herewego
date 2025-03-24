@@ -85,11 +85,11 @@
 					{% if isOnEvent %}
 						<div class="col-12 py-2">
 							<p>Vous participez à cet évênement</p>
-							<a href="{{ path('event_cancel', {event_id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
+							<a href="{{ path('event_cancel', {id: event.id}) }}" class="btn btn-danger">Annuler ma participation</a>
 						</div>
 					{% else %}	
 						<div class="col-12 py-2">
-							<a href="{{ path('event_participate', {event_id: event.id}) }}" class="btn btn-success">Participer</a>
+							<a href="{{ path('event_participate', {id: event.id}) }}" class="btn btn-success">Participer</a>
 						</div>
 					{% endif %}		
 				{% else %}

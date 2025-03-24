@@ -15,6 +15,8 @@ class EventVoter extends Voter
 
     public const VIEW = 'view';
     public const CAN_DELETE = 'CAN_DELETE';
+
+    public const CAN_CREATE = 'CAN_CREATE';
     public const CAN_EDIT = 'CAN_EDIT';
     public const CAN_PARTICIPATE = 'CAN_PARTICIPATE';
 
@@ -22,16 +24,11 @@ class EventVoter extends Voter
     public const CREATE_TRANSPORT = 'CREATE_TRANSPORT';
 
 
-    public function __construct(
-        private readonly ParticipationRepository $participationRepository
-    )
-    {
-    }
-
     protected function supports($attribute, $subject): bool
     {
-        return in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
-            && $subject instanceof Event;
+        return (in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
+            && $subject instanceof Event)
+            || ($attribute == self::CAN_CREATE && is_null($subject));
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
@@ -50,23 +47,13 @@ class EventVoter extends Voter
         /** @var Event $event */
         $event = $subject;
 
-        $participation = $this->findParticipation($event,$user);
-
         return match ($attribute) {
-            self::VIEW => $user->isParticipating($event),
+            self::VIEW, self::CAN_CANCEL => $user->isParticipating($event),
             self::CREATE_TRANSPORT => $user->allowCreateTransport($event),
             self::CAN_DELETE, self::CAN_EDIT => $event->getUser() === $user,
-            self::CAN_PARTICIPATE => !$participation,
-            self::CAN_CANCEL => !empty($participation),
+            self::CAN_PARTICIPATE => !$user->isParticipating($event),
+            self::CAN_CREATE => $user->isOrganizer(),
             default => false,
         };
-    }
-
-    private function findParticipation(Event $event, User $user): ?Participation
-    {
-        return $this->participationRepository->findOneBy([
-            'user' => $user->getId(),
-            'event' => $event->getId(),
-        ]);
     }
 }

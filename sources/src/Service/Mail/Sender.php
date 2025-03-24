@@ -32,9 +32,41 @@ class Sender
                 ]);
             $this->mailer->send($email);
         } catch (\Exception $e) {
-
+/** @todo  */
         }
 
 
+    }
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function sendDeleteTransports(Event $event, User $user): void
+    {
+        $transportManagerMails = [];
+        $ticketUserMails = [];
+
+        foreach ($event->getTransports() as $transport) {
+            $transportManagerMails[] = $transport->getUser()->getEmail();
+
+            $tickets = $transport->getTickets();
+            foreach ($tickets as $ticket) {
+                $ticketUserMails[] = $ticket->getUser()->getEmail();
+            }
+        }
+
+        try {
+            $email = new TemplatedEmail();
+            $email->from(new Address('admin@gmail.com', 'Admin'))
+                ->subject("Annulation de l'évênement : ".$event->getTitle())
+                ->to(...$transportManagerMails, ...$ticketUserMails)
+                ->htmlTemplate('emails/annulation_event.html.twig')
+                ->context([
+                    'event' => $event,
+                ]);
+            $this->mailer->send($email);
+        }catch (\Exception $e){
+            /** @todo  */
+        }
     }
 }
