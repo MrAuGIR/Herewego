@@ -167,16 +167,9 @@ class EventController extends AbstractController
     }
 
     #[Route('/create', name: 'event_create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
+    #[IsGranted(EventVoter::CAN_CREATE,null)]
     public function create(Request $request): RedirectResponse|Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour creer un évênement.');
-
-            return $this->redirectToRoute('app_login');
-        }
-
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
@@ -184,7 +177,7 @@ class EventController extends AbstractController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
 
-                $this->eventFactory->create($form,$event,$user);
+                $this->eventFactory->create($form,$event,$this->getCurrentUser());
 
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
 
@@ -201,17 +194,10 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{event_id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): RedirectResponse|Response
+    #[Route('/edit/{id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[IsGranted(EventVoter::CAN_EDIT,'event')]
+    public function edit(Event $event, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): RedirectResponse|Response
     {
-        $event = $eventRepository->find($event_id);
-
-        if (!$event) {
-            throw $this->createNotFoundException("l'event demandé n'existe pas!");
-        }
-
-        $this->denyAccessUnlessGranted('CAN_EDIT', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas l'éditer");
-
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
@@ -236,6 +222,9 @@ class EventController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/delete/{event_id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
     public function delete($event_id, EventRepository $eventRepository): RedirectResponse
     {
@@ -248,35 +237,8 @@ class EventController extends AbstractController
 
         $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
 
-        $transports = $event->getTransports();
-        $transportManagerMails = [];
+        $this->sender->sendDeleteTransports($event,$this->getCurrentUser());
 
-        $ticketUserMails = [];
-
-        foreach ($transports as $transport) {
-            $transportManagerMails[] = $transport->getUser()->getEmail();
-
-            $tickets = $transport->getTickets();
-            foreach ($tickets as $ticket) {
-                $ticketUserMails[] = $ticket->getUser()->getEmail();
-            }
-        }
-
-        // envoyer un mail à chaque User qui a créé un transport sur cet event
-        // envoyer un mail à chaque User qui a un ticket sur ces transports
-
-        $email = new TemplatedEmail();
-        $email->from(new Address('admin@gmail.com', 'Admin'))
-            ->subject("Annulation de l'évênement : ".$event->getTitle())
-            ->to(...$transportManagerMails, ...$ticketUserMails)
-            ->htmlTemplate('emails/annulation_event.html.twig')
-            ->context([
-                'event' => $event,
-            ]);
-        $this->mailer->send($email);
-
-
-        // traitement de la suppression
         $this->em->remove($event);
         $this->em->flush();
 
