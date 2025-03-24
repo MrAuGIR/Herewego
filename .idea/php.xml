@@ -15,6 +15,11 @@
       <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/sources/vendor/bin/php-cs-fixer" />
     </phpcsfixer_settings>
   </component>
+  <component name="PhpCodeSniffer">
+    <phpcs_settings>
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="ca26310c-47a7-4262-9c57-4d24c8ca1e18" timeout="30000" />
+    </phpcs_settings>
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/sources/vendor/symfony/polyfill-intl-icu" />
@@ -148,6 +153,11 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
+  <component name="PhpStan">
+    <PhpStan_settings>
+      <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="ca26310c-47a7-4262-9c57-4d24c8ca1e18" timeout="60000" />
+    </PhpStan_settings>
+  </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>
@@ -155,6 +165,11 @@
     <phpunit_settings>
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/sources/vendor/autoload.php" />
     </phpunit_settings>
+  </component>
+  <component name="Psalm">
+    <Psalm_settings>
+      <psalm_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="ca26310c-47a7-4262-9c57-4d24c8ca1e18" timeout="60000" />
+    </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />
