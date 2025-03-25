@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Dto\EventQueryDto;
+use App\Entity\Category;
 use App\Entity\Event;
+use App\Entity\EventGroup;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Factory\EventFactory;
@@ -12,8 +14,8 @@ use App\Form\EventType;
 use App\Repository\CategoryRepository;
 use App\Repository\EventGroupRepository;
 use App\Repository\EventRepository;
-use App\Repository\ParticipationRepository;
 use App\Repository\PictureRepository;
+use App\Security\Voter\CategoryVoter;
 use App\Security\Voter\EventVoter;
 use App\Service\Mail\Sender;
 use App\Tools\TagService;
@@ -100,31 +102,17 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/category/{category_id}', name: 'event_category', methods: [Request::METHOD_GET])]
-    public function category($category_id, CategoryRepository $categoryRepository): RedirectResponse|Response
+    #[Route('/category/{id}', name: 'event_category', methods: [Request::METHOD_GET])]
+    public function category(Category $category, CategoryRepository $categoryRepository): RedirectResponse|Response
     {
-        $category = $categoryRepository->find($category_id);
-        if (! $category) {
-            $this->addFlash('warning', "La Catégorie demandée n'existe pas");
-
-            return $this->redirectToRoute('event');
-        }
-
         return $this->render('event/category.html.twig', [
             'category' => $category,
         ]);
     }
 
-    #[Route('/group/{group_id}', name: 'event_group', methods: [Request::METHOD_GET])]
-    public function group($group_id, EventGroupRepository $eventGroupRepository): RedirectResponse|Response
+    #[Route('/group/{id}', name: 'event_group', methods: [Request::METHOD_GET])]
+    public function group(EventGroup $eventGroup): RedirectResponse|Response
     {
-        $eventGroup = $eventGroupRepository->find($group_id);
-        if (! $eventGroup) {
-            $this->addFlash('warning', "Le groupe demandé n'existe pas");
-
-            return $this->redirectToRoute('event');
-        }
-
         return $this->render('event/group.html.twig', [
             'eventGroup' => $eventGroup,
         ]);

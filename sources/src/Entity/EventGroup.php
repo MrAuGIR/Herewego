@@ -23,7 +23,7 @@ class EventGroup
     private ?string $pathImage;
 
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'eventGroup')]
-    private ArrayCollection $Events;
+    private Collection $Events;
 
     public function __construct()
     {

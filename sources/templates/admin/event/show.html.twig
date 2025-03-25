@@ -106,7 +106,7 @@
 				</div>
 				{% if event.eventGroup is not same as(null) %}
 					<div class="col-12">
-						<a href="{{ path('event_group', {group_id: event.eventGroup.id }) }}" title="">Voir les autres événement du même Event-group</a>
+						<a href="{{ path('event_group', {id: event.eventGroup.id }) }}" title="">Voir les autres événement du même Event-group</a>
 					</div>				
 				{% endif %}
 			</div>
