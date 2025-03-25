@@ -3,29 +3,32 @@
 namespace App\Controller;
 
 use App\Dto\EventQueryDto;
+use App\Entity\Category;
 use App\Entity\Event;
-use App\Entity\Participation;
+use App\Entity\EventGroup;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Factory\EventFactory;
+use App\Factory\ParticipationFactory;
 use App\Form\EventType;
 use App\Repository\CategoryRepository;
-use App\Repository\EventGroupRepository;
 use App\Repository\EventRepository;
-use App\Repository\ParticipationRepository;
 use App\Repository\PictureRepository;
+use App\Security\Voter\EventVoter;
+use App\Service\Files\PictureService;
+use App\Service\Mail\Sender;
 use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/event')]
@@ -37,6 +40,8 @@ class EventController extends AbstractController
         protected TagService             $tag,
         protected MailerInterface        $mailer,
         private readonly EventFactory    $eventFactory,
+        private readonly ParticipationFactory $participationFactory,
+        private readonly Sender $sender,
     ) {
     }
 
@@ -71,20 +76,15 @@ class EventController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'event_show', methods: [Request::METHOD_GET])]
-    public function show(Event $event, ParticipationRepository $participationRepository, PictureRepository $pictureRepository): RedirectResponse|Response
+    public function show(Event $event, PictureRepository $pictureRepository): RedirectResponse|Response
     {
         $pictures = $pictureRepository->findBy(['event' => $event->getId()], ['orderPriority' => 'DESC']);
 
-        /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->getCurrentUser();
 
         $isOnEvent = false;
         if ($user) {
-            $participations = $participationRepository->findBy([
-                'user' => $user->getId(),
-                'event' => $event->getId(),
-            ]);
-            if (! empty($participations)) {
+            if (!empty($this->participationFactory->getUserParticipation($event, $user))) {
                 $isOnEvent = true;
             }
         }
@@ -101,153 +101,59 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/category/{category_id}', name: 'event_category', methods: [Request::METHOD_GET])]
-    public function category($category_id, CategoryRepository $categoryRepository): RedirectResponse|Response
+    #[Route('/category/{id}', name: 'event_category', methods: [Request::METHOD_GET])]
+    public function category(Category $category, CategoryRepository $categoryRepository): RedirectResponse|Response
     {
-        $category = $categoryRepository->find($category_id);
-        if (! $category) {
-            $this->addFlash('warning', "La Catégorie demandée n'existe pas");
-
-            return $this->redirectToRoute('event');
-        }
-
         return $this->render('event/category.html.twig', [
             'category' => $category,
         ]);
     }
 
-    #[Route('/group/{group_id}', name: 'event_group', methods: [Request::METHOD_GET])]
-    public function group($group_id, EventGroupRepository $eventGroupRepository): RedirectResponse|Response
+    #[Route('/group/{id}', name: 'event_group', methods: [Request::METHOD_GET])]
+    public function group(EventGroup $eventGroup): RedirectResponse|Response
     {
-        $eventGroup = $eventGroupRepository->find($group_id);
-        if (! $eventGroup) {
-            $this->addFlash('warning', "Le groupe demandé n'existe pas");
-
-            return $this->redirectToRoute('event');
-        }
-
         return $this->render('event/group.html.twig', [
             'eventGroup' => $eventGroup,
         ]);
     }
 
-    #[Route('/participate/{event_id}', name: 'event_participate', methods: [Request::METHOD_GET])]
-    public function participate($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository): RedirectResponse
+    /**
+     * @throws TransportExceptionInterface
+     */
+    #[Route('/participate/{id}', name: 'event_participate', methods: [Request::METHOD_GET])]
+    #[IsGranted(EventVoter::CAN_PARTICIPATE,'event')]
+    public function participate(Event $event): RedirectResponse
     {
-        // recuperer l'event
-        $event = $eventRepository->find($event_id);
-        if (! $event) {
-            $this->addFlash('warning', "L'évênement demandé n'existe pas");
+        $user = $this->getCurrentUser();
 
-            return $this->redirectToRoute('event');
-        }
+        $this->participationFactory->addParticipation($event, $user);
 
-        // recuperer l'id du user connecté
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour participer à cet évênement');
+        $this->sender->sendEventParticipation($event, $user);
 
-            return $this->redirectToRoute('app_login');
-        }
-
-        // Verifie si le user participe déjà à cet event
-        $participations = $participationRepository->findBy([
-            'user' => $user->getId(),
-            'event' => $event->getId(),
-        ]);
-        if (! empty($participations)) {
-            $this->addFlash('warning', 'Vous participez déjà à cet évênement');
-
-            return $this->redirectToRoute('event_show', [
-                'id' => $event_id,
-            ]);
-        }
-
-        // rajouter une ligne dans la table participation
-        $participation = new Participation();
-        $participation->setEvent($event)
-            ->setUser($user)
-            ->setAddedAt(new \DateTime());
-        $this->em->persist($participation);
-        $this->em->flush();
-
-
-        $email = new TemplatedEmail();
-        $email->from(new Address('admin@gmail.com', 'Admin'))
-            ->subject("Participation à l'évênement : ".$event->getTitle())
-            ->to($user->getEmail())
-            ->htmlTemplate('emails/participation_event.html.twig')
-            ->context([
-                'user' => $user,
-                'event' => $event,
-            ]);
-        $this->mailer->send($email);
-
-
-
-        // redirige avec message
         $this->addFlash('success', 'Vous participez desormais à cet évênement');
 
         return $this->redirectToRoute('event_show', [
-            'id' => $event_id,
+            'id' => $event->getId(),
         ]);
     }
 
-    #[Route('/cancel/{event_id}', name: 'event_cancel', methods: [Request::METHOD_GET])]
-    public function cancel($event_id, EventRepository $eventRepository, ParticipationRepository $participationRepository): RedirectResponse
+    #[Route('/cancel/{id}', name: 'event_cancel', methods: [Request::METHOD_GET])]
+    #[IsGranted(EventVoter::CAN_CANCEL,'event')]
+    public function cancel(Event $event): RedirectResponse
     {
-        // recuperer l'event
-        $event = $eventRepository->find($event_id);
-        if (! $event) {
-            $this->addFlash('warning', "L'évênement demandé n'existe pas");
+        $this->participationFactory->cancelParticipation($event, $this->getCurrentUser());
 
-            return $this->redirectToRoute('event');
-        }
-
-        // recuperer l'id du user connecté
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour annuler votre participation à cet évênement.');
-
-            return $this->redirectToRoute('app_login');
-        }
-
-        // si le user participe pas on le redirige
-        $participation = $participationRepository->findOneBy([
-            'user' => $user->getId(),
-            'event' => $event->getId(),
-        ]);
-        if (empty($participation)) {
-            $this->addFlash('warning', 'Vous ne participez pas encore à cet évênement.');
-
-            return $this->redirectToRoute('event_show', [
-                'id' => $event_id,
-            ]);
-        }
-
-        // on supprime la participation
-        $this->em->remove($participation);
-        $this->em->flush();
-
-        // redirige vers la page de l'event (avec message success)
         $this->addFlash('success', 'Vous avez annulé votre participation à cet évênement');
 
         return $this->redirectToRoute('event_show', [
-            'id' => $event_id,
+            'id' => $event->getId(),
         ]);
     }
 
     #[Route('/create', name: 'event_create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
+    #[IsGranted(EventVoter::CAN_CREATE,null)]
     public function create(Request $request): RedirectResponse|Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (! $user) {
-            $this->addFlash('warning', 'Connectez-vous pour creer un évênement.');
-
-            return $this->redirectToRoute('app_login');
-        }
-
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
@@ -255,7 +161,7 @@ class EventController extends AbstractController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
 
-                $this->eventFactory->create($form,$event,$user);
+                $this->eventFactory->create($form,$event,$this->getCurrentUser());
 
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
 
@@ -272,17 +178,10 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{event_id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function edit($event_id, SluggerInterface $slugger, EventRepository $eventRepository, Request $request): RedirectResponse|Response
+    #[Route('/edit/{id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[IsGranted(EventVoter::CAN_EDIT,'event')]
+    public function edit(Event $event, Request $request): RedirectResponse|Response
     {
-        $event = $eventRepository->find($event_id);
-
-        if (!$event) {
-            throw $this->createNotFoundException("l'event demandé n'existe pas!");
-        }
-
-        $this->denyAccessUnlessGranted('CAN_EDIT', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas l'éditer");
-
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
@@ -307,52 +206,17 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{event_id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
-    public function delete($event_id, EventRepository $eventRepository): RedirectResponse
+    /**
+     * @throws TransportExceptionInterface
+     */
+    #[Route('/delete/{id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
+    #[IsGranted(EventVoter::CAN_DELETE,'event')]
+    public function delete(Event $event): RedirectResponse
     {
-        // recuperer l'event_id passé en param
-        $event = $eventRepository->find($event_id);
+        $this->sender->sendDeleteTransports($event);
 
-        if (! $event) {
-            throw $this->createNotFoundException("l'event demandé n'existe pas!");
-        }
-
-        $this->denyAccessUnlessGranted('CAN_DELETE', $event, "Vous n'êtes pas le createur de cet évênement, vous ne pouvez pas le supprimer");
-
-        $transports = $event->getTransports();
-        $transportManagerMails = [];
-
-        $ticketUserMails = [];
-
-        foreach ($transports as $transport) {
-            $transportManagerMails[] = $transport->getUser()->getEmail();
-
-            $tickets = $transport->getTickets();
-            foreach ($tickets as $ticket) {
-                $ticketUserMails[] = $ticket->getUser()->getEmail();
-            }
-        }
-
-        // envoyer un mail à chaque User qui a créé un transport sur cet event
-        // envoyer un mail à chaque User qui a un ticket sur ces transports
-
-        $email = new TemplatedEmail();
-        $email->from(new Address('admin@gmail.com', 'Admin'))
-            ->subject("Annulation de l'évênement : ".$event->getTitle())
-            ->to(...$transportManagerMails, ...$ticketUserMails)
-            ->htmlTemplate('emails/annulation_event.html.twig')
-            ->context([
-                'event' => $event,
-            ]);
-        $this->mailer->send($email);
-
-
-        // traitement de la suppression
         $this->em->remove($event);
         $this->em->flush();
-
-
-
 
         $this->addFlash('success', "La suppression de l'évênement a réussie");
 
@@ -360,23 +224,12 @@ class EventController extends AbstractController
     }
 
     #[Route('/picture/delete/{id}', name: 'event_picture_delete', methods: [Request::METHOD_DELETE])]
-    public function deleteImage(Picture $picture, Request $request): JsonResponse
+    public function deleteImage(Picture $picture, Request $request, PictureService $pictureService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        // on verifie si le token est valid
         if ($this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'])) {
-            // on recupere le nom de l'image
-            $path = $picture->getPath();
-            // on supprime le fichier
-            unlink($this->getParameter('images_directory').'/'.$path);
-
-            // on supprime l'entré de la base
-            $this->em = $this->getDoctrine()->getManager();
-            $this->em->remove($picture);
-            $this->em->flush();
-
-            // on repond en json
+            $pictureService->handleDelete($picture);
             return new JsonResponse(['success' => 1]);
         } else {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
@@ -392,5 +245,12 @@ class EventController extends AbstractController
         $this->em->flush();
 
         return new Response('true');
+    }
+
+    private function getCurrentUser(): ?User
+    {
+        /** @var User|null $user */
+        $user = $this->getUser();
+        return $user;
     }
 }
