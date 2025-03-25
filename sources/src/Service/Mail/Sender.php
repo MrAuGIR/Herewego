@@ -41,7 +41,7 @@ class Sender
     /**
      * @throws TransportExceptionInterface
      */
-    public function sendDeleteTransports(Event $event, User $user): void
+    public function sendDeleteTransports(Event $event): void
     {
         $transportManagerMails = [];
         $ticketUserMails = [];
