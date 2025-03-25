@@ -56,7 +56,7 @@
 				</div>
 				<div class="col-12"></div>
 				{% for category in categories %}
-					<a href="{{path('event_category', {category_id: category.id}) }}" type="button" class="btn btn-primary btn-lg my-2 me-2">{{category.name}}</a>
+					<a href="{{path('event_category', {id: category.id}) }}" type="button" class="btn btn-primary btn-lg my-2 me-2">{{category.name}}</a>
 				{% endfor %}
 			</div>
 			<div class="col-12"></div>
