@@ -8,6 +8,7 @@ use App\Factory\EventFactory;
 use App\Form\EventType;
 use App\Repository\EventRepository;
 use App\Repository\ParticipationRepository;
+use App\Service\Mail\Sender;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -120,31 +121,9 @@ class EventCrudController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(Event $event, MailerInterface $mailer): RedirectResponse
+    public function delete(Event $event, Sender $sender): RedirectResponse
     {
-        $transports = $event->getTransports();
-        $transportManagerMails = [];
-
-        $ticketUserMails = [];
-
-        foreach ($transports as $transport) {
-            $transportManagerMails[] = $transport->getUser()->getEmail();
-
-            $tickets = $transport->getTickets();
-            foreach ($tickets as $ticket) {
-                $ticketUserMails[] = $ticket->getUser()->getEmail();
-            }
-        }
-
-        $email = new TemplatedEmail();
-        $email->from(new Address('admin@gmail.com', 'Admin'))
-        ->subject("Annulation de l'évênement : ".$event->getTitle())
-            ->to(...$transportManagerMails, ...$ticketUserMails)
-            ->htmlTemplate('emails/annulation_event.html.twig')
-            ->context([
-                'event' => $event,
-            ]);
-        $mailer->send($email);
+        $sender->sendDeleteTransports($event);
 
         $this->em->remove($event);
         $this->em->flush();

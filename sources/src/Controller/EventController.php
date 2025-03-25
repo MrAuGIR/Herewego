@@ -213,7 +213,7 @@ class EventController extends AbstractController
     #[IsGranted(EventVoter::CAN_DELETE,'event')]
     public function delete(Event $event): RedirectResponse
     {
-        $this->sender->sendDeleteTransports($event,$this->getCurrentUser());
+        $this->sender->sendDeleteTransports($event);
 
         $this->em->remove($event);
         $this->em->flush();
