@@ -11,6 +11,7 @@ use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -119,7 +120,7 @@ class EventCrudController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(Event $event, MailerInterface $mailer)
+    public function delete(Event $event, MailerInterface $mailer): RedirectResponse
     {
         $transports = $event->getTransports();
         $transportManagerMails = [];

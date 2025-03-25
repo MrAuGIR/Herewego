@@ -12,11 +12,10 @@ use App\Factory\EventFactory;
 use App\Factory\ParticipationFactory;
 use App\Form\EventType;
 use App\Repository\CategoryRepository;
-use App\Repository\EventGroupRepository;
 use App\Repository\EventRepository;
 use App\Repository\PictureRepository;
-use App\Security\Voter\CategoryVoter;
 use App\Security\Voter\EventVoter;
+use App\Service\Files\PictureService;
 use App\Service\Mail\Sender;
 use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -225,23 +224,12 @@ class EventController extends AbstractController
     }
 
     #[Route('/picture/delete/{id}', name: 'event_picture_delete', methods: [Request::METHOD_DELETE])]
-    public function deleteImage(Picture $picture, Request $request): JsonResponse
+    public function deleteImage(Picture $picture, Request $request, PictureService $pictureService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        // on verifie si le token est valid
         if ($this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'])) {
-            // on recupere le nom de l'image
-            $path = $picture->getPath();
-            // on supprime le fichier
-            unlink($this->getParameter('images_directory').'/'.$path);
-
-            // on supprime l'entré de la base
-            $this->em = $this->getDoctrine()->getManager();
-            $this->em->remove($picture);
-            $this->em->flush();
-
-            // on repond en json
+            $pictureService->handleDelete($picture);
             return new JsonResponse(['success' => 1]);
         } else {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
