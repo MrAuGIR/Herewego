@@ -514,4 +514,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return false;
     }
+
+    public function isOrganizer(): bool
+    {
+        RETURN in_array('ROLE_ORGANIZER', $this->getRoles(), true);
+    }
 }
