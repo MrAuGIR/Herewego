@@ -487,10 +487,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function allowCreateTransport(Event $event): bool
     {
         if ($this->isParticipating($event)) {
-            if (!$this->alreadyManageTransport($event)) {
+            if (! $this->alreadyManageTransport($event)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -512,11 +513,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 return true;
             }
         }
+
         return false;
     }
 
     public function isOrganizer(): bool
     {
-        RETURN in_array('ROLE_ORGANIZER', $this->getRoles(), true);
+        return in_array('ROLE_ORGANIZER', $this->getRoles(), true);
     }
 }

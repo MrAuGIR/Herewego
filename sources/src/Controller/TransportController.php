@@ -24,8 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/transport', name: 'transport')]
 class TransportController extends AbstractController
 {
-
-    #[Route("/event/{id}", name: '', methods: [Request::METHOD_GET])]
+    #[Route('/event/{id}', name: '', methods: [Request::METHOD_GET])]
     #[IsGranted(EventVoter::VIEW, 'event')]
     public function index(Event $event): RedirectResponse|Response
     {
@@ -53,8 +52,7 @@ class TransportController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $factory->createFromRequest($transport, $ticket,$user);
+            $factory->createFromRequest($transport, $ticket, $user);
 
             return $this->redirectToRoute('transport_show', [
                 'id' => $transport->getId(),
@@ -69,9 +67,9 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/{transport_id}/cancelTicket/{id}", name: "_cancel_ticket")]
+    #[Route('/{transport_id}/cancelTicket/{id}', name: '_cancel_ticket')]
     #[IsGranted(TicketVoter::DELETE, 'ticket')]
-    public function cancelTicket(int $transport_id,Ticket $ticket, EntityManagerInterface $em): RedirectResponse
+    public function cancelTicket(int $transport_id, Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
         $transport = $ticket->getTransport();
 
@@ -90,7 +88,6 @@ class TransportController extends AbstractController
         ]);
     }
 
-
     #[Route('/manage/{id}', name: '_manage', methods: [Request::METHOD_GET])]
     #[IsGranted(TransportVoter::MANAGE, 'transport')]
     public function manage(Transport $transport): RedirectResponse|Response
@@ -100,14 +97,13 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/manage/accept/{id}", name: "_accept_ticket", methods: [Request::METHOD_GET])]
+    #[Route('/manage/accept/{id}', name: '_accept_ticket', methods: [Request::METHOD_GET])]
     public function accept(Ticket $ticket, TickerFactory $factory): RedirectResponse
     {
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
 
         if ($factory->validTicket($transport, $ticket)) {
-
             $this->addFlash('success', 'ticket validé');
 
             return $this->redirectToRoute('transport_manage', [
@@ -120,7 +116,7 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/manage/decline/{id}", name: "_decline_ticket")]
+    #[Route('/manage/decline/{id}', name: '_decline_ticket')]
     #[IsGranted(TicketVoter::DECLINE, 'ticket')]
     public function decline(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
     {
@@ -143,9 +139,9 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/create/{id}", name: "_create", methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/create/{id}', name: '_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     #[IsGranted(EventVoter::CREATE_TRANSPORT, 'event')]
-    public function create(Event $event,Request $request, EntityManagerInterface $em): RedirectResponse|Response
+    public function create(Event $event, Request $request, EntityManagerInterface $em): RedirectResponse|Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -157,7 +153,6 @@ class TransportController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             /* Creation du transport */
             $transport->setUser($user)
                       ->setEvent($event)
@@ -179,7 +174,7 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/edit/{id}", name: "_edit", methods: [Request::METHOD_POST, Request::METHOD_GET])]
+    #[Route('/edit/{id}', name: '_edit', methods: [Request::METHOD_POST, Request::METHOD_GET])]
     #[IsGranted(TransportVoter::EDIT, 'transport')]
     public function edit(Transport $transport, Request $request, EntityManagerInterface $em): Response
     {
@@ -187,7 +182,6 @@ class TransportController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $em->persist($transport);
             $em->flush();
 
@@ -205,7 +199,7 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route("/delete/{id}", name: "_delete", methods: [Request::METHOD_DELETE, Request::METHOD_GET])]
+    #[Route('/delete/{id}', name: '_delete', methods: [Request::METHOD_DELETE, Request::METHOD_GET])]
     #[IsGranted(TransportVoter::DELETE, 'transport')]
     public function delete(Transport $transport, EntityManagerInterface $em): Response
     {

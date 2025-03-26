@@ -17,7 +17,8 @@ class SecurityController extends AbstractController
     public function __construct(
         private readonly UserFactory $userFactory,
         private readonly OrganizerFactory $organizerFactory,
-    ){}
+    ) {
+    }
 
     #[Route('/register', name: 'app_register')]
     public function register(): Response
@@ -34,8 +35,7 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->userFactory->create($form,$user);
+            $this->userFactory->create($form, $user);
 
             $this->addFlash('success', 'Utilisateur créé, en attente de validation par l\'administration');
 
@@ -56,8 +56,7 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->organizerFactory->create($form,$user);
+            $this->organizerFactory->create($form, $user);
 
             $this->addFlash('success', 'Compte organisateur créé, en attente de validation par l\'administration');
 
@@ -72,7 +71,6 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 

@@ -15,18 +15,17 @@ class UserFactory
     ) {
     }
 
-
     public function create(FormInterface $form, User $user): void
     {
         $user->setIsValidate(true)
             ->setRegisterAt(new \DateTime())
         ;
-        $this->persist($form,$user);
+        $this->persist($form, $user);
     }
 
     public function edit(FormInterface $form, User $user): void
     {
-        $this->persist($form,$user);
+        $this->persist($form, $user);
     }
 
     public function updatePassword(array $data, User $user): void
@@ -46,6 +45,4 @@ class UserFactory
         $this->em->persist($user);
         $this->em->flush();
     }
-
-
 }

@@ -22,9 +22,9 @@ class CategoryCrudController extends AbstractController
 {
     public function __construct(
         protected UserPasswordHasherInterface $encoder,
-        protected EntityManagerInterface      $em,
-        protected SluggerInterface            $slugger,
-        private readonly LogoFactory          $logoFactory,
+        protected EntityManagerInterface $em,
+        protected SluggerInterface $slugger,
+        private readonly LogoFactory $logoFactory,
     ) {
     }
 
@@ -46,7 +46,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name:'create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
+    #[Route('/create', name:'create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $category = new Category();
@@ -56,8 +56,7 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
+            if (! empty($file = $this->logoFactory->handleFromForm($form, $category))) {
                 $category->setPathLogo($file);
             }
             $category->setSlug(strtolower($this->slugger->slug($category->getName())));
@@ -75,7 +74,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'edit', methods: [Request::METHOD_GET,Request::METHOD_PUT])]
+    #[Route('/edit/{id}', name: 'edit', methods: [Request::METHOD_GET, Request::METHOD_PUT])]
     public function edit(Category $category, Request $request): Response
     {
         $form = $this->createForm(CategoryType::class, $category);
@@ -83,8 +82,7 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            if (!empty($file = $this->logoFactory->handleFromForm($form,$category))) {
+            if (! empty($file = $this->logoFactory->handleFromForm($form, $category))) {
                 $category->setPathLogo($file);
             }
 
@@ -104,7 +102,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_GET,Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_GET, Request::METHOD_DELETE])]
     public function delete(Category $category, Request $request): RedirectResponse
     {
         $this->em->remove($category);

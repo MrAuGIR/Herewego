@@ -13,7 +13,8 @@ readonly class EventTagListener
 {
     public function __construct(
         private TagService $tagService,
-    ){}
+    ) {
+    }
 
     public function postPersist(Event $event, LifecycleEventArgs $args): void
     {

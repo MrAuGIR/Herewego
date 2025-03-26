@@ -10,14 +10,11 @@ use App\Repository\EventRepository;
 use App\Repository\ParticipationRepository;
 use App\Service\Mail\Sender;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -52,9 +49,10 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->eventFactory->create($form,$event, $user);
+                $this->eventFactory->create($form, $event, $user);
 
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
+
                 return $this->redirectToRoute('eventcrud');
             }
         } else {
@@ -74,7 +72,7 @@ class EventCrudController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                $this->eventFactory->edit($form,$event);
+                $this->eventFactory->edit($form, $event);
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
                 return $this->redirectToRoute('eventcrud');
@@ -92,7 +90,6 @@ class EventCrudController extends AbstractController
     #[Route('/show/{id}', name: 'eventcrud_show', methods: [Request::METHOD_GET])]
     public function show(Event $event, ParticipationRepository $participationRepository): Response
     {
-
         $user = $this->getUser();
 
         $isOnEvent = false;
