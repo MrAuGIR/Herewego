@@ -12,15 +12,16 @@ class ApiCheckSiret
     private const API_URL = 'https://api.insee.fr/api-sirene/3.11/siret/';
 
     private HttpClientInterface $client;
+
     public function __construct()
     {
         $this->init();
     }
 
-    private function init() : void
+    private function init(): void
     {
         $this->client = new CurlHttpClient([
-            'base_uri' => self::API_URL
+            'base_uri' => self::API_URL,
         ]);
     }
 
@@ -35,7 +36,6 @@ class ApiCheckSiret
             200, 201 => true,
             default => false,
         };
-
     }
 
     /**

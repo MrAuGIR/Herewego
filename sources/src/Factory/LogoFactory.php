@@ -22,16 +22,17 @@ class LogoFactory
             return null;
         }
 
-        $file = md5(uniqid()) . '.' . $logo->guessExtension();
+        $file = md5(uniqid()).'.'.$logo->guessExtension();
 
         $logo->move(
             $this->logoDirectory,
             $file
         );
 
-        if (!empty($category->getPathLogo())) {
+        if (! empty($category->getPathLogo())) {
             unlink($this->logoDirectory.DIRECTORY_SEPARATOR.$category->getPathLogo());
         }
+
         return $file;
     }
 }
