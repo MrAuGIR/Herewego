@@ -128,7 +128,7 @@ class EventController extends AbstractController
 
         $this->participationFactory->addParticipation($event, $user);
 
-        $this->sender->sendEventParticipation($event, $user);
+        $this->sender->send($event,Sender::EVENT_PARTICIPATION, $user);
 
         $this->addFlash('success', 'Vous participez desormais à cet évênement');
 
@@ -211,7 +211,7 @@ class EventController extends AbstractController
     #[IsGranted(EventVoter::CAN_DELETE, 'event')]
     public function delete(Event $event): RedirectResponse
     {
-        $this->sender->sendDeleteTransports($event);
+        $this->sender->send($event, Sender::EVENT_DELETE, $this->getCurrentUser());
 
         $this->em->remove($event);
         $this->em->flush();
