@@ -38,7 +38,7 @@ class UserController extends AbstractController
 
         return $this->render('user/profile.html.twig', [
             'user' => $user,
-            'validatedTickets' => $user->countValidatedTickets()
+            'validatedTickets' => $user->countValidatedTickets(),
         ]);
     }
 
@@ -152,6 +152,7 @@ class UserController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
+
         return $user;
     }
 }
