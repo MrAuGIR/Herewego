@@ -4,6 +4,7 @@ namespace App\Service\Mail;
 
 use App\Entity\Event;
 use App\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -13,7 +14,9 @@ class Sender
 {
     public function __construct(
         protected MailerInterface $mailer,
-    ){}
+        protected LoggerInterface $mailerLogger
+    ) {
+    }
 
     /**
      * @throws TransportExceptionInterface
@@ -32,10 +35,8 @@ class Sender
                 ]);
             $this->mailer->send($email);
         } catch (\Exception $e) {
-/** @todo  */
+            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
         }
-
-
     }
 
     /**
@@ -65,8 +66,8 @@ class Sender
                     'event' => $event,
                 ]);
             $this->mailer->send($email);
-        }catch (\Exception $e){
-            /** @todo  */
+        } catch (\Exception $e) {
+            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
         }
     }
 }

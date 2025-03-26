@@ -11,9 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 readonly class ParticipationFactory
 {
     public function __construct(
-        private EntityManagerInterface  $em,
+        private EntityManagerInterface $em,
         private ParticipationRepository $participationRepository
-    ){}
+    ) {
+    }
 
     public function addParticipation(Event $event, User $user): void
     {
@@ -27,7 +28,7 @@ readonly class ParticipationFactory
 
     public function cancelParticipation(Event $event, User $user): void
     {
-        if (!empty($participation = $this->getUserParticipation($event, $user))) {
+        if (! empty($participation = $this->getUserParticipation($event, $user))) {
             $this->em->remove($participation);
             $this->em->flush();
         }

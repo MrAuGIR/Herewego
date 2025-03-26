@@ -24,8 +24,8 @@ class OrganizerCrudController extends AbstractController
 {
     public function __construct(
         protected UserPasswordHasherInterface $encoder,
-        protected EntityManagerInterface      $em,
-        private readonly OrganizerFactory     $organizerFactory,
+        protected EntityManagerInterface $em,
+        private readonly OrganizerFactory $organizerFactory,
     ) {
     }
 
@@ -70,8 +70,7 @@ class OrganizerCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->organizerFactory->create($form,$user);
+            $this->organizerFactory->create($form, $user);
 
             $this->addFlash('success', 'Organisateur enregistré');
 
@@ -83,7 +82,7 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'organizer_edit', methods: [Request::METHOD_GET,Request::METHOD_POST])]
+    #[Route('/edit/{id}', name: 'organizer_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(User $user, Request $request): Response
     {
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_ORGANIZER']]);
@@ -91,7 +90,6 @@ class OrganizerCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->organizerFactory->edit($form, $user);
 
             $this->addFlash('success', 'Organisateur modifié');
@@ -119,15 +117,13 @@ class OrganizerCrudController extends AbstractController
     #[Route('/verifySiret/{id}', name: 'organizer_check_siret', methods: [Request::METHOD_GET])]
     public function verifySiret(User $user, ApiCheckSiret $apiCheckSiret): RedirectResponse
     {
-        if (!empty($siret = $user->getSiret())) {
+        if (! empty($siret = $user->getSiret())) {
             // siret isfac 49098556100011
             try {
-
                 match ($apiCheckSiret->check($siret)) {
                     true => $this->addFlash('success', 'Siret trouvé dans la base de donnée externe'),
                     false => $this->addFlash('danger', 'SIRET inconnue')
                 };
-
             } catch (\Exception|TransportExceptionInterface $e) {
                 $this->addFlash('warning', 'Base de donnée externe en maintenance '.$e->getMessage());
             }

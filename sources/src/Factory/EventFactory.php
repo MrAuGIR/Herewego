@@ -16,7 +16,8 @@ class EventFactory
         protected SluggerInterface $slugger,
         protected TagService $tag,
         private readonly PictureFactory $pictureFactory,
-    ){}
+    ) {
+    }
 
     public function create(FormInterface $form, Event $event, User $user): void
     {

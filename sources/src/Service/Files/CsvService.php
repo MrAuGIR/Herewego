@@ -10,21 +10,23 @@ use Symfony\Component\Filesystem\Filesystem;
 class CsvService
 {
     public function __construct(
-        #[Autowire(param: 'csv_directory')] private string $csvDirectory
-    )
-    {
+        #[Autowire(param: 'csv_directory')]
+        private string $csvDirectory
+    ) {
     }
 
     /**
      * @param Event[] $events
+     *
      * @throws CsvException
      */
     public function createEventCsv(array $events): string
     {
         $dataEvents = [];
-        foreach($this->generateLine($events) as $line) {
+        foreach ($this->generateLine($events) as $line) {
             $dataEvents[] = $line;
         }
+
         return  $this->createFile($dataEvents);
     }
 
@@ -50,7 +52,7 @@ class CsvService
     {
         $fileSystem = new Filesystem();
         $fileName = $this->createFileName();
-        $filePath = $this->csvDirectory . DIRECTORY_SEPARATOR . $fileName;
+        $filePath = $this->csvDirectory.DIRECTORY_SEPARATOR.$fileName;
 
         try {
             $fileSystem->mkdir($this->csvDirectory);
@@ -60,9 +62,8 @@ class CsvService
             foreach ($dataEvents as $event) {
                 $file->fputcsv($event);
             }
-
         } catch (\Exception $exception) {
-            throw new CsvException("Erreur lors de la création du fichier : " . $exception->getMessage());
+            throw new CsvException('Erreur lors de la création du fichier : '.$exception->getMessage());
         }
 
         return $fileName;
@@ -72,6 +73,7 @@ class CsvService
     {
         $date = new \DateTime();
         $timestamp = $date->getTimestamp();
+
         return 'file-'.$timestamp.'.csv';
     }
 }

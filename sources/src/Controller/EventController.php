@@ -36,17 +36,17 @@ class EventController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $em,
-        protected SluggerInterface       $slugger,
-        protected TagService             $tag,
-        protected MailerInterface        $mailer,
-        private readonly EventFactory    $eventFactory,
+        protected SluggerInterface $slugger,
+        protected TagService $tag,
+        protected MailerInterface $mailer,
+        private readonly EventFactory $eventFactory,
         private readonly ParticipationFactory $participationFactory,
         private readonly Sender $sender,
     ) {
     }
 
     #[Route('/', name: 'event', methods: [Request::METHOD_POST, Request::METHOD_GET])]
-    public function index(#[MapQueryString] EventQueryDto $dto,EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): JsonResponse|Response
+    public function index(#[MapQueryString] EventQueryDto $dto, EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): JsonResponse|Response
     {
         $events = $eventRepository->findByFilters($dto);
 
@@ -60,13 +60,13 @@ class EventController extends AbstractController
                     'limit' => $dto->limit,
                     'page' => $dto->page,
                     'order' => $dto->order,
-                ])
+                ]),
             ]);
         }
 
         $categories = $categoryRepository->findAll();
 
-        return $this->render('event/index.html.twig',[
+        return $this->render('event/index.html.twig', [
             'events' => $events,
             'categories' => $categories,
             'total' => $total,
@@ -84,7 +84,7 @@ class EventController extends AbstractController
 
         $isOnEvent = false;
         if ($user) {
-            if (!empty($this->participationFactory->getUserParticipation($event, $user))) {
+            if (! empty($this->participationFactory->getUserParticipation($event, $user))) {
                 $isOnEvent = true;
             }
         }
@@ -121,7 +121,7 @@ class EventController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/participate/{id}', name: 'event_participate', methods: [Request::METHOD_GET])]
-    #[IsGranted(EventVoter::CAN_PARTICIPATE,'event')]
+    #[IsGranted(EventVoter::CAN_PARTICIPATE, 'event')]
     public function participate(Event $event): RedirectResponse
     {
         $user = $this->getCurrentUser();
@@ -138,7 +138,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/cancel/{id}', name: 'event_cancel', methods: [Request::METHOD_GET])]
-    #[IsGranted(EventVoter::CAN_CANCEL,'event')]
+    #[IsGranted(EventVoter::CAN_CANCEL, 'event')]
     public function cancel(Event $event): RedirectResponse
     {
         $this->participationFactory->cancelParticipation($event, $this->getCurrentUser());
@@ -150,8 +150,8 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'event_create', methods: [Request::METHOD_GET,Request::METHOD_POST])]
-    #[IsGranted(EventVoter::CAN_CREATE,null)]
+    #[Route('/create', name: 'event_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[IsGranted(EventVoter::CAN_CREATE, null)]
     public function create(Request $request): RedirectResponse|Response
     {
         $event = new Event();
@@ -160,8 +160,7 @@ class EventController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
-                $this->eventFactory->create($form,$event,$this->getCurrentUser());
+                $this->eventFactory->create($form, $event, $this->getCurrentUser());
 
                 $this->addFlash('success', 'Vous avez créé un nouvel évênement');
 
@@ -179,7 +178,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: 'event_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    #[IsGranted(EventVoter::CAN_EDIT,'event')]
+    #[IsGranted(EventVoter::CAN_EDIT, 'event')]
     public function edit(Event $event, Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(EventType::class, $event);
@@ -187,7 +186,6 @@ class EventController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-
                 $this->eventFactory->edit($form, $event);
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
@@ -210,7 +208,7 @@ class EventController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/delete/{id}', name: 'event_delete', methods: [Request::METHOD_DELETE])]
-    #[IsGranted(EventVoter::CAN_DELETE,'event')]
+    #[IsGranted(EventVoter::CAN_DELETE, 'event')]
     public function delete(Event $event): RedirectResponse
     {
         $this->sender->sendDeleteTransports($event);
@@ -230,6 +228,7 @@ class EventController extends AbstractController
 
         if ($this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'])) {
             $pictureService->handleDelete($picture);
+
             return new JsonResponse(['success' => 1]);
         } else {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
@@ -251,6 +250,7 @@ class EventController extends AbstractController
     {
         /** @var User|null $user */
         $user = $this->getUser();
+
         return $user;
     }
 }
