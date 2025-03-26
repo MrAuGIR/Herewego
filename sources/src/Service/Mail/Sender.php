@@ -3,6 +3,7 @@
 namespace App\Service\Mail;
 
 use App\Entity\Event;
+use App\Entity\Transport;
 use App\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -33,6 +34,26 @@ class Sender
                     'user' => $user,
                     'event' => $event,
                 ]);
+            $this->mailer->send($email);
+        } catch (\Exception $e) {
+            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
+        }
+    }
+
+    public function sendEventTransport(Transport $transport, User $user): void
+    {
+        try {
+            $email = new TemplatedEmail();
+            $email->from(new Address('admin@gmail.com', 'Admin'))
+                 ->subject("Participation au Transport de l'event : ".$transport->getEvent()->getTitle())
+                 ->to($user->getEmail())
+                 ->htmlTemplate('emails/transport_event.html.twig')
+                 ->context([
+                     'user' => $user,
+                     'event' => $transport->getEvent(),
+                     'transport' => $transport,
+                 ]);
+
             $this->mailer->send($email);
         } catch (\Exception $e) {
             $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());

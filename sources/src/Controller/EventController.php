@@ -102,7 +102,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/category/{id}', name: 'event_category', methods: [Request::METHOD_GET])]
-    public function category(Category $category, CategoryRepository $categoryRepository): RedirectResponse|Response
+    public function category(Category $category): RedirectResponse|Response
     {
         return $this->render('event/category.html.twig', [
             'category' => $category,
