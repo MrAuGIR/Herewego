@@ -17,7 +17,6 @@ readonly class PictureFactory
         $pictures = $form->get('pictures')->getData();
 
         foreach ($pictures as $picture) {
-
             yield $this->pictureService->handleCreate($picture);
         }
     }

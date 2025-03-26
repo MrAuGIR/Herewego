@@ -21,7 +21,6 @@ class HomeController extends AbstractController
 
         $categories = $categoryRepository->findAll();
 
-        // On verifie que c'est une requète ajax -> si oui on met a jour le content uniquement
         if ($request->get('ajax')) {
             return new JsonResponse([
                 'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page', 'order')),

@@ -17,23 +17,24 @@ class NotFoundRedirectService
         '/event/group/' => [
             'route' => 'home',
             'message' => 'Group not found',
-        ]
+        ],
     ];
 
     public function __construct(
         private readonly RouterInterface $router,
         private readonly RequestStack $requestStack
-    ) {}
+    ) {
+    }
 
     public function handle(Request $request): ?RedirectResponse
     {
-        if (!empty($mapping = $this->findMapping($request->getPathInfo()))) {
-
+        if (! empty($mapping = $this->findMapping($request->getPathInfo()))) {
             $session = $this->requestStack->getSession();
             $session->getFlashBag()->add('warning', $mapping['message']);
 
             return new RedirectResponse($this->router->generate($mapping['route']));
         }
+
         return null;
     }
 
@@ -44,6 +45,7 @@ class NotFoundRedirectService
                 return $mapping;
             }
         }
+
         return null;
     }
 }

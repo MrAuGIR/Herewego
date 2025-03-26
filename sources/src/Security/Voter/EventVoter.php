@@ -3,16 +3,13 @@
 namespace App\Security\Voter;
 
 use App\Entity\Event;
-use App\Entity\Participation;
 use App\Entity\User;
-use App\Repository\ParticipationRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventVoter extends Voter
 {
-
     public const VIEW = 'view';
     public const CAN_DELETE = 'CAN_DELETE';
 
@@ -23,12 +20,11 @@ class EventVoter extends Voter
     public const CAN_CANCEL = 'CAN_CANCEL';
     public const CREATE_TRANSPORT = 'CREATE_TRANSPORT';
 
-
     protected function supports($attribute, $subject): bool
     {
         return (in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
             && $subject instanceof Event)
-            || ($attribute == self::CAN_CREATE && is_null($subject));
+            || (self::CAN_CREATE == $attribute && is_null($subject));
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
@@ -51,7 +47,7 @@ class EventVoter extends Voter
             self::VIEW, self::CAN_CANCEL => $user->isParticipating($event),
             self::CREATE_TRANSPORT => $user->allowCreateTransport($event),
             self::CAN_DELETE, self::CAN_EDIT => $event->getUser() === $user,
-            self::CAN_PARTICIPATE => !$user->isParticipating($event),
+            self::CAN_PARTICIPATE => ! $user->isParticipating($event),
             self::CAN_CREATE => $user->isOrganizer(),
             default => false,
         };
