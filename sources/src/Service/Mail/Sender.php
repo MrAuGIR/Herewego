@@ -40,25 +40,24 @@ class Sender
         }
     }
 
-    public function sendEventTransport(Transport $transport, User $user): void 
+    public function sendEventTransport(Transport $transport, User $user): void
     {
-      try {
+        try {
+            $email = new TemplatedEmail();
+            $email->from(new Address('admin@gmail.com', 'Admin'))
+                 ->subject("Participation au Transport de l'event : ".$transport->getEvent()->getTitle())
+                 ->to($user->getEmail())
+                 ->htmlTemplate('emails/transport_event.html.twig')
+                 ->context([
+                     'user' => $user,
+                     'event' => $transport->getEvent(),
+                     'transport' => $transport,
+                 ]);
 
-          $email = new TemplatedEmail();
-          $email->from(new Address('admin@gmail.com', 'Admin'))
-               ->subject("Participation au Transport de l'event : ".$transport->getEvent()->getTitle())
-               ->to($user->getEmail())
-               ->htmlTemplate('emails/transport_event.html.twig')
-               ->context([
-                'user' => $user,
-                'event' => $transport->getEvent(),
-                'transport' => $transport,
-            ]);
-
-           $this->mailer->send($email);
-      }catch(\Exception $e) {
-          $this->mailerLogger->error("Error while sending Email, ".$e->getMessage());
-      }
+            $this->mailer->send($email);
+        } catch (\Exception $e) {
+            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
+        }
     }
 
     /**
