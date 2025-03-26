@@ -8,11 +8,13 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Psr\Log\LoggerInterface;
 
 class Sender
 {
     public function __construct(
-        protected MailerInterface $mailer,
+      protected MailerInterface $mailer,
+      protected LoggerInterface $mailerLogger
     ){}
 
     /**
@@ -32,7 +34,7 @@ class Sender
                 ]);
             $this->mailer->send($email);
         } catch (\Exception $e) {
-/** @todo  */
+            $this->mailerLogger->error("Error while sending Email, ".$e->getMessage());
         }
 
 
@@ -66,7 +68,7 @@ class Sender
                 ]);
             $this->mailer->send($email);
         }catch (\Exception $e){
-            /** @todo  */
+            $this->mailerLogger->error("Error while sending Email, ".$e->getMessage());
         }
     }
 }
