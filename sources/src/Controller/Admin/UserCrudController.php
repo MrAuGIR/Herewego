@@ -20,7 +20,7 @@ class UserCrudController extends AbstractController
 {
     public function __construct(
         protected EntityManagerInterface $em,
-        private readonly UserFactory     $userFactory,
+        private readonly UserFactory $userFactory,
     ) {
     }
 
@@ -30,7 +30,7 @@ class UserCrudController extends AbstractController
         $user = $userRepository->find((int) $request->query->get('userId'));
 
         if ($user) {
-            $user->setIsValidate(!$user->getIsValidate());
+            $user->setIsValidate(! $user->getIsValidate());
             $this->em->flush();
         }
 
@@ -64,7 +64,6 @@ class UserCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->userFactory->create($form, $user);
 
             $this->addFlash('success', 'Utilisateur enregistré');
@@ -86,7 +85,6 @@ class UserCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->userFactory->edit($form, $user);
 
             $this->addFlash('success', 'Utilisateur modifié');

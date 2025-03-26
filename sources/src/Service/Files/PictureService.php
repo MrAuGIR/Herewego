@@ -10,9 +10,11 @@ use Symfony\Component\HttpFoundation\File\File;
 readonly class PictureService
 {
     public function __construct(
-      #[Autowire(param: 'images_directory')] private string $imagesDirectory,
-        private EntityManagerInterface                      $em,
-    ){}
+        #[Autowire(param: 'images_directory')]
+        private string $imagesDirectory,
+        private EntityManagerInterface $em,
+    ) {
+    }
 
     public function handleCreate(File $picture): Picture
     {
