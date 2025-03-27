@@ -5,21 +5,17 @@ namespace App\Command;
 use App\Entity\Transport;
 use App\Entity\User;
 use App\Repository\TransportRepository;
-use App\Repository\UserRepository;
 use App\Service\Mail\Sender;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Mailer\MailerInterface;
 
 #[AsCommand(name: 'app:send-email-transport')]
 class SendEmailCommand extends Command
 {
     public function __construct(
         private readonly TransportRepository $transportRepository,
-        private readonly UserRepository $userRepository,
-        private readonly MailerInterface $mailer,
         private readonly Sender $sender,
     ) {
         parent::__construct();
@@ -41,10 +37,10 @@ class SendEmailCommand extends Command
             $tickets = $transport->getTickets();
 
             foreach ($tickets as $ticket) {
-                if (true == $ticket->getIsValidate()) {
+                if ($ticket->getIsValidate()) {
                     ++$numberEmail;
                     $user = $ticket->getUser();
-                    $this->SendEmail($transport, $user);
+                    $this->sendEmail($transport, $user);
                 }
             }
         }
@@ -54,8 +50,8 @@ class SendEmailCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function SendEmail(Transport $transport, User $user): void
+    public function sendEmail(Transport $transport, User $user): void
     {
-        $this->sender->sendEventTransport($transport, $user);
+        $this->sender->send($transport, Sender::EVENT_TRANSPORT ,$user);
     }
 }
