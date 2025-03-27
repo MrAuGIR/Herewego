@@ -117,9 +117,6 @@ class EventController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
     #[Route('/participate/{id}', name: 'event_participate', methods: [Request::METHOD_GET])]
     #[IsGranted(EventVoter::CAN_PARTICIPATE, 'event')]
     public function participate(Event $event): RedirectResponse
