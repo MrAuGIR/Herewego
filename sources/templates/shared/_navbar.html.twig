@@ -17,16 +17,16 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">                        
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('user_profile')}}">Profil</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_profile')}}">{{ 'home.profile'|trans({},'messages', locale) }}</a>
                                 </li>  
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('user_events')}}">Participations / Transports</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_events')}}">{{ 'home.transport_participation'|trans({},'messages', locale) }}</a>
                                 </li>  
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('user_history')}}">Historique</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('user_history')}}">{{ 'home.history'|trans({},'messages', locale) }}</a>
                                 </li>      
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">Déconnexion</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">{{ 'home.logout'|trans({},'messages', locale) }}</a>
                                 </li>                           
                             </ul>
                         </li>   
@@ -43,19 +43,19 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_profile')}}">Profil</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_profile')}}">{{ 'home.profile'|trans({},'messages', locale) }}</a>
                                 </li>  
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_events')}}">Évènements</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_events')}}">{{ 'home.events'|trans({},'messages', locale) }}</a>
                                 </li>  
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_history')}}">Historique</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_history')}}">{{ 'home.history'|trans({},'messages', locale) }}</a>
                                 </li>  
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_stats')}}">Statistiques</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('organizer_stats')}}">{{ 'home.stats'|trans({},'messages', locale) }}</a>
                                 </li> 
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">Déconnexion</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">{{ 'home.logout'|trans({},'messages', locale) }}/a>
                                 </li>                                     
                             </ul>
                         </li>   
@@ -71,10 +71,10 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('admin')}}">Tableau de bord</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('admin')}}">{{ 'home.dashboard'|trans({},'messages', locale) }}</a>
                                 </li>  
                                 <li>
-                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">Déconnexion</a>
+                                    <a class="dropdown-item" aria-current="page" href="{{path('app_logout')}}">{{ 'home.logout'|trans({},'messages', locale) }}</a>
                                 </li>                                   
                             </ul>
                         </li>   
@@ -84,14 +84,14 @@
                     {% endif %} 
                 {% else %}	
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{path('app_register')}}" title="Inscription">Inscription</a>
+                        <a class="nav-link" aria-current="page" href="{{path('app_register')}}" title="Inscription">{{ 'home.register'|trans({},'messages', locale) }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{{path('app_login')}}" title="Connexion">Connexion</a>
+                        <a class="nav-link" aria-current="page" href="{{path('app_login')}}" title="Connexion">{{ 'home.login'|trans({},'messages', locale) }}</a>
                     </li>                                        
                 {% endif %}	
             </ul>
-            {{ dump(app.request.locale) }}
+
             <div class="language-switcher">
                 <a href="{{ path('change_locale', {'locale': 'fr'}) }}"
                    class="{{ app.request.locale == 'fr' ? 'active' : '' }}">
@@ -108,7 +108,7 @@
                     <a class="nav-link" aria-current="page" href="{{path('home')}}" title="Accueil">{{ 'home.home'|trans({}, 'messages', locale) }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{path('event')}}" title="Events">Les évènements</a>
+                    <a class="nav-link" aria-current="page" href="{{path('event')}}" title="Events">{{ 'home.events'|trans({}, 'messages', locale) }}</a>
                 </li>
             </ul>
         </div>
