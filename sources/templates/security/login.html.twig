@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Log in!{% endblock %}
-
+{% set locale = app.request.locale %}
 {% block body %}
 <div class="container">
     <div class="row">
@@ -17,7 +17,7 @@
                     </div>
                 {% endif %}
 
-                <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
+                <h1 class="h3 mb-3 font-weight-normal">{{ 'home.login'|trans({}, 'messages', locale) }}</h1>
                 <label for="inputEmail">Votre email</label>
                 <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" required autofocus>
                 <label for="inputPassword">Votre mot de passe</label>

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}HereWeGo{% endblock %}
-
+{% set locale = app.request.locale %}
 {% block body %}
 	<!-- DEBUT CONTENU DE LA PAGE -->
 	<div class="banniere">
@@ -18,7 +18,7 @@
 		<div class="container">
 			<div class="row py-5 ">
 				<div class="col-12 d-flex justify-content-center my-5">
-					<h3 class="h3-index">Derniers événements</h3>
+					<h3 class="h3-index">{{ 'home.last_events'|trans({},'messages',locale) }}</h3>
 				</div>
 				{% for event in lastEvents %}
 					<div class="col-12 col-sm-6 col-lg-4 mb-3">
@@ -26,7 +26,7 @@
 					</div>
 				{% endfor %}
 				<div class="col-12">
-					<a class="btn btn-primary" href="{{path('event')}}">Voir plus de derniers events</a>
+					<a class="btn btn-primary" href="{{path('event')}}">{{ 'home.see_more'|trans({},'messages',locale) }}</a>
 				</div>
 			</div>
 		</div>
@@ -35,7 +35,7 @@
 		<div class="container">
 			<div class="row py-5">
 				<div class="col-12 d-flex justify-content-center my-5">
-					<h3 class="h3-index">Evénements les plus populaires</h3>
+					<h3 class="h3-index">{{ 'home.most_popular_event'|trans({},'messages',locale) }}</h3>
 				</div>
 				{% for event in popularityEvents %}
 					<div class="col-12 col-sm-6 col-lg-4 mb-3">
@@ -43,7 +43,7 @@
 					</div>
 				{% endfor %}
 				<div class="col-12">
-					<a class="btn btn-primary" href="{{path('event')}}">Voir plus d'événements populaires'</a>
+					<a class="btn btn-primary" href="{{path('event')}}">{{ 'home.see_more_popular_event'|trans({},'messages',locale) }}</a>
 				</div>
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 		<div class="container">
 			<div class="row py-5">
 				<div class="col-12">
-					<h3>Catégorie d'événements</h3>
+					<h3>{{ 'home.event_categories'|trans({},'messages',locale) }}</h3>
 				</div>
 				<div class="col-12"></div>
 				{% for category in categories %}

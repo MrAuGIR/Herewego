@@ -32,6 +32,7 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpstan/phpdoc-parser" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/serializer" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/translation" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
