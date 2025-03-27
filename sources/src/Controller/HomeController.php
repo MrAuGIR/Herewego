@@ -2,35 +2,37 @@
 
 namespace App\Controller;
 
+use App\Dto\EventQueryDto;
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'home', methods: [Request::METHOD_GET])]
-    public function index(EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
+    public function index(#[MapQueryString] EventQueryDto $dto,EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
-        $lastEvents = $eventRepository->findLast();
-
-        $MostPopularityEvents = $eventRepository->findByPopularity();
-
-        $categories = $categoryRepository->findAll();
-
         if ($request->get('ajax')) {
             return new JsonResponse([
-                'content' => $this->renderView('event/_content.html.twig', compact('events', 'total', 'limit', 'page', 'order')),
+                'content' => $this->renderView('event/_content.html.twig', [
+                    'events' => $eventRepository->findByFilters($dto),
+                    'total' => $eventRepository->getCountEvent($dto),
+                    'limit' => $dto->limit,
+                    'page' => $dto->page,
+                    'order' => $dto->order,
+                ]),
             ]);
         }
 
         return $this->render('home/index.html.twig', [
-            'lastEvents' => $lastEvents,
-            'popularityEvents' => $MostPopularityEvents,
-            'categories' => $categories,
+            'lastEvents' => $eventRepository->findLast(),
+            'popularityEvents' => $eventRepository->findByPopularity(),
+            'categories' => $categoryRepository->findAll(),
             'controller_name' => 'HomeController',
         ]);
     }
