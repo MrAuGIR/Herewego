@@ -2,7 +2,7 @@
 {% block title %}
     Inscription
 {% endblock %}
-
+{% set locale = app.request.locale %}
 {% block body %}
     <div class="container">
         {% include "shared/_choice.register.html.twig" %} 

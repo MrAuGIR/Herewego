@@ -5,3 +5,12 @@ home:
   see_more_popular_event: See more popular events
   event_categories: Event's categories
   home: Home
+  events: Events
+  register: Register
+  login: Login
+  logout: Logout
+  dashboard: Dashboard
+  history: History
+  stats: Stats
+  profile: Profile
+  transport_participation: Participate / Transports
