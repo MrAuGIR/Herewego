@@ -2,93 +2,31 @@
 
 namespace App\Service\Mail;
 
-use App\Entity\Event;
-use App\Entity\Transport;
 use App\Entity\User;
-use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
+use App\Service\Mail\Rules\MailerRuleInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class Sender
 {
+    public const EVENT_TRANSPORT = 'event_transport';
+
+    public const EVENT_PARTICIPATION = 'event_participation';
+
+    public const EVENT_DELETE = 'event_delete';
+
     public function __construct(
-        protected MailerInterface $mailer,
-        protected LoggerInterface $mailerLogger
+        #[AutowireIterator('app.mailer.sender')] private readonly iterable $senders,
     ) {
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function sendEventParticipation(Event $event, User $user): void
+    public function send(object $object, string $match, ?User $user): void
     {
-        try {
-            $email = new TemplatedEmail();
-            $email->from(new Address('admin@gmail.com', 'Admin'))
-                ->subject("Participation à l'évênement : ".$event->getTitle())
-                ->to($user->getEmail())
-                ->htmlTemplate('emails/participation_event.html.twig')
-                ->context([
-                    'user' => $user,
-                    'event' => $event,
-                ]);
-            $this->mailer->send($email);
-        } catch (\Exception $e) {
-            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
-        }
-    }
-
-    public function sendEventTransport(Transport $transport, User $user): void
-    {
-        try {
-            $email = new TemplatedEmail();
-            $email->from(new Address('admin@gmail.com', 'Admin'))
-                 ->subject("Participation au Transport de l'event : ".$transport->getEvent()->getTitle())
-                 ->to($user->getEmail())
-                 ->htmlTemplate('emails/transport_event.html.twig')
-                 ->context([
-                     'user' => $user,
-                     'event' => $transport->getEvent(),
-                     'transport' => $transport,
-                 ]);
-
-            $this->mailer->send($email);
-        } catch (\Exception $e) {
-            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
-        }
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function sendDeleteTransports(Event $event): void
-    {
-        $transportManagerMails = [];
-        $ticketUserMails = [];
-
-        foreach ($event->getTransports() as $transport) {
-            $transportManagerMails[] = $transport->getUser()->getEmail();
-
-            $tickets = $transport->getTickets();
-            foreach ($tickets as $ticket) {
-                $ticketUserMails[] = $ticket->getUser()->getEmail();
+        /** @var MailerRuleInterface $sender */
+        foreach ($this->senders as $sender) {
+            if ($sender->support($match, $object)) {
+                $sender->send($object, $user);
             }
         }
-
-        try {
-            $email = new TemplatedEmail();
-            $email->from(new Address('admin@gmail.com', 'Admin'))
-                ->subject("Annulation de l'évênement : ".$event->getTitle())
-                ->to(...$transportManagerMails, ...$ticketUserMails)
-                ->htmlTemplate('emails/annulation_event.html.twig')
-                ->context([
-                    'event' => $event,
-                ]);
-            $this->mailer->send($email);
-        } catch (\Exception $e) {
-            $this->mailerLogger->error('Error while sending Email, '.$e->getMessage());
-        }
     }
+
 }

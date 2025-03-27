@@ -114,13 +114,10 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
     #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
     public function delete(Event $event, Sender $sender): RedirectResponse
     {
-        $sender->sendDeleteTransports($event);
+        $sender->send($event, Sender::EVENT_DELETE, $this->getUser());
 
         $this->em->remove($event);
         $this->em->flush();

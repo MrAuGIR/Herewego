@@ -22,8 +22,8 @@ readonly class EntityNotFoundListener
             return;
         }
 
-        $response = $this->notFoundRedirectService->handle($event->getRequest());
-
-        $event->setResponse($response);
+        if (!empty($response = $this->notFoundRedirectService->handle($event->getRequest()))) {
+            $event->setResponse($response);
+        }
     }
 }
