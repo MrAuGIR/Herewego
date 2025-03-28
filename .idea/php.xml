@@ -149,6 +149,8 @@
       <path value="$PROJECT_DIR$/sources/vendor/phpdocumentor/reflection-docblock" />
       <path value="$PROJECT_DIR$/sources/vendor/symfony/serializer" />
       <path value="$PROJECT_DIR$/sources/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/sources/vendor/symfony/doctrine-messenger" />
+      <path value="$PROJECT_DIR$/sources/vendor/symfony/messenger" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
