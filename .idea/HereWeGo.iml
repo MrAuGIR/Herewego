@@ -32,6 +32,9 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/phpstan/phpdoc-parser" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/serializer" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/translation" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/doctrine-messenger" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/vendor/symfony/messenger" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

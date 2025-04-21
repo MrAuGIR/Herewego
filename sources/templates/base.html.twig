@@ -1,5 +1,6 @@
+{% set locale = app.request.locale %}
 <!DOCTYPE html>
-<html>
+<html lang="{{ locale }}">
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,7 +43,7 @@
                 </div>
                 {% endblock %}
                 
-                
+
         {% block body %}{% endblock %}
                 
             </main>
@@ -83,7 +84,6 @@
             </div>
             {% endblock %}
         </footer>
-        {# <div>{{ dump(app.user) }}</div> #}
         {% block javascripts %}
             <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
         {% endblock %}        
