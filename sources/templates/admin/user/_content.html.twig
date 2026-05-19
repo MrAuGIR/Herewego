@@ -34,7 +34,7 @@
                     <th>quelque chose</th>
                     <th>
                         <a href="{{path('usercrud_edit',{id:user.id})}}">Editer</a>
-                        <a href="{{path('usercrud_delete',{id:user.id})}}">Supprimer</a>
+                        <form method="post" action="{{ path('usercrud_delete', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer cet utilisateur ?');"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}"><button type="submit" class="btn btn-link p-0">Supprimer</button></form>
                     </th>
                 </tr>
                 {% endfor %}
