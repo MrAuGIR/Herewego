@@ -24,7 +24,7 @@ window.onload = () => {
                     }
                 }
             };
-            xmlhttp.open("get", `/user/profil/avatar/${this.dataset.path}`)
+            xmlhttp.open("get", `/user/profile/avatar/${this.dataset.path}`)
             xmlhttp.send()
         })
     }
