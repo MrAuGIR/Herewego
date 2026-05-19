@@ -114,7 +114,7 @@
                         Importance :
                     </div>
                     <div class="mb-2">
-                        <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-order>
+                        <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-token="{{ csrf_token('order' ~ picture.id) }}" data-order>
                     </div>
                     <div class="mb-2">
                         <a class="btn btn-danger" href="{{ path('event_picture_delete', {id: picture.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ picture.id) }}">Supprimer</a>
