@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Dto\EventQueryDto;
@@ -38,7 +40,8 @@ class EventRepository extends ServiceEntityRepository
         }
 
         return $this->createQueryBuilder('e')
-            ->andWhere('e.category', $category)
+            ->andWhere('e.category = :category')
+            ->setParameter('category', $category)
             ->orderBy('e.createdAt', 'ASC')
             ->setMaxResults(6)
             ->getQuery()
@@ -84,20 +87,18 @@ class EventRepository extends ServiceEntityRepository
                 ->setParameter('localisation', $localisation.'%');
         }
 
-        if (! empty($order = $dto->order)) {
-            $query->orderBy('e.startedAt', $order)
-                ->setFirstResult(($dto->page * $dto->limit) - $dto->limit)
-                ->setMaxResults($dto->limit);
-        } else {
-            $query->orderBy('e.startedAt', 'ASC')
-                ->setFirstResult(($dto->page * $dto->limit) - $dto->limit)
-                ->setMaxResults($dto->limit);
-        }
+        $order = 'DESC' === strtoupper((string) $dto->order) ? 'DESC' : 'ASC';
+        $limit = max(1, min(100, $dto->limit));
+        $page = max(1, $dto->page);
+
+        $query->orderBy('e.startedAt', $order)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
 
         return $query->getQuery()->getResult();
     }
 
-    public function getCountEvent(EventQueryDto $dto)
+    public function getCountEvent(EventQueryDto $dto): int
     {
         $date = new \DateTime();
 
@@ -108,7 +109,7 @@ class EventRepository extends ServiceEntityRepository
 
         if (! empty($categories = $dto->categories)) {
             $query->andWhere('c.category IN(:cats)')
-                ->setParameter(':cats', array_values($categories));
+                ->setParameter('cats', array_values($categories));
         }
 
         if (! empty($localisation = $dto->localisation)) {
@@ -117,8 +118,7 @@ class EventRepository extends ServiceEntityRepository
                 ->setParameter('localisation', $localisation.'%');
         }
 
-        // return the scalar result
-        return $query->getQuery()->getSingleScalarResult();
+        return (int) $query->getQuery()->getSingleScalarResult();
     }
 
     /**

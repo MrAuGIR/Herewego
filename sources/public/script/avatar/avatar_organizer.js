@@ -25,7 +25,7 @@ window.onload = () => {
                     }
                 }
             };
-            xmlhttp.open("get", `/organizer/profil/avatar/${this.dataset.path}`)
+            xmlhttp.open("get", `/organizer/profile/avatar/${this.dataset.path}`)
             xmlhttp.send()
         })
     }

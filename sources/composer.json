@@ -21,13 +21,16 @@
         "symfony/flex": "^2",
         "symfony/form": "7.2.*",
         "symfony/framework-bundle": "7.2.*",
+        "symfony/html-sanitizer": "7.2.*",
         "symfony/http-client": "7.2.*",
+        "symfony/lock": "7.2.*",
         "symfony/mailer": "7.2.*",
         "symfony/messenger": "7.2.*",
         "symfony/mime": "7.2.*",
         "symfony/monolog-bundle": "^3.10",
         "symfony/property-access": "7.2.*",
         "symfony/property-info": "7.2.*",
+        "symfony/rate-limiter": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
         "symfony/serializer": "7.2.*",
@@ -81,7 +84,9 @@
             "@auto-scripts"
         ],
         "fix-style": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "check-style": "vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run"
+        "check-style": "vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run",
+        "phpstan": "vendor/bin/phpstan analyse --no-progress",
+        "test": "vendor/bin/phpunit"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -93,7 +98,15 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "fakerphp/faker": "^1.24",
         "friendsofphp/php-cs-fixer": "^3.70",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "^11.5.55",
+        "symfony/browser-kit": "7.2.*",
+        "symfony/css-selector": "7.2.*",
         "symfony/debug-bundle": "7.2.*",
         "symfony/maker-bundle": "^1.62",
         "symfony/stopwatch": "7.2.*",

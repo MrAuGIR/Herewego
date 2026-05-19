@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Dto\EventQueryDto;
@@ -15,10 +17,9 @@ use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
 use App\Repository\PictureRepository;
 use App\Security\Voter\EventVoter;
+use App\Service\Event\EventManager;
 use App\Service\Files\PictureService;
 use App\Service\Mail\Sender;
-use App\Tools\TagService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,22 +27,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/event')]
 class EventController extends AbstractController
 {
     public function __construct(
-        protected EntityManagerInterface $em,
-        protected SluggerInterface $slugger,
-        protected TagService $tag,
-        protected MailerInterface $mailer,
         private readonly EventFactory $eventFactory,
         private readonly ParticipationFactory $participationFactory,
         private readonly Sender $sender,
+        private readonly EventManager $eventManager,
     ) {
     }
 
@@ -89,8 +85,7 @@ class EventController extends AbstractController
             }
         }
 
-        $event->setCountViews($event->getCountViews() + 1);
-        $this->em->flush();
+        $this->eventManager->registerView($event);
 
         return $this->render('event/show.html.twig', [
             'event' => $event,
@@ -125,7 +120,7 @@ class EventController extends AbstractController
 
         $this->participationFactory->addParticipation($event, $user);
 
-        $this->sender->send($event,Sender::EVENT_PARTICIPATION, $user);
+        $this->sender->send($event, Sender::EVENT_PARTICIPATION, $user);
 
         $this->addFlash('success', 'Vous participez desormais à cet évênement');
 
@@ -208,10 +203,7 @@ class EventController extends AbstractController
     #[IsGranted(EventVoter::CAN_DELETE, 'event')]
     public function delete(Event $event): RedirectResponse
     {
-        $this->sender->send($event, Sender::EVENT_DELETE, $this->getCurrentUser());
-
-        $this->em->remove($event);
-        $this->em->flush();
+        $this->eventManager->delete($event, $this->getCurrentUser());
 
         $this->addFlash('success', "La suppression de l'évênement a réussie");
 
@@ -221,24 +213,29 @@ class EventController extends AbstractController
     #[Route('/picture/delete/{id}', name: 'event_picture_delete', methods: [Request::METHOD_DELETE])]
     public function deleteImage(Picture $picture, Request $request, PictureService $pictureService): JsonResponse
     {
+        $this->denyAccessUnlessGranted(EventVoter::CAN_EDIT, $picture->getEvent());
+
         $data = json_decode($request->getContent(), true);
 
-        if ($this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'])) {
-            $pictureService->handleDelete($picture);
-
-            return new JsonResponse(['success' => 1]);
-        } else {
+        if (! $this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'] ?? '')) {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
+
+        $pictureService->handleDelete($picture);
+
+        return new JsonResponse(['success' => 1]);
     }
 
-    #[Route('/picture/order/{value}/{id}', name: 'event_picture_order', methods: [Request::METHOD_GET])]
-    public function changePicturePriority($value, $id, PictureRepository $pictureRepository): Response
+    #[Route('/picture/order/{id}', name: 'event_picture_order', methods: [Request::METHOD_POST])]
+    public function changePicturePriority(Picture $picture, Request $request): Response
     {
-        $picture = $pictureRepository->find($id);
-        $picture->setOrderPriority($value);
+        $this->denyAccessUnlessGranted(EventVoter::CAN_EDIT, $picture->getEvent());
 
-        $this->em->flush();
+        if (! $this->isCsrfTokenValid('order'.$picture->getId(), (string) $request->request->get('_token'))) {
+            return new Response('Token invalide', Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->eventManager->changePicturePriority($picture, (int) $request->request->get('value'));
 
         return new Response('true');
     }

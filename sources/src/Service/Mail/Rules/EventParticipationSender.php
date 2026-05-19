@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Mail\Rules;
 
 use App\Entity\Event;
 use App\Entity\User;
-use App\Service\Mail\Rules\MailerRuleInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -20,9 +21,10 @@ class EventParticipationSender implements MailerRuleInterface
     }
 
     public const MATCH = 'event_participation';
+
     public function support(string $match, mixed $subject): bool
     {
-        return $match === self::MATCH && $subject instanceof Event;
+        return self::MATCH === $match && $subject instanceof Event;
     }
 
     /**
@@ -32,6 +34,7 @@ class EventParticipationSender implements MailerRuleInterface
     {
         /** @var Event $event */
         $event = $subject;
+
         try {
             $email = new TemplatedEmail();
             $email->from(new Address('admin@gmail.com', 'Admin'))

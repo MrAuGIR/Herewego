@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factory;
 
 use App\Entity\Event;
@@ -7,6 +9,7 @@ use App\Entity\User;
 use App\Tools\TagService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class EventFactory
@@ -16,6 +19,7 @@ class EventFactory
         protected SluggerInterface $slugger,
         protected TagService $tag,
         private readonly PictureFactory $pictureFactory,
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
@@ -41,7 +45,12 @@ class EventFactory
             $event->addPicture($picture);
         }
 
-        $event->setSlug(strtolower($this->slugger->slug($event->getTitle())));
+        $event->setSlug($this->slugger->slug($event->getTitle())->lower()->toString());
+
+        // Assainit le HTML riche (CKEditor) avant persistance — anti-XSS stocké.
+        if (null !== $event->getDescription()) {
+            $event->setDescription($this->htmlSanitizer->sanitize($event->getDescription()));
+        }
 
         $this->em->persist($event);
         $this->em->flush();

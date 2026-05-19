@@ -13,7 +13,10 @@
 			<a href="{{ path('transport_edit', {id:transport.id}) }}" class="btn btn-secondary">Editer mon transport</a>
 		</div>
 		<div class="col-12 col-lg-6 d-flex justify-content-center">
-			<a href="{{ path('transport_delete',{id:transport.id}) }}" class="btn btn-secondary">Supprimer mon transport</a>
+			<form method="post" action="{{ path('transport_delete', {id: transport.id}) }}" onsubmit="return confirm('Supprimer ce transport ?');">
+				<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ transport.id) }}">
+				<button type="submit" class="btn btn-secondary">Supprimer mon transport</button>
+			</form>
 		</div>
 	</div>
 	<div class="row">
@@ -96,17 +99,17 @@
 							<td>{{ ticket.user.firstName }}</td>
 							<td>{{ ticket.countPlaces }}</td>
 							<td>{{ ticket.askedAt | date('Y-m-d') }}</td>
-							<td>{{ ticket.commentary | raw }}</td>
+							<td>{{ ticket.commentary }}</td>
 							<td>
 								{% if transport.remainingPlace > 0 and ticket.isValidate != true %}
-								<a href="{{ path('transport_accept_ticket', {id: ticket.id }) }}">Valider</a>
+								<form method="post" action="{{ path('transport_accept_ticket', {id: ticket.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('accept' ~ ticket.id) }}"><button type="submit" class="btn btn-link p-0">Valider</button></form>
 								{% else %}
 								<span style="color:grey">valider</span>
 								{% endif %}
 							</td>
 							<td>
 								{% if ticket.isValidate is null or ticket.isValidate == true %}
-								<a href="{{ path('transport_decline_ticket', {id: ticket.id }) }}">Annuler</a>
+								<form method="post" action="{{ path('transport_decline_ticket', {id: ticket.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('decline' ~ ticket.id) }}"><button type="submit" class="btn btn-link p-0">Annuler</button></form>
 								{% else %}
 								<span style="color:grey">annuler</span>
 								{% endif %}
