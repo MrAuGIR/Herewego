@@ -1,23 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\QuestionUser;
+use App\Entity\User;
 use App\Form\FaqType;
 use App\Repository\QuestionAdminRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Faq\QuestionUserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/faq', name: 'faq_')]
 class FaqController extends AbstractController
 {
     #[Route('/', name: 'index', methods: [Request::METHOD_GET])]
-    public function index(QuestionAdminRepository $QuestionAdminRepository): \Symfony\Component\HttpFoundation\Response
+    public function index(QuestionAdminRepository $questionAdminRepository): Response
     {
-        $questions = $QuestionAdminRepository->findBy([], ['importance' => 'DESC']);
-
+        $questions = $questionAdminRepository->findBy([], ['importance' => 'DESC']);
 
         return $this->render('faq/index.html.twig', [
             'questions' => $questions,
@@ -25,21 +29,17 @@ class FaqController extends AbstractController
     }
 
     #[Route('/question', name: 'question', methods: [Request::METHOD_POST])]
-    public function question(Request $request, EntityManagerInterface $em): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function question(Request $request, QuestionUserManager $questionUserManager): RedirectResponse|Response
     {
         $question = new QuestionUser();
 
         $form = $this->createForm(FaqType::class, $question);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($this->getUser()) {
-                $question->setUser($this->getUser());
-            }
-
-            $em->persist($question);
-            $em->flush();
+            /** @var User|null $author */
+            $author = $this->getUser();
+            $questionUserManager->submit($question, $author);
 
             $this->addFlash('success', "Votre question a bien été envoyé à l'administrateur.");
 
