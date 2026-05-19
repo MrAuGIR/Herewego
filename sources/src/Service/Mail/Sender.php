@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Mail;
 
 use App\Entity\User;
@@ -15,7 +17,8 @@ class Sender
     public const EVENT_DELETE = 'event_delete';
 
     public function __construct(
-        #[AutowireIterator('app.mailer.sender')] private readonly iterable $senders,
+        #[AutowireIterator('app.mailer.sender')]
+        private readonly iterable $senders,
     ) {
     }
 
@@ -28,5 +31,4 @@ class Sender
             }
         }
     }
-
 }

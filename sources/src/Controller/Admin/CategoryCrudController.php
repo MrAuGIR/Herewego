@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
@@ -59,7 +61,7 @@ class CategoryCrudController extends AbstractController
             if (! empty($file = $this->logoFactory->handleFromForm($form, $category))) {
                 $category->setPathLogo($file);
             }
-            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
+            $category->setSlug($this->slugger->slug($category->getName())->lower()->toString());
 
             $this->em->persist($category);
             $this->em->flush();
@@ -86,7 +88,7 @@ class CategoryCrudController extends AbstractController
                 $category->setPathLogo($file);
             }
 
-            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
+            $category->setSlug($this->slugger->slug($category->getName())->lower()->toString());
 
             $this->em->persist($category);
             $this->em->flush();
@@ -102,9 +104,13 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_GET, Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Category $category, Request $request): RedirectResponse
     {
+        if (! $this->isCsrfTokenValid('delete'.$category->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
         $this->em->remove($category);
         $this->em->flush();
 

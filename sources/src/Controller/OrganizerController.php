@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -8,6 +10,7 @@ use App\Form\EditProfilType;
 use App\Repository\EventRepository;
 use App\Service\Files\CsvService;
 use App\Service\Files\Exception\CsvException;
+use App\Service\User\AvatarCatalog;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -99,9 +102,13 @@ class OrganizerController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/avatar/{path}', name: 'organizer_edit_avatar', methods: [Request::METHOD_PUT])]
-    public function avatar($path): JsonResponse
+    #[Route('/profile/avatar/{path}', name: 'organizer_edit_avatar', requirements: ['path' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST, Request::METHOD_PUT])]
+    public function avatar(string $path, AvatarCatalog $avatarCatalog): JsonResponse
     {
+        if (! $avatarCatalog->isValid($path)) {
+            throw $this->createNotFoundException('Avatar inconnu.');
+        }
+
         /**
          * @var User $user
          */
@@ -113,9 +120,13 @@ class OrganizerController extends AbstractController
         return new JsonResponse(['path' => $user->getPathAvatar()]);
     }
 
-    #[Route('/profile/delete', name: 'organizer_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(SessionInterface $sessionInterface): RedirectResponse
+    #[Route('/profile/delete', name: 'organizer_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
+    public function delete(Request $request, SessionInterface $sessionInterface): RedirectResponse
     {
+        if (! $this->isCsrfTokenValid('delete_account', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
         $this->tokenStorage->setToken(null);
         $sessionInterface->invalidate();
 

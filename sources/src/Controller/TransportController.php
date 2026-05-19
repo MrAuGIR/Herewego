@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Event;
@@ -13,7 +15,7 @@ use App\Repository\TicketRepository;
 use App\Security\Voter\EventVoter;
 use App\Security\Voter\TicketVoter;
 use App\Security\Voter\TransportVoter;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Transport\TransportManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +26,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/transport', name: 'transport')]
 class TransportController extends AbstractController
 {
+    public function __construct(
+        private readonly TransportManager $transportManager,
+    ) {
+    }
+
     #[Route('/event/{id}', name: '', methods: [Request::METHOD_GET])]
     #[IsGranted(EventVoter::VIEW, 'event')]
     public function index(Event $event): RedirectResponse|Response
@@ -48,7 +55,6 @@ class TransportController extends AbstractController
         }
 
         $form = $this->createForm(TicketType::class, $ticket);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -67,19 +73,15 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route('/{transport_id}/cancelTicket/{id}', name: '_cancel_ticket')]
+    #[Route('/{transport_id}/cancelTicket/{id}', name: '_cancel_ticket', methods: [Request::METHOD_POST])]
     #[IsGranted(TicketVoter::DELETE, 'ticket')]
-    public function cancelTicket(int $transport_id, Ticket $ticket, EntityManagerInterface $em): RedirectResponse
+    public function cancelTicket(int $transport_id, Ticket $ticket, Request $request): RedirectResponse
     {
-        $transport = $ticket->getTransport();
-
-        if ($ticket->getIsValidate()) {
-            $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
+        if (! $this->isCsrfTokenValid('cancel'.$ticket->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
-        $em->persist($transport);
-        $em->remove($ticket);
-        $em->flush();
+        $this->transportManager->cancelTicket($ticket);
 
         $this->addFlash('info', 'votre ticket est annulé');
 
@@ -97,40 +99,37 @@ class TransportController extends AbstractController
         ]);
     }
 
-    #[Route('/manage/accept/{id}', name: '_accept_ticket', methods: [Request::METHOD_GET])]
-    public function accept(Ticket $ticket, TickerFactory $factory): RedirectResponse
+    #[Route('/manage/accept/{id}', name: '_accept_ticket', methods: [Request::METHOD_POST])]
+    public function accept(Ticket $ticket, Request $request, TickerFactory $factory): RedirectResponse
     {
         /** @var Transport $transport */
         $transport = $ticket->getTransport();
+
+        // Seul le gestionnaire du transport peut valider un ticket.
+        $this->denyAccessUnlessGranted(TransportVoter::MANAGE, $transport);
+
+        if (! $this->isCsrfTokenValid('accept'.$ticket->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
 
         if ($factory->validTicket($transport, $ticket)) {
             $this->addFlash('success', 'ticket validé');
-
-            return $this->redirectToRoute('transport_manage', [
-                'id' => $ticket->getTransport()->getId(),
-            ]);
         }
 
         return $this->redirectToRoute('transport_manage', [
-            'id' => $ticket->getTransport()->getId(),
+            'id' => $transport->getId(),
         ]);
     }
 
-    #[Route('/manage/decline/{id}', name: '_decline_ticket')]
+    #[Route('/manage/decline/{id}', name: '_decline_ticket', methods: [Request::METHOD_POST])]
     #[IsGranted(TicketVoter::DECLINE, 'ticket')]
-    public function decline(Ticket $ticket, EntityManagerInterface $em): RedirectResponse
+    public function decline(Ticket $ticket, Request $request): RedirectResponse
     {
-        /** @var Transport $transport */
-        $transport = $ticket->getTransport();
-
-        if ($ticket->getIsValidate()) {
-            $transport->setRemainingPlace($transport->getRemainingPlace() + $ticket->getCountPlaces());
-            $em->persist($transport);
+        if (! $this->isCsrfTokenValid('decline'.$ticket->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
-        $ticket->setIsValidate(false);
-        $em->persist($ticket);
-        $em->flush();
+        $this->transportManager->declineTicket($ticket);
 
         $this->addFlash('success', 'ticket annulé');
 
@@ -141,7 +140,7 @@ class TransportController extends AbstractController
 
     #[Route('/create/{id}', name: '_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     #[IsGranted(EventVoter::CREATE_TRANSPORT, 'event')]
-    public function create(Event $event, Request $request, EntityManagerInterface $em): RedirectResponse|Response
+    public function create(Event $event, Request $request): RedirectResponse|Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -149,18 +148,10 @@ class TransportController extends AbstractController
         $transport = new Transport();
 
         $form = $this->createForm(TransportType::class, $transport);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Creation du transport */
-            $transport->setUser($user)
-                      ->setEvent($event)
-                      ->setRemainingPlace($transport->getTotalPlace())
-                      ->setCreatedAt(new \DateTime())
-            ;
-            $em->persist($transport);
-            $em->flush();
+            $this->transportManager->create($transport, $event, $user);
 
             $this->addFlash('success', 'Transport créé');
 
@@ -176,14 +167,13 @@ class TransportController extends AbstractController
 
     #[Route('/edit/{id}', name: '_edit', methods: [Request::METHOD_POST, Request::METHOD_GET])]
     #[IsGranted(TransportVoter::EDIT, 'transport')]
-    public function edit(Transport $transport, Request $request, EntityManagerInterface $em): Response
+    public function edit(Transport $transport, Request $request): Response
     {
         $form = $this->createForm(TransportType::class, $transport);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($transport);
-            $em->flush();
+            $this->transportManager->save($transport);
 
             $this->addFlash('success', 'Transport modifié');
 
@@ -195,19 +185,22 @@ class TransportController extends AbstractController
             'event' => $transport->getEvent(),
             'user' => $this->getUser(),
             'form' => $form->createView(),
-
         ]);
     }
 
-    #[Route('/delete/{id}', name: '_delete', methods: [Request::METHOD_DELETE, Request::METHOD_GET])]
+    #[Route('/delete/{id}', name: '_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     #[IsGranted(TransportVoter::DELETE, 'transport')]
-    public function delete(Transport $transport, EntityManagerInterface $em): Response
+    public function delete(Transport $transport, Request $request): Response
     {
-        $em->remove($transport);
-        $em->flush();
+        if (! $this->isCsrfTokenValid('delete'.$transport->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
+        $eventId = $transport->getEvent()->getId();
+        $this->transportManager->delete($transport);
 
         $this->addFlash('success', 'transport supprimé');
 
-        return $this->redirectToRoute('event_show', ['id' => $transport->getEvent()->getId()]);
+        return $this->redirectToRoute('event_show', ['id' => $eventId]);
     }
 }

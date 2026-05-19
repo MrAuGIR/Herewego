@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Dto\EventQueryDto;
@@ -15,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'home', methods: [Request::METHOD_GET])]
-    public function index(#[MapQueryString] EventQueryDto $dto,EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
+    public function index(#[MapQueryString] EventQueryDto $dto, EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
         if ($request->get('ajax')) {
             return new JsonResponse([
