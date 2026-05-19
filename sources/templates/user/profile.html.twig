@@ -117,7 +117,7 @@
 								<a href="{{ path('user_edit_password') }}" title="page de modification du mot de passe" class="btn btn-secondary  m-5 m-auto">Modifier mon mot de passe</a>
 							</div>
 							<div>							
-								<a href="{{ path('user_delete') }}" title="suppression du compte" class="btn btn-danger  m-5 m-auto">Supprimer mon compte</a>	
+								<form method="post" action="{{ path('user_delete') }}" onsubmit="return confirm('Supprimer définitivement votre compte ?');"><input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}"><button type="submit" title="suppression du compte" class="btn btn-danger m-5 m-auto">Supprimer mon compte</button></form>	
 							</div>
 						</div>
 						

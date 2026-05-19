@@ -19,6 +19,10 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+                enable_csrf: true
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
             logout:
                 path: /logout
             access_denied_handler: App\Security\AccessDeniedHandler
@@ -32,9 +36,9 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+    # Défense en profondeur (en complément des #[IsGranted] des contrôleurs admin).
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
     security:

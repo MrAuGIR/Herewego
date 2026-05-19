@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\TicketRepository;
@@ -32,7 +34,7 @@ class Ticket
     private ?\DateTimeInterface $emailSendAt;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tickets')]
-    #[ORM\JoinColumn(nullable: 'true')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user;
 
     #[ORM\ManyToOne(targetEntity: Transport::class, inversedBy: 'tickets')]

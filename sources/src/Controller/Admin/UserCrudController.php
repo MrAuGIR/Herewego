@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\User;
@@ -98,9 +100,13 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_GET, Request::METHOD_DELETE])]
+    #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
+        if (! $this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
         $this->em->remove($user);
         $this->em->flush();
 

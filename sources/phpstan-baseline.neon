@@ -1,0 +1,265 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Security\\Core\\User\\UserInterface\:\:getId\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controller/Admin/EventCrudController.php
+
+		-
+			message: '#^Parameter \#3 \$user of method App\\Service\\Mail\\Sender\:\:send\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/Admin/EventCrudController.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Security\\Core\\User\\UserInterface\:\:getId\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Controller/OrganizerController.php
+
+		-
+			message: '#^Call to an undefined method Faker\\Generator\:\:department\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/DataFixtures/AppFixtures.php
+
+		-
+			message: '#^Parameter \#1 \$placePrice of method App\\Entity\\Transport\:\:setPlacePrice\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/DataFixtures/AppFixtures.php
+
+		-
+			message: '#^Property App\\Entity\\Category\:\:\$events type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Event\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Category.php
+
+		-
+			message: '#^Property App\\Entity\\City\:\:\$cityCp type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/City.php
+
+		-
+			message: '#^Property App\\Entity\\City\:\:\$cityName type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/City.php
+
+		-
+			message: '#^Property App\\Entity\\City\:\:\$localisations type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\ArrayCollection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Localisation\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/City.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$createdAt type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeInterface\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$description type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$participations type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Participation\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$pictures type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Picture\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$slug type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$startedAt type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeInterface\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$tag type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$title type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$transports type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Transport\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\EventGroup\:\:\$Events type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Event\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/EventGroup.php
+
+		-
+			message: '#^Property App\\Entity\\EventGroup\:\:\$name type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/EventGroup.php
+
+		-
+			message: '#^Property App\\Entity\\Localisation\:\:\$events type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Event\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Localisation.php
+
+		-
+			message: '#^Property App\\Entity\\Localisation\:\:\$transports type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Transport\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Localisation.php
+
+		-
+			message: '#^Property App\\Entity\\Localisation\:\:\$users type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\User\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/Localisation.php
+
+		-
+			message: '#^Property App\\Entity\\QuestionUser\:\:\$question type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/QuestionUser.php
+
+		-
+			message: '#^Property App\\Entity\\QuestionUser\:\:\$subject type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/QuestionUser.php
+
+		-
+			message: '#^Property App\\Entity\\QuestionUser\:\:\$user type mapping mismatch\: database can contain Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\User\> but property expects App\\Entity\\User\|null\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/QuestionUser.php
+
+		-
+			message: '#^Property App\\Entity\\QuestionUser\:\:\$user type mapping mismatch\: property can contain App\\Entity\\User\|null but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\User\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/QuestionUser.php
+
+		-
+			message: '#^Property App\\Entity\\Ticket\:\:\$askedAt type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeInterface\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Ticket.php
+
+		-
+			message: '#^Property App\\Entity\\Ticket\:\:\$countPlaces type mapping mismatch\: property can contain int\|null but database expects int\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Ticket.php
+
+		-
+			message: '#^Property App\\Entity\\Transport\:\:\$createdAt type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeInterface\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Transport.php
+
+		-
+			message: '#^Property App\\Entity\\Transport\:\:\$placePrice type mapping mismatch\: property can contain string\|null but database expects float\|int\|string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Transport.php
+
+		-
+			message: '#^Property App\\Entity\\Transport\:\:\$remainingPlace type mapping mismatch\: property can contain int\|null but database expects int\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Transport.php
+
+		-
+			message: '#^Property App\\Entity\\Transport\:\:\$returnEndedAt type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeInterface\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Transport.php
+
+		-
+			message: '#^Property App\\Entity\\Transport\:\:\$returnStartedAt type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeInterface\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Transport.php
+
+		-
+			message: '#^Property App\\Entity\\Transport\:\:\$totalPlace type mapping mismatch\: property can contain int\|null but database expects int\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Transport.php
+
+		-
+			message: '#^Method App\\Entity\\User\:\:getUserIdentifier\(\) should return non\-empty\-string but returns int\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$events type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Event\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$participations type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Participation\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$questionUsers type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\QuestionUser\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$tickets type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Ticket\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$transports type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Transport\>\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface\:\:getFlashBag\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Security/AccessDeniedHandler.php
+
+		-
+			message: '#^Instanceof between App\\Entity\\User and Symfony\\Component\\Security\\Core\\User\\UserInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Security/Voter/EventVoter.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface\:\:getFlashBag\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Service/Security/NotFoundRedirectService.php
