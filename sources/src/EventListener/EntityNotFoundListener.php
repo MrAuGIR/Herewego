@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\EventListener;
 
 use App\Service\Security\NotFoundRedirectService;
@@ -22,7 +24,7 @@ readonly class EntityNotFoundListener
             return;
         }
 
-        if (!empty($response = $this->notFoundRedirectService->handle($event->getRequest()))) {
+        if (! empty($response = $this->notFoundRedirectService->handle($event->getRequest()))) {
             $event->setResponse($response);
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\Transport;
@@ -52,6 +54,6 @@ class SendEmailCommand extends Command
 
     public function sendEmail(Transport $transport, User $user): void
     {
-        $this->sender->send($transport, Sender::EVENT_TRANSPORT ,$user);
+        $this->sender->send($transport, Sender::EVENT_TRANSPORT, $user);
     }
 }

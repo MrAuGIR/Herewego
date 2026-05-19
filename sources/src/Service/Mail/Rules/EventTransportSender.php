@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Mail\Rules;
 
 use App\Entity\Transport;
 use App\Entity\User;
-use App\Service\Mail\Rules\MailerRuleInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -23,7 +24,7 @@ class EventTransportSender implements MailerRuleInterface
 
     public function support(string $match, mixed $subject): bool
     {
-        return $match === self::MATCH && $subject instanceof Transport;
+        return self::MATCH === $match && $subject instanceof Transport;
     }
 
     /**
@@ -33,6 +34,7 @@ class EventTransportSender implements MailerRuleInterface
     {
         /** @var Transport $transport */
         $transport = $subject;
+
         try {
             $email = new TemplatedEmail();
             $email->from(new Address('admin@gmail.com', 'Admin'))
