@@ -103,7 +103,7 @@
             <div>
                 <img src="{{ asset('/uploads/' ~ picture.path) }}" alt="Photo de l'event" width="50">
                 <a href="{{ path('event_picture_delete', {id: picture.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ picture.id) }}">Supprimer</a>
-                <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-order>
+                <input type="number" name="orderPriority" value="{{ picture.orderPriority }}" data-id="{{ picture.id }}" data-token="{{ csrf_token('order' ~ picture.id) }}" data-order>
             </div>
         {% endfor %}
     {% endif %}
