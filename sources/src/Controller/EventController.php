@@ -48,7 +48,7 @@ class EventController extends AbstractController
 
         $total = $eventRepository->getCountEvent($dto);
 
-        if ($request->get('ajax')) {
+        if ($request->query->get('ajax')) {
             return new JsonResponse([
                 'content' => $this->renderView('event/_content.html.twig', [
                     'events' => $events,

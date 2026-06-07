@@ -43,7 +43,7 @@ class OrganizerCrudController extends AbstractController
 
         $users = $userRepository->findByRole('ROLE_ORGANIZER');
 
-        if ($request->get('ajax')) {
+        if ($request->query->get('ajax')) {
             return new JsonResponse([
                 'content' => $this->renderView('admin/organizer/_content.html.twig', ['users' => $users]),
             ]);

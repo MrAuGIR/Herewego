@@ -19,9 +19,7 @@ class CategoryType extends AbstractType
             'label' => 'Nom',
             'attr' => ['placeholder' => 'nom de la category'],
             'constraints' => [
-                new NotBlank([
-                    'message' => 'Le nom de la catégorie est obligatoire',
-                ]),
+                new NotBlank(message: 'Le nom de la catégorie est obligatoire'),
             ],
         ])
         ->add('color', ColorType::class, [

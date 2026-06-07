@@ -29,7 +29,7 @@ class TicketType extends AbstractType
             ->add('commentary', CKEditorType::class, [
                 'label' => 'Commentaire',
                 'constraints' => [
-                    new NotBlank(['message' => 'veuillez saisir un court message d\'indication']),
+                    new NotBlank(message: 'veuillez saisir un court message d\'indication'),
                 ],
             ])
             // ->add('isValidate')

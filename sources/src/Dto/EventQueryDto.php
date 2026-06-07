@@ -14,7 +14,7 @@ final readonly class EventQueryDto
         public int $limit = 12,
         #[Assert\Positive]
         public int $page = 1,
-        #[Assert\Choice(['ASC', 'DESC'])]
+        #[Assert\Choice(choices: ['ASC', 'DESC'])]
         public string $order = 'ASC',
         public ?array $categories = null,
         public ?string $localisation = null,

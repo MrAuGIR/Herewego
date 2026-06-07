@@ -23,9 +23,7 @@ class LocalisationType extends AbstractType
                     'readonly' => true,
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'La ville est obligatoire',
-                    ]),
+                    new NotBlank(message: 'La ville est obligatoire'),
                 ],
                 'required' => false,
             ])
@@ -35,9 +33,7 @@ class LocalisationType extends AbstractType
                     'readonly' => true,
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Le code postal est obligatoire',
-                    ]),
+                    new NotBlank(message: 'Le code postal est obligatoire'),
                 ],
                 'required' => false,
 
@@ -48,9 +44,7 @@ class LocalisationType extends AbstractType
                     'readonly' => true,
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => "L'adresse complète est obligatoire",
-                    ]),
+                    new NotBlank(message: "L'adresse complète est obligatoire"),
                 ],
                 'required' => false,
             ])

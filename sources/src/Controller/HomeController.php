@@ -19,7 +19,7 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home', methods: [Request::METHOD_GET])]
     public function index(#[MapQueryString] EventQueryDto $dto, EventRepository $eventRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
-        if ($request->get('ajax')) {
+        if ($request->query->get('ajax')) {
             return new JsonResponse([
                 'content' => $this->renderView('event/_content.html.twig', [
                     'events' => $eventRepository->findByFilters($dto),

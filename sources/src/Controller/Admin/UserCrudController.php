@@ -38,7 +38,7 @@ class UserCrudController extends AbstractController
 
         $users = $userRepository->findByRole('ROLE_USER');
 
-        if ($request->get('ajax')) {
+        if ($request->query->get('ajax')) {
             return new JsonResponse(['success' => 1]);
         }
 
