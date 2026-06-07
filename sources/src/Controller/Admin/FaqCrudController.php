@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\QuestionAdmin;
@@ -9,6 +11,7 @@ use App\Repository\QuestionAdminRepository;
 use App\Repository\QuestionUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +27,8 @@ class FaqCrudController extends AbstractController
         protected EntityManagerInterface $em,
         protected SluggerInterface $slugger,
         protected QuestionUserRepository $qUserRepo,
-        protected QuestionAdminRepository $qAdminRepo
+        protected QuestionAdminRepository $qAdminRepo,
+        protected HtmlSanitizerInterface $htmlSanitizer,
     ) {
     }
 
@@ -73,8 +77,8 @@ class FaqCrudController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $questionAdmin->setImportance((int) $form->get('importance')->getData())
-                ->setQuestion($form->get('question')->getData())
-                ->setAnswer($form->get('answer')->getData());
+                ->setQuestion($this->htmlSanitizer->sanitize((string) $form->get('question')->getData()))
+                ->setAnswer($this->htmlSanitizer->sanitize((string) $form->get('answer')->getData()));
 
             $this->em->persist($questionAdmin);
             $this->em->flush();
@@ -96,8 +100,8 @@ class FaqCrudController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $questionAdmin->setImportance((int) $form->get('importance')->getData())
-                ->setQuestion($form->get('question')->getData())
-                ->setAnswer($form->get('answer')->getData());
+                ->setQuestion($this->htmlSanitizer->sanitize((string) $form->get('question')->getData()))
+                ->setAnswer($this->htmlSanitizer->sanitize((string) $form->get('answer')->getData()));
 
             $this->em->persist($questionAdmin);
             $this->em->flush();

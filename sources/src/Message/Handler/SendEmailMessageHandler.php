@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Message\Handler;
 
 use App\Message\SendEmailMessage;
@@ -11,7 +13,8 @@ class SendEmailMessageHandler
 {
     public function __construct(
         private Sender $sender
-    ) {}
+    ) {
+    }
 
     public function __invoke(SendEmailMessage $message): void
     {

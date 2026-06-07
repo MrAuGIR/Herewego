@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+declare(strict_types=1);
 
 namespace App\Service\Mail\Rules;
 
@@ -22,7 +24,7 @@ class DeleteTransportSender implements MailerRuleInterface
 
     public function support(string $match, mixed $subject): bool
     {
-        return $match === self::DELETE_TRANSPORT && $subject instanceof Event;
+        return self::DELETE_TRANSPORT === $match && $subject instanceof Event;
     }
 
     /**
@@ -60,4 +62,3 @@ class DeleteTransportSender implements MailerRuleInterface
         }
     }
 }
-

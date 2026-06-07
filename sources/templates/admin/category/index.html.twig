@@ -30,7 +30,7 @@
                         <th>quelque chose</th>
                         <th>
                             <a href="{{path('admin_category_edit',{id:category.id})}}">Editer</a>
-                            <a href="{{path('admin_category_delete',{id:category.id})}}">Supprimer</a>
+                            <form method="post" action="{{ path('admin_category_delete', {id: category.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer cette catégorie ?');"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}"><button type="submit" class="btn btn-link p-0">Supprimer</button></form>
                         </th>
                     </tr>
                     {% endfor %}

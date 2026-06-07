@@ -125,7 +125,10 @@
                     {% else %}
                         <span> Votre demande n'a pas été accepté</span><br>
                     {% endif %}
-                    <a class="btn btn-primary" href="{{path('transport_cancel_ticket',{id: ticket.id, transport_id: transport.id })}}">Annuler ma demande</a>
+                    <form method="post" action="{{ path('transport_cancel_ticket', {id: ticket.id, transport_id: transport.id}) }}" onsubmit="return confirm('Annuler votre demande ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ ticket.id) }}">
+                        <button type="submit" class="btn btn-primary">Annuler ma demande</button>
+                    </form>
                 </div>
             </div>
             {% endif %}

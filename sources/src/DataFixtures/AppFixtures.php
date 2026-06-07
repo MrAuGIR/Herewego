@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Entity\Category;
@@ -14,22 +16,20 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppFixtures extends Fixture
 {
     public function __construct(
         private SluggerInterface $slugger,
-        private UserPasswordEncoderInterface $passwordEncoder,
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
-        $faker->addProvider(new \Bezhanov\Faker\Provider\Commerce($faker));
-        $faker->addProvider(new \Bluemmb\Faker\PicsumPhotosProvider($faker));
 
 
 
@@ -48,7 +48,7 @@ class AppFixtures extends Fixture
             ->setValidatedAt(new \DateTime())
             ->setRoles(['ROLE_ADMIN'])
             ->setLocalisation($localisation)
-            ->setPassword($this->passwordEncoder->encodePassword($admin, 'password'));
+            ->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
         $manager->persist($admin);
 
 
@@ -66,7 +66,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_USER'])
             ->setPathAvatar('1')
             ->setLocalisation($localisation)
-            ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
+            ->setPassword($this->passwordHasher->hashPassword($user, 'password'));
             $manager->persist($user);
 
             $question = new QuestionUser();
@@ -90,7 +90,7 @@ class AppFixtures extends Fixture
         for ($c = 1; $c < 4; ++$c) {
             $category = new Category();
             $category->setName($faker->department())
-                ->setSlug(strtolower($this->slugger->slug($category->getName())))
+                ->setSlug($this->slugger->slug($category->getName())->lower()->toString())
                 ->setColor($faker->colorName())
                 ->setPathLogo('https://via.placeholder.com/50');
             $manager->persist($category);
@@ -109,7 +109,7 @@ class AppFixtures extends Fixture
                 ->setValidatedAt(new \DateTime())
                 ->setRoles(['ROLE_ORGANIZER'])
                 ->setPathAvatar('2')
-                ->setPassword($this->passwordEncoder->encodePassword($organizer, 'password'))
+                ->setPassword($this->passwordHasher->hashPassword($organizer, 'password'))
                 ->setSiret('siret-'.$faker->numberBetween(10000, 99999))
                 ->setCompanyName($faker->company())
                 ->setLocalisation($localisation)
@@ -128,7 +128,7 @@ class AppFixtures extends Fixture
                     ->setWebsite($faker->url())
                     ->setPhone($faker->phoneNumber())
                     ->setCountViews(0)
-                    ->setSlug(strtolower($this->slugger->slug($event->getTitle())))
+                    ->setSlug($this->slugger->slug($event->getTitle())->lower()->toString())
                     ->setTag('tag-'.$event->getSlug())
                     ->setCreatedAt($faker->dateTime())
                     ->setInstagramLink($faker->url().'-insta')
@@ -160,7 +160,7 @@ class AppFixtures extends Fixture
                         ->setRoles(['ROLE_USER'])
                         ->setPathAvatar('1')
                         ->setLocalisation($localisation)
-                        ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
+                        ->setPassword($this->passwordHasher->hashPassword($user, 'password'));
                         $manager->persist($user);
 
                         $question = new QuestionUser();
