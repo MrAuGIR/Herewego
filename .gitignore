@@ -2,3 +2,8 @@
 /sources/public/uploads
 .claude/
 /sources/AUDIT.md
+# Dump de base de données — ne jamais versionner (contient des PII)
+/herewego_dump.tar.gz
+*.sql
+*.sql.gz
+*.tar.gz
