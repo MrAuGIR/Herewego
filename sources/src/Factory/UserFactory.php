@@ -19,7 +19,7 @@ class UserFactory
 
     public function create(FormInterface $form, User $user): void
     {
-        $user->setIsValidate(true)
+        $user->setIsValidate(false)
             ->setRegisterAt(new \DateTime())
         ;
         $this->persist($form, $user);

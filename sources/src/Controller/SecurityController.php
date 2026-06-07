@@ -9,8 +9,11 @@ use App\Factory\OrganizerFactory;
 use App\Factory\UserFactory;
 use App\Form\RegisterType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -19,7 +22,23 @@ class SecurityController extends AbstractController
     public function __construct(
         private readonly UserFactory $userFactory,
         private readonly OrganizerFactory $organizerFactory,
+        private readonly RateLimiterFactory $registrationLimiter,
     ) {
+    }
+
+    /**
+     * Garde-fou commun aux inscriptions : rate-limit par IP + détection honeypot.
+     * Retourne true si la soumission doit être ignorée (bot honeypot).
+     */
+    private function isSpamSubmission(Request $request, FormInterface $form): bool
+    {
+        $limiter = $this->registrationLimiter->create($request->getClientIp());
+        if (false === $limiter->consume(1)->isAccepted()) {
+            throw new TooManyRequestsHttpException(null, "Trop de tentatives d'inscription. Réessayez plus tard.");
+        }
+
+        // Honeypot : un humain ne remplit jamais ce champ caché.
+        return (bool) $form->get('homepage')->getData();
     }
 
     #[Route('/register', name: 'app_register')]
@@ -36,12 +55,18 @@ class SecurityController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->userFactory->create($form, $user);
+        if ($form->isSubmitted()) {
+            if ($this->isSpamSubmission($request, $form)) {
+                return $this->redirectToRoute('app_login');
+            }
 
-            $this->addFlash('success', 'Utilisateur créé, en attente de validation par l\'administration');
+            if ($form->isValid()) {
+                $this->userFactory->create($form, $user);
 
-            return $this->redirectToRoute('app_login');
+                $this->addFlash('success', 'Utilisateur créé, en attente de validation par l\'administration');
+
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->render('security/register.user.html.twig', [
@@ -57,12 +82,18 @@ class SecurityController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->organizerFactory->create($form, $user);
+        if ($form->isSubmitted()) {
+            if ($this->isSpamSubmission($request, $form)) {
+                return $this->redirectToRoute('app_login');
+            }
 
-            $this->addFlash('success', 'Compte organisateur créé, en attente de validation par l\'administration');
+            if ($form->isValid()) {
+                $this->organizerFactory->create($form, $user);
 
-            return $this->redirectToRoute('app_login');
+                $this->addFlash('success', 'Compte organisateur créé, en attente de validation par l\'administration');
+
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->render('security/register.organizer.html.twig', [

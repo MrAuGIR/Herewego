@@ -49,7 +49,16 @@ class RegisterType extends AbstractType
                 'label' => 'votre numéro de téléphone',
                 'attr' => ['placeholder' => 'renseigner votre numéro de téléphone'],
             ])
-            ->add('localisation', LocalisationType::class);
+            ->add('localisation', LocalisationType::class)
+            // Honeypot anti-bot : champ invisible pour un humain. S'il est rempli,
+            // la soumission provient d'un robot et sera rejetée côté contrôleur.
+            ->add('homepage', TextType::class, [
+                'required' => false,
+                'mapped' => false,
+                'label' => false,
+                'attr' => ['autocomplete' => 'off', 'tabindex' => '-1'],
+                'row_attr' => ['style' => 'position:absolute;left:-5000px;', 'aria-hidden' => 'true'],
+            ]);
 
 
         if (in_array('ROLE_ORGANIZER', $options['chosen_role'])) {
