@@ -211,12 +211,6 @@ parameters:
 			path: src/Entity/Transport.php
 
 		-
-			message: '#^Method App\\Entity\\User\:\:getUserIdentifier\(\) should return non\-empty\-string but returns int\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Entity/User.php
-
-		-
 			message: '#^Property App\\Entity\\User\:\:\$events type mapping mismatch\: property can contain Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable\<App\\Entity\\Event\>\.$#'
 			identifier: doctrine.associationType
 			count: 1
