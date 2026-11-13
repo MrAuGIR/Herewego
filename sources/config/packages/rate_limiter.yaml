@@ -4,3 +4,14 @@ framework:
             policy: 'sliding_window'
             limit: 5
             interval: '15 minutes'
+
+when@test:
+    framework:
+        cache:
+            pools:
+                # Stockage mémoire : l'état du limiteur ne survit pas d'un test à l'autre.
+                cache.rate_limiter_test:
+                    adapter: cache.adapter.array
+        rate_limiter:
+            registration:
+                cache_pool: cache.rate_limiter_test
