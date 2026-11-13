@@ -31,7 +31,6 @@ class TransportType extends AbstractType
                     'placeholder' => 'Date de départ',
                     'min' => $now.'T00:00',
                 ],
-
             ])
             ->add('goEndedAt', DateTimeType::class, [
                 'label' => 'Arrivé ? (heure approximative)',
@@ -82,12 +81,10 @@ class TransportType extends AbstractType
                     'value' => 'Créé'],
             ])
 
-
-
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Transport::class,

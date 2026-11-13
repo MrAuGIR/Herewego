@@ -263,7 +263,7 @@ class Event
 
     public function addPicture(Picture $picture): self
     {
-        if (! $this->pictures->contains($picture)) {
+        if (!$this->pictures->contains($picture)) {
             $this->pictures[] = $picture;
             $picture->setEvent($this);
         }
@@ -290,7 +290,7 @@ class Event
 
     public function addTransport(Transport $transport): self
     {
-        if (! $this->transports->contains($transport)) {
+        if (!$this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setEvent($this);
         }
@@ -317,7 +317,7 @@ class Event
 
     public function addParticipation(Participation $participation): self
     {
-        if (! $this->participations->contains($participation)) {
+        if (!$this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setEvent($this);
         }

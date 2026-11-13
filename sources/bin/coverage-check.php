@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * Vérifie que la couverture de lignes d'un rapport Clover atteint un seuil minimal.
  *

@@ -14,7 +14,7 @@ readonly class ParticipationFactory
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private ParticipationRepository $participationRepository
+        private ParticipationRepository $participationRepository,
     ) {
     }
 
@@ -30,7 +30,7 @@ readonly class ParticipationFactory
 
     public function cancelParticipation(Event $event, User $user): void
     {
-        if (! empty($participation = $this->getUserParticipation($event, $user))) {
+        if (!empty($participation = $this->getUserParticipation($event, $user))) {
             $this->em->remove($participation);
             $this->em->flush();
         }

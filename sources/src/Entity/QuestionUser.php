@@ -26,7 +26,6 @@ class QuestionUser
     #[Assert\Length(min: 5, max: 100, minMessage: 'Le sujet doit faire au moins 5 caractères', maxMessage: 'Le sujet doit faire moins de 100 caractères')]
     private ?string $subject;
 
-
     // Auteur facultatif : une question peut être posée par un visiteur anonyme.
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'questionUsers')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]

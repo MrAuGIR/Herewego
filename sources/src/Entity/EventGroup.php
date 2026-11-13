@@ -20,7 +20,6 @@ class EventGroup
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name;
 
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $pathImage;
 
@@ -68,7 +67,7 @@ class EventGroup
 
     public function addEvent(Event $event): self
     {
-        if (! $this->Events->contains($event)) {
+        if (!$this->Events->contains($event)) {
             $this->Events[] = $event;
             $event->setEventGroup($this);
         }

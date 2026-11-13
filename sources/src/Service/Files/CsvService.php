@@ -13,7 +13,7 @@ class CsvService
 {
     public function __construct(
         #[Autowire(param: 'csv_directory')]
-        private string $csvDirectory
+        private string $csvDirectory,
     ) {
     }
 
@@ -29,7 +29,7 @@ class CsvService
             $dataEvents[] = $line;
         }
 
-        return  $this->createFile($dataEvents);
+        return $this->createFile($dataEvents);
     }
 
     private function generateLine(array $events): \Generator
@@ -54,7 +54,7 @@ class CsvService
     {
         $fileSystem = new Filesystem();
         $fileName = $this->createFileName();
-        $filePath = $this->csvDirectory.DIRECTORY_SEPARATOR.$fileName;
+        $filePath = $this->csvDirectory.\DIRECTORY_SEPARATOR.$fileName;
 
         try {
             $fileSystem->mkdir($this->csvDirectory);

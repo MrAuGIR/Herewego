@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[IsGranted('ROLE_ADMIN', message: '404 page not found', statusCode: 404)]
-#[Route('/admin/category',  name: 'admin_category_')]
+#[Route('/admin/category', name: 'admin_category_')]
 class CategoryCrudController extends AbstractController
 {
     public function __construct(
@@ -40,7 +40,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/show/{id}', name:'show', methods: [Request::METHOD_GET])]
+    #[Route('/show/{id}', name: 'show', methods: [Request::METHOD_GET])]
     public function show(Category $category): Response
     {
         return $this->render('admin/category/show.html.twig', [
@@ -48,7 +48,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name:'create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/create', name: 'create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         $category = new Category();
@@ -58,7 +58,7 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (! empty($file = $this->logoFactory->handleFromForm($form, $category))) {
+            if (!empty($file = $this->logoFactory->handleFromForm($form, $category))) {
                 $category->setPathLogo($file);
             }
             $category->setSlug($this->slugger->slug($category->getName())->lower()->toString());
@@ -84,7 +84,7 @@ class CategoryCrudController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (! empty($file = $this->logoFactory->handleFromForm($form, $category))) {
+            if (!empty($file = $this->logoFactory->handleFromForm($form, $category))) {
                 $category->setPathLogo($file);
             }
 
@@ -107,7 +107,7 @@ class CategoryCrudController extends AbstractController
     #[Route('/delete/{id}', name: 'delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Category $category, Request $request): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('delete'.$category->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete'.$category->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 

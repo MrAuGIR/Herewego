@@ -32,7 +32,7 @@ class UserCrudController extends AbstractController
         $user = $userRepository->find((int) $request->query->get('userId'));
 
         if ($user) {
-            $user->setIsValidate(! $user->getIsValidate());
+            $user->setIsValidate(!$user->getIsValidate());
             $this->em->flush();
         }
 
@@ -103,7 +103,7 @@ class UserCrudController extends AbstractController
     #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 

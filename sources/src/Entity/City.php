@@ -70,7 +70,7 @@ class City
 
     public function addLocalisation(Localisation $localisation): self
     {
-        if (! $this->localisations->contains($localisation)) {
+        if (!$this->localisations->contains($localisation)) {
             $this->localisations[] = $localisation;
             $localisation->setCity($this);
         }

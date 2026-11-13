@@ -13,7 +13,7 @@ class UserFactory
 {
     public function __construct(
         protected readonly UserPasswordHasherInterface $encoder,
-        protected readonly EntityManagerInterface $em
+        protected readonly EntityManagerInterface $em,
     ) {
     }
 

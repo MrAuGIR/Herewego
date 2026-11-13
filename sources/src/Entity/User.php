@@ -330,7 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTicket(Ticket $ticket): self
     {
-        if (! $this->tickets->contains($ticket)) {
+        if (!$this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
             $ticket->setUser($this);
         }
@@ -360,7 +360,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addParticipation(Participation $participation): self
     {
-        if (! $this->participations->contains($participation)) {
+        if (!$this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setUser($this);
         }
@@ -390,7 +390,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addQuestionUser(QuestionUser $questionUser): self
     {
-        if (! $this->questionUsers->contains($questionUser)) {
+        if (!$this->questionUsers->contains($questionUser)) {
             $this->questionUsers[] = $questionUser;
             $questionUser->setUser($this);
         }
@@ -420,7 +420,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTransport(Transport $transport): self
     {
-        if (! $this->transports->contains($transport)) {
+        if (!$this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setUser($this);
         }
@@ -447,7 +447,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addEvent(Event $event): self
     {
-        if (! $this->events->contains($event)) {
+        if (!$this->events->contains($event)) {
             $this->events[] = $event;
             $event->setUser($this);
         }
@@ -479,17 +479,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function countValidatedTickets(): int
     {
-        $validatedTickets = array_filter($this->getTickets()->toArray(), function (Ticket $ticket) {
+        $validatedTickets = array_filter($this->getTickets()->toArray(), static function (Ticket $ticket) {
             return $ticket->getIsValidate();
         });
 
-        return count($validatedTickets);
+        return \count($validatedTickets);
     }
 
     public function allowCreateTransport(Event $event): bool
     {
         if ($this->isParticipating($event)) {
-            if (! $this->alreadyManageTransport($event)) {
+            if (!$this->alreadyManageTransport($event)) {
                 return true;
             }
         }
@@ -521,6 +521,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isOrganizer(): bool
     {
-        return in_array('ROLE_ORGANIZER', $this->getRoles(), true);
+        return \in_array('ROLE_ORGANIZER', $this->getRoles(), true);
     }
 }

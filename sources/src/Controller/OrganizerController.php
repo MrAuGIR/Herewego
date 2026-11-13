@@ -31,7 +31,7 @@ class OrganizerController extends AbstractController
         protected UserPasswordHasherInterface $encoder,
         protected EntityManagerInterface $em,
         protected CsvService $csvService,
-        protected TokenStorageInterface $tokenStorage
+        protected TokenStorageInterface $tokenStorage,
     ) {
     }
 
@@ -105,7 +105,7 @@ class OrganizerController extends AbstractController
     #[Route('/profile/avatar/{path}', name: 'organizer_edit_avatar', requirements: ['path' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST, Request::METHOD_PUT])]
     public function avatar(string $path, AvatarCatalog $avatarCatalog): JsonResponse
     {
-        if (! $avatarCatalog->isValid($path)) {
+        if (!$avatarCatalog->isValid($path)) {
             throw $this->createNotFoundException('Avatar inconnu.');
         }
 
@@ -123,7 +123,7 @@ class OrganizerController extends AbstractController
     #[Route('/profile/delete', name: 'organizer_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Request $request, SessionInterface $sessionInterface): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('delete_account', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_account', (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 

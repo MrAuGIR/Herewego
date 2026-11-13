@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210223213407 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE ticket ADD transport_id INT DEFAULT NULL');
@@ -25,7 +25,7 @@ final class Version20210223213407 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_97A0ADA39909C13F ON ticket (transport_id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE ticket DROP FOREIGN KEY FK_97A0ADA39909C13F');

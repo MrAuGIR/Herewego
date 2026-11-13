@@ -37,7 +37,7 @@ class OrganizerCrudController extends AbstractController
         $user = $userRepository->find((int) $request->query->get('userId'));
 
         if ($user) {
-            $user->setIsValidate(! $user->getIsValidate());
+            $user->setIsValidate(!$user->getIsValidate());
             $this->em->flush();
         }
 
@@ -108,7 +108,7 @@ class OrganizerCrudController extends AbstractController
     #[Route('/delete/{id}', name: 'organizer_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(User $user, Request $request): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
@@ -123,12 +123,12 @@ class OrganizerCrudController extends AbstractController
     #[Route('/verifySiret/{id}', name: 'organizer_check_siret', methods: [Request::METHOD_GET])]
     public function verifySiret(User $user, ApiCheckSiret $apiCheckSiret): RedirectResponse
     {
-        if (! empty($siret = $user->getSiret())) {
+        if (!empty($siret = $user->getSiret())) {
             // siret isfac 49098556100011
             try {
                 match ($apiCheckSiret->check($siret)) {
                     true => $this->addFlash('success', 'Siret trouvé dans la base de donnée externe'),
-                    false => $this->addFlash('danger', 'SIRET inconnue')
+                    false => $this->addFlash('danger', 'SIRET inconnue'),
                 };
             } catch (\Exception|TransportExceptionInterface $e) {
                 $this->addFlash('warning', 'Base de donnée externe en maintenance '.$e->getMessage());

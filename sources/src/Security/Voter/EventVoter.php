@@ -24,9 +24,9 @@ class EventVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        return (in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
+        return (\in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
             && $subject instanceof Event)
-            || (self::CAN_CREATE == $attribute && is_null($subject));
+            || (self::CAN_CREATE == $attribute && null === $subject);
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
@@ -34,11 +34,11 @@ class EventVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
 
-        if (! $user instanceof UserInterface) {
+        if (!$user instanceof UserInterface) {
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
 
@@ -49,7 +49,7 @@ class EventVoter extends Voter
             self::VIEW, self::CAN_CANCEL => $user->isParticipating($event),
             self::CREATE_TRANSPORT => $user->allowCreateTransport($event),
             self::CAN_DELETE, self::CAN_EDIT => $event->getUser() === $user,
-            self::CAN_PARTICIPATE => ! $user->isParticipating($event),
+            self::CAN_PARTICIPATE => !$user->isParticipating($event),
             self::CAN_CREATE => $user->isOrganizer(),
             default => false,
         };

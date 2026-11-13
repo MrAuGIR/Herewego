@@ -92,7 +92,7 @@ class Localisation
 
     public function addUser(User $user): self
     {
-        if (! $this->users->contains($user)) {
+        if (!$this->users->contains($user)) {
             $this->users[] = $user;
             $user->setLocalisation($this);
         }
@@ -119,7 +119,7 @@ class Localisation
 
     public function addEvent(Event $event): self
     {
-        if (! $this->events->contains($event)) {
+        if (!$this->events->contains($event)) {
             $this->events[] = $event;
             $event->setLocalisation($this);
         }
@@ -149,7 +149,7 @@ class Localisation
 
     public function addTransport(Transport $transport): self
     {
-        if (! $this->transports->contains($transport)) {
+        if (!$this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setLocalisationStart($this);
         }

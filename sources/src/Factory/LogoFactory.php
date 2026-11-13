@@ -12,7 +12,7 @@ class LogoFactory
 {
     public function __construct(
         #[Autowire(param: 'logo_directory')]
-        private string $logoDirectory
+        private string $logoDirectory,
     ) {
     }
 
@@ -31,8 +31,8 @@ class LogoFactory
             $file
         );
 
-        if (! empty($category->getPathLogo())) {
-            unlink($this->logoDirectory.DIRECTORY_SEPARATOR.$category->getPathLogo());
+        if (!empty($category->getPathLogo())) {
+            unlink($this->logoDirectory.\DIRECTORY_SEPARATOR.$category->getPathLogo());
         }
 
         return $file;

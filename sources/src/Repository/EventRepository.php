@@ -70,18 +70,17 @@ class EventRepository extends ServiceEntityRepository
             ->andWhere('e.endedAt > :date')
             ->setParameter('date', $date);
 
-
-        if (! empty($categories = $dto->categories)) {
+        if (!empty($categories = $dto->categories)) {
             $query->andWhere('e.category in (:cats)')
                 ->setParameter('cats', array_values($categories));
         }
 
-        if (! empty($keyWord = $dto->q)) {
+        if (!empty($keyWord = $dto->q)) {
             $query->andWhere('e.title LIKE :title')
             ->setParameter('title', $keyWord.'%');
         }
 
-        if (! empty($localisation = $dto->localisation)) {
+        if (!empty($localisation = $dto->localisation)) {
             $query->innerJoin('e.localisation', 'l')
                 ->andWhere('l.cityName LIKE :localisation')
                 ->setParameter('localisation', $localisation.'%');
@@ -107,12 +106,12 @@ class EventRepository extends ServiceEntityRepository
             ->where('c.endedAt > :date')
             ->setParameter('date', $date);
 
-        if (! empty($categories = $dto->categories)) {
+        if (!empty($categories = $dto->categories)) {
             $query->andWhere('c.category IN(:cats)')
                 ->setParameter('cats', array_values($categories));
         }
 
-        if (! empty($localisation = $dto->localisation)) {
+        if (!empty($localisation = $dto->localisation)) {
             $query->innerJoin('c.localisation', 'l')
                 ->andWhere('l.cityName LIKE :localisation')
                 ->setParameter('localisation', $localisation.'%');

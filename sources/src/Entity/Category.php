@@ -97,7 +97,7 @@ class Category
 
     public function addEvent(Event $event): self
     {
-        if (! $this->events->contains($event)) {
+        if (!$this->events->contains($event)) {
             $this->events[] = $event;
             $event->setCategory($this);
         }

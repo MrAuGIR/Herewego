@@ -45,7 +45,7 @@ final class SmokeTest extends WebTestCase
         self::assertSame(
             Response::HTTP_OK,
             $client->getResponse()->getStatusCode(),
-            sprintf('La page %s doit répondre 200', $path),
+            \sprintf('La page %s doit répondre 200', $path),
         );
     }
 }

@@ -72,8 +72,6 @@ class ParticipationRepository extends ServiceEntityRepository
         ;
     }
 
-
-
     // $qb->select('c')
     // ->innerJoin('c.phones', 'p', 'WITH', 'p.phone = :phone')
     // ->where('c.username = :username');

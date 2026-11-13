@@ -77,9 +77,8 @@ class EventCrudController extends AbstractController
                 $this->addFlash('success', 'Vous avez modifié votre évênement avec succés');
 
                 return $this->redirectToRoute('eventcrud');
-            } else {
-                $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
             }
+            $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
         }
 
         return $this->render('admin/event/edit.html.twig', [
@@ -99,7 +98,7 @@ class EventCrudController extends AbstractController
                 'user' => $user->getId(),
                 'event' => $event->getId(),
             ]);
-            if (! empty($participations)) {
+            if (!empty($participations)) {
                 $isOnEvent = true;
             }
         }

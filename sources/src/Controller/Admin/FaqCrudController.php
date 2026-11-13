@@ -43,7 +43,7 @@ class FaqCrudController extends AbstractController
     }
 
     #[Route('/show/qUser/{id}', name: 'faqcrud_qUser_show', methods: ['GET'])]
-    public function show(QuestionUser $questionUser)
+    public function show(QuestionUser $questionUser): void
     {
     }
 

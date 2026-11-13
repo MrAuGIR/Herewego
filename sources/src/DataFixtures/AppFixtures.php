@@ -31,9 +31,6 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-
-
-
         $admin = new User();
         $localisation = $this->makeLocalisation($faker, $manager);
 
@@ -50,7 +47,6 @@ class AppFixtures extends Fixture
             ->setLocalisation($localisation)
             ->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
         $manager->persist($admin);
-
 
         for ($i = 0; $i < 10; ++$i) {
             $user = new User();
@@ -76,8 +72,6 @@ class AppFixtures extends Fixture
             $manager->persist($question);
         }
 
-
-
         for ($i = 1; $i <= 20; ++$i) {
             $questionAdmin = new QuestionAdmin();
             $questionAdmin->setQuestion($faker->words(10, true).' ?')
@@ -94,7 +88,6 @@ class AppFixtures extends Fixture
                 ->setColor($faker->colorName())
                 ->setPathLogo('https://via.placeholder.com/50');
             $manager->persist($category);
-
 
             for ($e = 1; $e < 8; ++$e) {
                 $organizer = new User();

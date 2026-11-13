@@ -24,7 +24,7 @@ class Transport
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\GreaterThan(message: "la date d'arriver allé doit etre après la date de départ allé", propertyPath: 'goStartedAt')]
-    #[Assert\NotNull(message:  "Veuillez saisir la date d'arrivé' allé ")]
+    #[Assert\NotNull(message: "Veuillez saisir la date d'arrivé' allé ")]
     private ?\DateTimeInterface $goEndedAt;
 
     #[ORM\Column(type: 'datetime')]
@@ -216,7 +216,7 @@ class Transport
 
     public function addTicket(Ticket $ticket): self
     {
-        if (! $this->tickets->contains($ticket)) {
+        if (!$this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
             $ticket->setTransport($this);
         }

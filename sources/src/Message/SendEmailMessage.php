@@ -11,7 +11,7 @@ class SendEmailMessage
     public function __construct(
         private object $object,
         private string $match,
-        private ?User $user
+        private ?User $user,
     ) {
     }
 
