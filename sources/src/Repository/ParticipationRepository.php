@@ -9,11 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Participation|null find($id, $lockMode = null, $lockVersion = null)
- * @method Participation|null findOneBy(array $criteria, array $orderBy = null)
- * @method Participation[]    findAll()
- * @method Participation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
  * @extends ServiceEntityRepository<Participation>
  */
 class ParticipationRepository extends ServiceEntityRepository
@@ -40,7 +35,10 @@ class ParticipationRepository extends ServiceEntityRepository
     }
     */
 
-    public function findByDateBeforeNow($userId)
+    /**
+     * @return Participation[]
+     */
+    public function findByDateBeforeNow(?int $userId): array
     {
         $date = new \DateTime();
 
@@ -56,7 +54,10 @@ class ParticipationRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByDateAfterNow($userId)
+    /**
+     * @return Participation[]
+     */
+    public function findByDateAfterNow(?int $userId): array
     {
         $date = new \DateTime();
 

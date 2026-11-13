@@ -6,8 +6,14 @@ namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Paramètres de recherche/pagination des évènements.
+ */
 final readonly class EventQueryDto
 {
+    /**
+     * @param array<int|string, int|string>|null $categories
+     */
     public function __construct(
         #[Assert\Positive]
         #[Assert\LessThanOrEqual(100)]

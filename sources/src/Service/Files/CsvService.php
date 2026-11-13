@@ -32,13 +32,18 @@ class CsvService
         return $this->createFile($dataEvents);
     }
 
+    /**
+     * @param Event[] $events
+     *
+     * @return \Generator<int, list<int|string|null>>
+     */
     private function generateLine(array $events): \Generator
     {
         foreach ($events as $event) {
             yield [
                 $event->getTitle(),
                 $event->getStartedAt()->format('Y-m-d'),
-                $event->getEndedAt()->format('Y-m-d'),
+                $event->getEndedAt()?->format('Y-m-d'),
                 $event->getCountViews(),
                 $event->getCategory()->getName(),
                 $event->getLocalisation()->getCityName(),
@@ -48,6 +53,8 @@ class CsvService
     }
 
     /**
+     * @param list<list<int|string|null>> $dataEvents
+     *
      * @throws CsvException
      */
     private function createFile(array $dataEvents): string

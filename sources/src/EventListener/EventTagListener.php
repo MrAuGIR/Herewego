@@ -7,8 +7,8 @@ namespace App\EventListener;
 use App\Entity\Event;
 use App\Tools\TagService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 #[AsEntityListener(event: Events::postPersist, method: 'postPersist', entity: 'App\Entity\Event')]
 readonly class EventTagListener
@@ -18,7 +18,7 @@ readonly class EventTagListener
     ) {
     }
 
-    public function postPersist(Event $event, LifecycleEventArgs $args): void
+    public function postPersist(Event $event, PostPersistEventArgs $args): void
     {
         $entityManager = $args->getObjectManager();
         $tagCode = $this->tagService->makeTagCode($event);

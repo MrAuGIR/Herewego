@@ -9,6 +9,9 @@ use Symfony\Component\Form\FormInterface;
 
 class OrganizerFactory extends UserFactory
 {
+    /**
+     * @param FormInterface<mixed> $form
+     */
     protected function persist(FormInterface $form, User $user): void
     {
         $hash = $this->encoder->hashPassword($user, $user->getPassword());

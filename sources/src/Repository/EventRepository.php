@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Dto\EventQueryDto;
+use App\Entity\Category;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Event|null find($id, $lockMode = null, $lockVersion = null)
- * @method Event|null findOneBy(array $criteria, array $orderBy = null)
- * @method Event[]    findAll()
- * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
  * @extends ServiceEntityRepository<Event>
  */
 class EventRepository extends ServiceEntityRepository
@@ -29,7 +25,7 @@ class EventRepository extends ServiceEntityRepository
      *
      * @return Event[]
      */
-    public function findLast($category = null): array
+    public function findLast(Category|int|null $category = null): array
     {
         if (null === $category) {
             return $this->createQueryBuilder('e')
@@ -62,6 +58,9 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Event[]
+     */
     public function findByFilters(EventQueryDto $dto): array
     {
         $date = new \DateTime();
@@ -123,7 +122,7 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByDateAfterNow($organizerId): array
+    public function findByDateAfterNow(?int $organizerId): array
     {
         $date = new \DateTime();
 
@@ -141,7 +140,7 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByDateBeforeNow($organizerId): array
+    public function findByDateBeforeNow(?int $organizerId): array
     {
         $date = new \DateTime();
 

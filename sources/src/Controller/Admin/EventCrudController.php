@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\Factory\EventFactory;
 use App\Form\EventType;
 use App\Repository\EventRepository;
-use App\Repository\ParticipationRepository;
 use App\Service\Mail\Sender;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/event')]
@@ -88,21 +88,8 @@ class EventCrudController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'eventcrud_show', methods: [Request::METHOD_GET])]
-    public function show(Event $event, ParticipationRepository $participationRepository): Response
+    public function show(Event $event, #[CurrentUser] User $user): Response
     {
-        $user = $this->getUser();
-
-        $isOnEvent = false;
-        if ($user) {
-            $participations = $participationRepository->findBy([
-                'user' => $user->getId(),
-                'event' => $event->getId(),
-            ]);
-            if (!empty($participations)) {
-                $isOnEvent = true;
-            }
-        }
-
         $event->setCountViews($event->getCountViews() + 1);
         $this->em->flush();
 
@@ -115,9 +102,9 @@ class EventCrudController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(Event $event, Sender $sender): RedirectResponse
+    public function delete(Event $event, Sender $sender, #[CurrentUser] User $user): RedirectResponse
     {
-        $sender->send($event, Sender::EVENT_DELETE, $this->getUser());
+        $sender->send($event, Sender::EVENT_DELETE, $user);
 
         $this->em->remove($event);
         $this->em->flush();

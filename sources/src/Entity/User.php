@@ -26,6 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $email;
 
+    /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -71,18 +72,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'users')]
     private ?Localisation $localisation = null;
 
+    /** @var Collection<int, Ticket> */
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $tickets;
 
+    /** @var Collection<int, Participation> */
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $participations;
 
+    /** @var Collection<int, QuestionUser> */
     #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: 'user')]
     private Collection $questionUsers;
 
+    /** @var Collection<int, Transport> */
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $transports;
 
+    /** @var Collection<int, Event> */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $events;
 
@@ -124,6 +130,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -131,9 +139,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return array_values(array_unique($roles));
     }
 
+    /**
+     * @param list<string> $roles
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -321,7 +332,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Ticket[]
+     * @return Collection<int, Ticket>
      */
     public function getTickets(): Collection
     {
@@ -351,7 +362,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Participation[]
+     * @return Collection<int, Participation>
      */
     public function getParticipations(): Collection
     {
@@ -381,7 +392,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|QuestionUser[]
+     * @return Collection<int, QuestionUser>
      */
     public function getQuestionUsers(): Collection
     {
@@ -411,7 +422,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Transport[]
+     * @return Collection<int, Transport>
      */
     public function getTransports(): Collection
     {
@@ -440,6 +451,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
     public function getEvents(): Collection
     {
         return $this->events;

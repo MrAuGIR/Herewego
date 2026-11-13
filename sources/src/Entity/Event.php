@@ -64,12 +64,15 @@ class Event
     #[Assert\NotBlank(message: 'La catégorie est obligatoire.')]
     private ?Category $category;
 
+    /** @var Collection<int, Picture> */
     #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
     private Collection $pictures;
 
+    /** @var Collection<int, Transport> */
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $transports;
 
+    /** @var Collection<int, Participation> */
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $participations;
 
@@ -256,6 +259,9 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection<int, Picture>
+     */
     public function getPictures(): Collection
     {
         return $this->pictures;
@@ -283,6 +289,9 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection<int, Transport>
+     */
     public function getTransports(): Collection
     {
         return $this->transports;
@@ -310,6 +319,9 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection<int, Participation>
+     */
     public function getParticipations(): Collection
     {
         return $this->participations;

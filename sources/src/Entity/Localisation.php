@@ -26,12 +26,15 @@ class Localisation
     #[ORM\JoinColumn(nullable: true)]
     private ?City $city = null;
 
+    /** @var Collection<int, User> */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'localisation')]
     private Collection $users;
 
+    /** @var Collection<int, Event> */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'localisation')]
     private Collection $events;
 
+    /** @var Collection<int, Transport> */
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'localisation_start')]
     private Collection $transports;
 
@@ -85,6 +88,9 @@ class Localisation
         return $this;
     }
 
+    /**
+     * @return Collection<int, User>
+     */
     public function getUsers(): Collection
     {
         return $this->users;
@@ -112,6 +118,9 @@ class Localisation
         return $this;
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
     public function getEvents(): Collection
     {
         return $this->events;
@@ -140,7 +149,7 @@ class Localisation
     }
 
     /**
-     * @return Collection|Transport[]
+     * @return Collection<int, Transport>
      */
     public function getTransports(): Collection
     {

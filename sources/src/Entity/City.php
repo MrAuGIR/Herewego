@@ -23,8 +23,9 @@ class City
     #[ORM\Column(type: 'string', length: 50)]
     private ?string $cityCp;
 
+    /** @var Collection<int, Localisation> */
     #[ORM\OneToMany(targetEntity: Localisation::class, mappedBy: 'city')]
-    private ArrayCollection $localisations;
+    private Collection $localisations;
 
     public function __construct()
     {
@@ -61,7 +62,7 @@ class City
     }
 
     /**
-     * @return Collection|Localisation[]
+     * @return Collection<int, Localisation>
      */
     public function getLocalisations(): Collection
     {

@@ -16,6 +16,9 @@ class LogoFactory
     ) {
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function handleFromForm(FormInterface $form, Category $category): ?string
     {
         $logo = $form->get('pathLogo')->getData();

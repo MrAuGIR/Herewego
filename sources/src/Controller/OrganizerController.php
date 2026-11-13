@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/organizer')]
@@ -142,9 +143,9 @@ class OrganizerController extends AbstractController
      * @throws CsvException
      */
     #[Route('/events', name: 'organizer_events', methods: [Request::METHOD_GET])]
-    public function events(EventRepository $eventRepository): RedirectResponse|Response
+    public function events(EventRepository $eventRepository, #[CurrentUser] User $user): RedirectResponse|Response
     {
-        $events = $eventRepository->findByDateAfterNow($this->getUser()->getId());
+        $events = $eventRepository->findByDateAfterNow($user->getId());
 
         $fileName = $this->csvService->createEventCsv($events);
 
@@ -159,9 +160,9 @@ class OrganizerController extends AbstractController
      * @throws CsvException
      */
     #[Route('/history', name: 'organizer_history', methods: [Request::METHOD_GET])]
-    public function history(EventRepository $eventRepository): RedirectResponse|Response
+    public function history(EventRepository $eventRepository, #[CurrentUser] User $user): RedirectResponse|Response
     {
-        $events = $eventRepository->findByDateBeforeNow($this->getUser()->getId());
+        $events = $eventRepository->findByDateBeforeNow($user->getId());
 
         $fileName = $this->csvService->createEventCsv($events);
 

@@ -60,8 +60,9 @@ class Transport
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'transports')]
     private ?Event $event;
 
+    /** @var Collection<int, Ticket> */
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'transport', cascade: ['remove'])]
-    private $tickets;
+    private Collection $tickets;
 
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
     private ?Localisation $localisation_start;
@@ -207,7 +208,7 @@ class Transport
     }
 
     /**
-     * @return Collection|Ticket[]
+     * @return Collection<int, Ticket>
      */
     public function getTickets(): Collection
     {

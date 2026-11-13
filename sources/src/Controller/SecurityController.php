@@ -29,6 +29,8 @@ class SecurityController extends AbstractController
     /**
      * Garde-fou commun aux inscriptions : rate-limit par IP + détection honeypot.
      * Retourne true si la soumission doit être ignorée (bot honeypot).
+     *
+     * @param FormInterface<mixed> $form
      */
     private function isSpamSubmission(Request $request, FormInterface $form): bool
     {

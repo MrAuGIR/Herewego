@@ -17,6 +17,9 @@ class UserFactory
     ) {
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function create(FormInterface $form, User $user): void
     {
         $user->setIsValidate(false)
@@ -25,17 +28,26 @@ class UserFactory
         $this->persist($form, $user);
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function edit(FormInterface $form, User $user): void
     {
         $this->persist($form, $user);
     }
 
+    /**
+     * @param array{newPassword: string} $data
+     */
     public function updatePassword(array $data, User $user): void
     {
         $user->setPassword($this->encoder->hashPassword($user, $data['newPassword']));
         $this->em->flush();
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     protected function persist(FormInterface $form, User $user): void
     {
         $hash = $this->encoder->hashPassword($user, $user->getPassword());

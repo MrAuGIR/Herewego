@@ -23,6 +23,7 @@ class EventGroup
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $pathImage;
 
+    /** @var Collection<int, Event> */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'eventGroup')]
     private Collection $Events;
 
@@ -60,6 +61,9 @@ class EventGroup
         return $this;
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
     public function getEvents(): Collection
     {
         return $this->Events;
