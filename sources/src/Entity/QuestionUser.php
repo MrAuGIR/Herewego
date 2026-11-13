@@ -27,9 +27,10 @@ class QuestionUser
     private ?string $subject;
 
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'questionUsers')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user;
+    // Auteur facultatif : une question peut être posée par un visiteur anonyme.
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'questionUsers')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
 
     public function getId(): ?int
     {

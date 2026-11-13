@@ -66,7 +66,8 @@ class Transport
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
     private ?Localisation $localisation_start;
 
-    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
+    // Unidirectionnelle : Localisation#transports est déjà le côté inverse de localisation_start.
+    #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'])]
     private ?Localisation $localisation_return;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transports')]
