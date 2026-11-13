@@ -101,9 +101,13 @@ class EventCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(Event $event, Sender $sender, #[CurrentUser] User $user): RedirectResponse
+    #[Route('/delete/{id}', name: 'eventcrud_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
+    public function delete(Event $event, Request $request, Sender $sender, #[CurrentUser] User $user): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('delete_event'.$event->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
         $sender->send($event, Sender::EVENT_DELETE, $user);
 
         $this->em->remove($event);
