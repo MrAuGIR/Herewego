@@ -32,7 +32,7 @@
                         <th><a href="{{path('eventcrud_show',{id:event.id})}}">Voir</a></th>
                         <th>
                             <a href="{{path('eventcrud_edit',{id:event.id})}}">Editer</a>
-                            <a href="{{path('eventcrud_delete',{id:event.id})}}">Supprimer</a>
+                            <form method="post" action="{{ path('eventcrud_delete', {id: event.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer cet évènement ?');"><input type="hidden" name="_token" value="{{ csrf_token('delete_event' ~ event.id) }}"><button type="submit" class="btn btn-link p-0">Supprimer</button></form>
                         </th>
                     </tr>
                     {% endfor %}

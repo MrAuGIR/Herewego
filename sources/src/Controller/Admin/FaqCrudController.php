@@ -49,9 +49,13 @@ class FaqCrudController extends AbstractController
         return $this->redirectToRoute('faqcrud');
     }
 
-    #[Route('/delete/qUser/{id}', name: 'faqcrud_qUser_delete', methods: [Request::METHOD_DELETE])]
-    public function delete(QuestionUser $questionUser): RedirectResponse
+    #[Route('/delete/qUser/{id}', name: 'faqcrud_qUser_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
+    public function delete(QuestionUser $questionUser, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('delete_quser'.$questionUser->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
         $this->em->remove($questionUser);
         $this->em->flush();
 
@@ -116,9 +120,13 @@ class FaqCrudController extends AbstractController
         return $this->render('admin/faq/edit.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route('/delete/qAdmin/{id}', name: 'faqcrud_qAdmin_delete', methods: [Request::METHOD_DELETE])]
-    public function deleteQAdmin(QuestionAdmin $questionAdmin): RedirectResponse
+    #[Route('/delete/qAdmin/{id}', name: 'faqcrud_qAdmin_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
+    public function deleteQAdmin(QuestionAdmin $questionAdmin, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('delete_qadmin'.$questionAdmin->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF invalide.');
+        }
+
         $this->em->remove($questionAdmin);
         $this->em->flush();
 

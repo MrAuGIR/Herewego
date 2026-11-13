@@ -41,7 +41,7 @@
                             <a href="{{path('faqcrud_qUser_show',{id:question.id})}}">Détail</a>
                         </th>
                         <th>
-                            <a href="{{path('faqcrud_qUser_delete',{id:question.id})}}">Supprimer</a>
+                            <form method="post" action="{{ path('faqcrud_qUser_delete', {id: question.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer cette question ?');"><input type="hidden" name="_token" value="{{ csrf_token('delete_quser' ~ question.id) }}"><button type="submit" class="btn btn-link p-0">Supprimer</button></form>
                         </th>
                     </tr>
                     {% endfor %}

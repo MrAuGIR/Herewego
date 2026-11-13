@@ -108,13 +108,25 @@ final class AdminAreaTest extends FunctionalTestCase
 
         $this->client->request('GET', '/admin/faq/show/qAdmin/'.$question->getId());
         self::assertResponseRedirects('/admin/faq/liste');
-        $this->client->request('DELETE', '/admin/faq/delete/qAdmin/'.$question->getId());
+        $deleteQAdmin = '/admin/faq/delete/qAdmin/'.$question->getId();
+        $this->client->request('GET', $deleteQAdmin);
+        self::assertResponseStatusCodeSame(405);
+        $this->client->request('POST', $deleteQAdmin, ['_token' => 'bad']);
+        self::assertResponseRedirects('/');
+        $token = $this->csrfFrom('/admin/faq/liste', $deleteQAdmin);
+        $this->client->request('POST', $deleteQAdmin, ['_token' => $token]);
         self::assertResponseRedirects('/admin/faq/liste');
+        self::assertSame(0, $this->em()->getRepository(QuestionAdmin::class)->count([]));
 
         $questionUser = $this->createQuestionUser($this->createUser());
         $this->client->request('GET', '/admin/faq/show/qUser/'.$questionUser->getId());
         self::assertResponseRedirects('/admin/faq/');
-        $this->client->request('DELETE', '/admin/faq/delete/qUser/'.$questionUser->getId());
+        $deleteQUser = '/admin/faq/delete/qUser/'.$questionUser->getId();
+        $this->client->request('POST', $deleteQUser, ['_token' => 'bad']);
+        self::assertResponseRedirects('/');
+        self::assertSame(1, $this->em()->getRepository(QuestionUser::class)->count([]));
+        $token = $this->csrfFrom('/admin/faq/', $deleteQUser);
+        $this->client->request('POST', $deleteQUser, ['_token' => $token]);
         self::assertResponseRedirects('/admin/faq/');
         self::assertSame(0, $this->em()->getRepository(QuestionUser::class)->count([]));
     }
@@ -151,7 +163,13 @@ final class AdminAreaTest extends FunctionalTestCase
         self::assertResponseIsSuccessful();
 
         $id = $event->getId();
-        $this->client->request('DELETE', '/admin/event/delete/'.$id);
+        $deleteEvent = '/admin/event/delete/'.$id;
+        $this->client->request('GET', $deleteEvent);
+        self::assertResponseStatusCodeSame(405);
+        $this->client->request('POST', $deleteEvent, ['_token' => 'bad']);
+        self::assertResponseRedirects('/');
+        $token = $this->csrfFrom('/admin/event/', $deleteEvent);
+        $this->client->request('POST', $deleteEvent, ['_token' => $token]);
         self::assertResponseRedirects('/admin/event/');
         $this->em()->clear();
         self::assertNull($this->em()->find(Event::class, $id));
