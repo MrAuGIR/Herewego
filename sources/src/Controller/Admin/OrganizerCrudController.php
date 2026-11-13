@@ -54,14 +54,6 @@ class OrganizerCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/show/{id}', name: 'organizer_show', methods: [Request::METHOD_GET])]
-    public function show(User $user): Response
-    {
-        return $this->render('admin/organizer/show.html.twig', [
-            'user' => $user,
-        ]);
-    }
-
     #[Route('/create', name: 'organizer_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
@@ -137,6 +129,8 @@ class OrganizerCrudController extends AbstractController
             return $this->redirectToRoute('admin_organizer_edit', ['id' => $user->getId()]);
         }
 
-        return $this->redirectToRoute('admin_organizer_edit');
+        $this->addFlash('warning', 'Aucun SIRET renseigné pour cet organisateur');
+
+        return $this->redirectToRoute('admin_organizer_edit', ['id' => $user->getId()]);
     }
 }

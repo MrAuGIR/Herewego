@@ -51,7 +51,7 @@ class OrganizerController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
             $this->addFlash('success', 'La modification du profil est un succés.');
 
@@ -78,7 +78,7 @@ class OrganizerController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
@@ -128,10 +128,12 @@ class OrganizerController extends AbstractController
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
+        // L'utilisateur doit être lu avant de vider le token.
+        $user = $this->getUser();
         $this->tokenStorage->setToken(null);
         $sessionInterface->invalidate();
 
-        $this->em->remove($this->getUser());
+        $this->em->remove($user);
         $this->em->flush();
 
         $this->addFlash('success', 'Votre compte a bien été supprimé');

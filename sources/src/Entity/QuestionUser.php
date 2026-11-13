@@ -19,12 +19,12 @@ class QuestionUser
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'La question est obligatoire.')]
     #[Assert\Length(min: 20, max: 255, minMessage: 'La question doit faire au moins 20 caractères', maxMessage: 'La question doit faire moins de 255 caractères')]
-    private ?string $question;
+    private ?string $question = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'Le sujet est obligatoire.')]
     #[Assert\Length(min: 5, max: 100, minMessage: 'Le sujet doit faire au moins 5 caractères', maxMessage: 'Le sujet doit faire moins de 100 caractères')]
-    private ?string $subject;
+    private ?string $subject = null;
 
     // Auteur facultatif : une question peut être posée par un visiteur anonyme.
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'questionUsers')]

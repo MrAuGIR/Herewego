@@ -53,14 +53,12 @@ class TransportRepository extends ServiceEntityRepository
      *
      * @return Transport[]
      */
-    public function findTransportToAlert()
+    public function findTransportToAlert(): array
     {
-        $date = new \DateTime('now');
-        $date = $date->modify('-2 day');
-
         $query = $this->createQueryBuilder('p')
-            ->where('p.goStartedAt > :date')
-            ->setParameter('date', $date);
+            ->where('p.goStartedAt BETWEEN :now AND :limit')
+            ->setParameter('now', new \DateTime('now'))
+            ->setParameter('limit', new \DateTime('+2 days'));
 
         return $query->getQuery()->getResult();
     }

@@ -54,7 +54,7 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
             $this->addFlash('success', 'Profil modifié avec succés.');
 
@@ -75,7 +75,7 @@ class UserController extends AbstractController
         $form = $this->createForm(EditPassType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {

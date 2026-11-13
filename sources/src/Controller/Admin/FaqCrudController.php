@@ -43,8 +43,10 @@ class FaqCrudController extends AbstractController
     }
 
     #[Route('/show/qUser/{id}', name: 'faqcrud_qUser_show', methods: ['GET'])]
-    public function show(QuestionUser $questionUser): void
+    public function show(QuestionUser $questionUser): RedirectResponse
     {
+        // Pas de page de détail : le contenu est affiché dans la liste.
+        return $this->redirectToRoute('faqcrud');
     }
 
     #[Route('/delete/qUser/{id}', name: 'faqcrud_qUser_delete', methods: [Request::METHOD_DELETE])]
@@ -66,7 +68,7 @@ class FaqCrudController extends AbstractController
         return $this->render('admin/faq/liste.html.twig', compact('questionsAdmin'));
     }
 
-    #[Route('/create/qAdmin', name: 'faqcrud_qAdmin_create', methods: [Request::METHOD_POST])]
+    #[Route('/create/qAdmin', name: 'faqcrud_qAdmin_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): RedirectResponse|Response
     {
         $questionAdmin = new QuestionAdmin();
@@ -91,7 +93,7 @@ class FaqCrudController extends AbstractController
         return $this->render('admin/faq/create.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route('/edit/qAdmin/{id}', name: 'faqcrud_qAdmin_edit', methods: [Request::METHOD_PUT])]
+    #[Route('/edit/qAdmin/{id}', name: 'faqcrud_qAdmin_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(QuestionAdmin $questionAdmin, Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(QuestionAdminType::class, $questionAdmin);

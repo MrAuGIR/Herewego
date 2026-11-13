@@ -26,7 +26,7 @@ class TicketType extends AbstractType
                 'label' => 'Nombre de places',
                 'attr' => ['class' => 'form-control'],
                 'constraints' => [
-                    new NotNull(['message' => 'veuillez saisir une valeur']),
+                    new NotNull(message: 'veuillez saisir une valeur'),
                 ],
             ])
             ->add('commentary', CKEditorType::class, [

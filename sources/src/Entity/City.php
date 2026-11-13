@@ -18,10 +18,10 @@ class City
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $cityName;
+    private ?string $cityName = null;
 
     #[ORM\Column(type: 'string', length: 50)]
-    private ?string $cityCp;
+    private ?string $cityCp = null;
 
     /** @var Collection<int, Localisation> */
     #[ORM\OneToMany(targetEntity: Localisation::class, mappedBy: 'city')]

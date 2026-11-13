@@ -29,7 +29,7 @@ class EventRepository extends ServiceEntityRepository
     {
         if (null === $category) {
             return $this->createQueryBuilder('e')
-                ->orderBy('e.createdAt', 'ASC')
+                ->orderBy('e.createdAt', 'DESC')
                 ->setMaxResults(6)
                 ->getQuery()
                 ->getResult();
@@ -38,7 +38,7 @@ class EventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->andWhere('e.category = :category')
             ->setParameter('category', $category)
-            ->orderBy('e.createdAt', 'ASC')
+            ->orderBy('e.createdAt', 'DESC')
             ->setMaxResults(6)
             ->getQuery()
             ->getResult();
@@ -52,7 +52,7 @@ class EventRepository extends ServiceEntityRepository
     public function findByPopularity(): array
     {
         return $this->createQueryBuilder('e')
-            ->orderBy('e.countViews', 'ASC')
+            ->orderBy('e.countViews', 'DESC')
             ->setMaxResults(6)
             ->getQuery()
             ->getResult();
@@ -108,6 +108,11 @@ class EventRepository extends ServiceEntityRepository
         if (!empty($categories = $dto->categories)) {
             $query->andWhere('c.category IN(:cats)')
                 ->setParameter('cats', array_values($categories));
+        }
+
+        if (!empty($keyWord = $dto->q)) {
+            $query->andWhere('c.title LIKE :title')
+                ->setParameter('title', $keyWord.'%');
         }
 
         if (!empty($localisation = $dto->localisation)) {

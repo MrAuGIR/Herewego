@@ -20,59 +20,59 @@ class Transport
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\NotNull(message: ' Veuillez saisir la date de départ allé ')]
-    private ?\DateTimeInterface $goStartedAt;
+    private ?\DateTimeInterface $goStartedAt = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\GreaterThan(message: "la date d'arriver allé doit etre après la date de départ allé", propertyPath: 'goStartedAt')]
     #[Assert\NotNull(message: "Veuillez saisir la date d'arrivé' allé ")]
-    private ?\DateTimeInterface $goEndedAt;
+    private ?\DateTimeInterface $goEndedAt = null;
 
     #[ORM\Column(type: 'datetime')]
     #[Assert\GreaterThan(message: "la date de départ retour doit être après la date d'arrivé allé", propertyPath: 'goEndedAt')]
     #[Assert\NotNull(message: 'Veuillez saisir la date départ au retour')]
-    private ?\DateTimeInterface $returnStartedAt;
+    private ?\DateTimeInterface $returnStartedAt = null;
 
     #[ORM\Column(type: 'datetime')]
     #[Assert\GreaterThan(message: "la date de d'arrivé retour doit être après la date de depart retour", propertyPath: 'returnStartedAt')]
     #[Assert\NotNull(message: "Veuillez saisir la date d'arrivé au retour")]
-    private ?\DateTimeInterface $returnEndedAt;
+    private ?\DateTimeInterface $returnEndedAt = null;
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\Positive(message: 'le prix doit être positif')]
-    private ?string $placePrice;
+    private ?string $placePrice = null;
 
     #[ORM\Column(type: 'integer')]
     #[Assert\Positive(message: 'nombre doit être positif')]
     #[Assert\GreaterThan(value: 0)]
     #[Assert\NotNull(message: 'veuillez saisir un nombre de place')]
-    private ?int $totalPlace;
+    private ?int $totalPlace = null;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $remainingPlace;
+    private ?int $remainingPlace = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Assert\NotBlank(message: 'Le champs commentaire est obligatoire')]
-    private ?string $commentary;
+    private ?string $commentary = null;
 
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $createdAt;
+    private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'transports')]
-    private ?Event $event;
+    private ?Event $event = null;
 
     /** @var Collection<int, Ticket> */
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'transport', cascade: ['remove'])]
     private Collection $tickets;
 
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'transports')]
-    private ?Localisation $localisation_start;
+    private ?Localisation $localisation_start = null;
 
     // Unidirectionnelle : Localisation#transports est déjà le côté inverse de localisation_start.
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'])]
-    private ?Localisation $localisation_return;
+    private ?Localisation $localisation_return = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'transports')]
-    private ?User $user;
+    private ?User $user = null;
 
     public function __construct()
     {

@@ -40,14 +40,6 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/show/{id}', name: 'show', methods: [Request::METHOD_GET])]
-    public function show(Category $category): Response
-    {
-        return $this->render('admin/category/show.html.twig', [
-            'category' => $category,
-        ]);
-    }
-
     #[Route('/create', name: 'create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
@@ -68,7 +60,7 @@ class CategoryCrudController extends AbstractController
 
             $this->addFlash('success', 'categorie ajouté');
 
-            return $this->redirectToRoute('categorycrud');
+            return $this->redirectToRoute('admin_category_list');
         }
 
         return $this->render('admin/category/create.html.twig', [
@@ -76,7 +68,7 @@ class CategoryCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'edit', methods: [Request::METHOD_GET, Request::METHOD_PUT])]
+    #[Route('/edit/{id}', name: 'edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(Category $category, Request $request): Response
     {
         $form = $this->createForm(CategoryType::class, $category);
@@ -95,7 +87,7 @@ class CategoryCrudController extends AbstractController
 
             $this->addFlash('success', 'categorie modifié');
 
-            return $this->redirectToRoute('categorycrud');
+            return $this->redirectToRoute('admin_category_list');
         }
 
         return $this->render('admin/category/edit.html.twig', [
@@ -116,6 +108,6 @@ class CategoryCrudController extends AbstractController
 
         $this->addFlash('success', 'Category supprimé');
 
-        return $this->redirectToRoute('categorycrud');
+        return $this->redirectToRoute('admin_category_list');
     }
 }
