@@ -29,6 +29,7 @@ class Category
     #[ORM\Column(type: 'string', length: 255)]
     private string $slug;
 
+    /** @var Collection<int, Event> */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'category')]
     private Collection $events;
 
@@ -90,6 +91,9 @@ class Category
         return $this;
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
     public function getEvents(): Collection
     {
         return $this->events;
@@ -97,7 +101,7 @@ class Category
 
     public function addEvent(Event $event): self
     {
-        if (! $this->events->contains($event)) {
+        if (!$this->events->contains($event)) {
             $this->events[] = $event;
             $event->setCategory($this);
         }

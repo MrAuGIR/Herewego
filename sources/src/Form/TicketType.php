@@ -13,9 +13,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/**
+ * @extends AbstractType<Ticket>
+ */
 class TicketType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             // ->add('askedAt')
@@ -23,7 +26,7 @@ class TicketType extends AbstractType
                 'label' => 'Nombre de places',
                 'attr' => ['class' => 'form-control'],
                 'constraints' => [
-                    new NotNull(['message' => 'veuillez saisir une valeur']),
+                    new NotNull(message: 'veuillez saisir une valeur'),
                 ],
             ])
             ->add('commentary', CKEditorType::class, [
@@ -40,7 +43,7 @@ class TicketType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Ticket::class,

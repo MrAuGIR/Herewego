@@ -18,8 +18,9 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash \
 RUN docker-php-ext-configure intl \
   && docker-php-ext-install pdo pdo_mysql opcache intl zip calendar dom mbstring gd xsl fileinfo
 
-RUN pecl install apcu \
-  && docker-php-ext-enable apcu
+# pcov : driver de couverture de code (PHPUnit --coverage-*), plus léger que xdebug
+RUN pecl install apcu pcov \
+  && docker-php-ext-enable apcu pcov
 
 RUN pecl install imagick \
   && docker-php-ext-enable imagick
@@ -29,8 +30,8 @@ RUN pecl install xdebug \
 
 COPY ./xdebug.ini "${PHP_INI_DIR}/conf.d"
 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/yarnkey.gpg \
+  && echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
   && apt-get update && apt-get install -y yarn
 
 WORKDIR /var/www/html

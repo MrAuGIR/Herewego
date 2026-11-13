@@ -18,13 +18,14 @@ class City
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $cityName;
+    private ?string $cityName = null;
 
     #[ORM\Column(type: 'string', length: 50)]
-    private ?string $cityCp;
+    private ?string $cityCp = null;
 
+    /** @var Collection<int, Localisation> */
     #[ORM\OneToMany(targetEntity: Localisation::class, mappedBy: 'city')]
-    private ArrayCollection $localisations;
+    private Collection $localisations;
 
     public function __construct()
     {
@@ -61,7 +62,7 @@ class City
     }
 
     /**
-     * @return Collection|Localisation[]
+     * @return Collection<int, Localisation>
      */
     public function getLocalisations(): Collection
     {
@@ -70,7 +71,7 @@ class City
 
     public function addLocalisation(Localisation $localisation): self
     {
-        if (! $this->localisations->contains($localisation)) {
+        if (!$this->localisations->contains($localisation)) {
             $this->localisations[] = $localisation;
             $localisation->setCity($this);
         }

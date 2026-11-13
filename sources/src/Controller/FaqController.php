@@ -28,7 +28,7 @@ class FaqController extends AbstractController
         ]);
     }
 
-    #[Route('/question', name: 'question', methods: [Request::METHOD_POST])]
+    #[Route('/question', name: 'question', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function question(Request $request, QuestionUserManager $questionUserManager): RedirectResponse|Response
     {
         $question = new QuestionUser();

@@ -1,0 +1,18 @@
+parameters:
+    level: 6
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+    excludePaths:
+        - config/reference.php (?)
+        - config/secrets/ (?)
+    tmpDir: var/cache/phpstan
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+    doctrine:
+        objectManagerLoader: tests/object-manager.php
+        # Convention Symfony/maker : propriétés nullables (avant hydratation) sur colonnes NOT NULL.
+        allowNullablePropertyForRequiredField: true

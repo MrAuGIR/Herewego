@@ -7,6 +7,7 @@ namespace App\Service\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class NotFoundRedirectService
@@ -24,15 +25,17 @@ class NotFoundRedirectService
 
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 
     public function handle(Request $request): ?RedirectResponse
     {
-        if (! empty($mapping = $this->findMapping($request->getPathInfo()))) {
+        if (!empty($mapping = $this->findMapping($request->getPathInfo()))) {
             $session = $this->requestStack->getSession();
-            $session->getFlashBag()->add('warning', $mapping['message']);
+            if ($session instanceof FlashBagAwareSessionInterface) {
+                $session->getFlashBag()->add('warning', $mapping['message']);
+            }
 
             return new RedirectResponse($this->router->generate($mapping['route']));
         }
@@ -40,6 +43,9 @@ class NotFoundRedirectService
         return null;
     }
 
+    /**
+     * @return array{route: string, message: string}|null
+     */
     private function findMapping(string $route): ?array
     {
         foreach (self::MAPPING_REDIRECTION as $uri => $mapping) {

@@ -16,6 +16,8 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Faker\Generator;
+use Faker\Provider\fr_FR\Address as FrAddress;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -30,9 +32,6 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
-
-
-
 
         $admin = new User();
         $localisation = $this->makeLocalisation($faker, $manager);
@@ -50,7 +49,6 @@ class AppFixtures extends Fixture
             ->setLocalisation($localisation)
             ->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
         $manager->persist($admin);
-
 
         for ($i = 0; $i < 10; ++$i) {
             $user = new User();
@@ -76,8 +74,6 @@ class AppFixtures extends Fixture
             $manager->persist($question);
         }
 
-
-
         for ($i = 1; $i <= 20; ++$i) {
             $questionAdmin = new QuestionAdmin();
             $questionAdmin->setQuestion($faker->words(10, true).' ?')
@@ -89,12 +85,11 @@ class AppFixtures extends Fixture
 
         for ($c = 1; $c < 4; ++$c) {
             $category = new Category();
-            $category->setName($faker->department())
+            $category->setName(FrAddress::departmentName())
                 ->setSlug($this->slugger->slug($category->getName())->lower()->toString())
                 ->setColor($faker->colorName())
                 ->setPathLogo('https://via.placeholder.com/50');
             $manager->persist($category);
-
 
             for ($e = 1; $e < 8; ++$e) {
                 $organizer = new User();
@@ -178,7 +173,7 @@ class AppFixtures extends Fixture
                             ->setReturnStartedAt($faker->dateTime())
                             ->setReturnEndedAt($faker->dateTime())
                             ->setCreatedAt($faker->dateTime())
-                            ->setPlacePrice($faker->numberBetween(5, 30))
+                            ->setPlacePrice((string) $faker->numberBetween(5, 30))
                             ->setTotalPlace($faker->numberBetween(2, 5))
                             ->setRemainingPlace($faker->numberBetween(0, 2))
                             ->setCommentary("t$t: ".$faker->text(55))
@@ -214,14 +209,14 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 
-    private function makeLocalisation($faker, $manager): Localisation
+    private function makeLocalisation(Generator $faker, ObjectManager $manager): Localisation
     {
         $localisation = new Localisation();
         $localisation->setAdress($faker->address())
             ->setCityName($faker->city())
-            ->setCityCp($faker->numberBetween(1000, 90000))
-            ->setCoordonneesX($faker->numberBetween(0, 100))
-            ->setCoordonneesY($faker->numberBetween(0, 100));
+            ->setCityCp((string) $faker->numberBetween(1000, 90000))
+            ->setCoordonneesX((string) $faker->numberBetween(0, 100))
+            ->setCoordonneesY((string) $faker->numberBetween(0, 100));
         $manager->persist($localisation);
 
         return $localisation;

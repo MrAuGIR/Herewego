@@ -16,7 +16,7 @@ class DeleteTransportSender implements MailerRuleInterface
 {
     public function __construct(
         protected MailerInterface $mailer,
-        protected LoggerInterface $mailerLogger
+        protected LoggerInterface $mailerLogger,
     ) {
     }
 

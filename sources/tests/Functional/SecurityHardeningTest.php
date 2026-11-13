@@ -34,7 +34,7 @@ final class SecurityHardeningTest extends WebTestCase
         self::assertSame(
             Response::HTTP_METHOD_NOT_ALLOWED,
             $client->getResponse()->getStatusCode(),
-            sprintf('%s ne doit plus être accessible en GET', $path),
+            \sprintf('%s ne doit plus être accessible en GET', $path),
         );
     }
 

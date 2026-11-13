@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/organizer')]
@@ -31,7 +32,7 @@ class OrganizerController extends AbstractController
         protected UserPasswordHasherInterface $encoder,
         protected EntityManagerInterface $em,
         protected CsvService $csvService,
-        protected TokenStorageInterface $tokenStorage
+        protected TokenStorageInterface $tokenStorage,
     ) {
     }
 
@@ -50,7 +51,7 @@ class OrganizerController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
             $this->addFlash('success', 'La modification du profil est un succés.');
 
@@ -77,7 +78,7 @@ class OrganizerController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
             if ($data['newPassword'] !== $data['newPasswordRepeat']) {
@@ -105,7 +106,7 @@ class OrganizerController extends AbstractController
     #[Route('/profile/avatar/{path}', name: 'organizer_edit_avatar', requirements: ['path' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST, Request::METHOD_PUT])]
     public function avatar(string $path, AvatarCatalog $avatarCatalog): JsonResponse
     {
-        if (! $avatarCatalog->isValid($path)) {
+        if (!$avatarCatalog->isValid($path)) {
             throw $this->createNotFoundException('Avatar inconnu.');
         }
 
@@ -123,14 +124,16 @@ class OrganizerController extends AbstractController
     #[Route('/profile/delete', name: 'organizer_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
     public function delete(Request $request, SessionInterface $sessionInterface): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('delete_account', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_account', (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
+        // L'utilisateur doit être lu avant de vider le token.
+        $user = $this->getUser();
         $this->tokenStorage->setToken(null);
         $sessionInterface->invalidate();
 
-        $this->em->remove($this->getUser());
+        $this->em->remove($user);
         $this->em->flush();
 
         $this->addFlash('success', 'Votre compte a bien été supprimé');
@@ -142,9 +145,9 @@ class OrganizerController extends AbstractController
      * @throws CsvException
      */
     #[Route('/events', name: 'organizer_events', methods: [Request::METHOD_GET])]
-    public function events(EventRepository $eventRepository): RedirectResponse|Response
+    public function events(EventRepository $eventRepository, #[CurrentUser] User $user): RedirectResponse|Response
     {
-        $events = $eventRepository->findByDateAfterNow($this->getUser()->getId());
+        $events = $eventRepository->findByDateAfterNow($user->getId());
 
         $fileName = $this->csvService->createEventCsv($events);
 
@@ -159,9 +162,9 @@ class OrganizerController extends AbstractController
      * @throws CsvException
      */
     #[Route('/history', name: 'organizer_history', methods: [Request::METHOD_GET])]
-    public function history(EventRepository $eventRepository): RedirectResponse|Response
+    public function history(EventRepository $eventRepository, #[CurrentUser] User $user): RedirectResponse|Response
     {
-        $events = $eventRepository->findByDateBeforeNow($this->getUser()->getId());
+        $events = $eventRepository->findByDateBeforeNow($user->getId());
 
         $fileName = $this->csvService->createEventCsv($events);
 

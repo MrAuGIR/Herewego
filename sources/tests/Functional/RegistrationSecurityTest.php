@@ -6,7 +6,6 @@ namespace App\Tests\Functional;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -18,13 +17,6 @@ final class RegistrationSecurityTest extends WebTestCase
     public function testHoneypotSubmissionCreatesNoUser(): void
     {
         $client = self::createClient();
-
-        /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $metadata = $em->getMetadataFactory()->getAllMetadata();
-        $tool = new SchemaTool($em);
-        $tool->dropSchema($metadata);
-        $tool->createSchema($metadata);
 
         $crawler = $client->request('GET', '/register/user');
         self::assertResponseIsSuccessful();
@@ -38,7 +30,7 @@ final class RegistrationSecurityTest extends WebTestCase
 
         self::assertSame(
             0,
-            (int) $em->getRepository(User::class)->count([]),
+            (int) self::getContainer()->get(EntityManagerInterface::class)->getRepository(User::class)->count([]),
             'Une soumission honeypot ne doit créer aucun utilisateur',
         );
     }

@@ -11,6 +11,7 @@
 					<a class="btn btn-primary" href="{{path('faq_index')}}" title="page faq">Retourner vers la FAQ</a>
 				</div>
 			</div>
+			{{ form_start(formView) }}
 			<div class="row my-4">
 				<div class="col-8 m-auto mb-3">
                     <div class="form-group">
@@ -26,5 +27,6 @@
                     <button class="btn btn-primary w-50" type="submit">Envoyer</button>
                 </div>
 			</div>
+			{{ form_end(formView) }}
 		</div>
 	{% endblock %}

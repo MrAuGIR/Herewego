@@ -80,7 +80,7 @@ class EventController extends AbstractController
 
         $isOnEvent = false;
         if ($user) {
-            if (! empty($this->participationFactory->getUserParticipation($event, $user))) {
+            if (!empty($this->participationFactory->getUserParticipation($event, $user))) {
                 $isOnEvent = true;
             }
         }
@@ -159,9 +159,8 @@ class EventController extends AbstractController
                 return $this->redirectToRoute('event_show', [
                     'id' => $event->getId(),
                 ]);
-            } else {
-                $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
             }
+            $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
         }
 
         return $this->render('event/create.html.twig', [
@@ -184,15 +183,13 @@ class EventController extends AbstractController
                 return $this->redirectToRoute('event_show', [
                     'id' => $event->getId(),
                 ]);
-            } else {
-                $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
             }
+            $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires');
         }
 
         return $this->render('event/update.html.twig', [
             'formView' => $form->createView(),
             'event' => $event,
-
         ]);
     }
 
@@ -217,7 +214,7 @@ class EventController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (! $this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'] ?? '')) {
+        if (!$this->isCsrfTokenValid('delete'.$picture->getId(), $data['_token'] ?? '')) {
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
 
@@ -231,7 +228,7 @@ class EventController extends AbstractController
     {
         $this->denyAccessUnlessGranted(EventVoter::CAN_EDIT, $picture->getEvent());
 
-        if (! $this->isCsrfTokenValid('order'.$picture->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('order'.$picture->getId(), (string) $request->request->get('_token'))) {
             return new Response('Token invalide', Response::HTTP_BAD_REQUEST);
         }
 

@@ -19,9 +19,12 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Event>
+ */
 class EventType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', TextType::class, [
@@ -75,7 +78,7 @@ class EventType extends AbstractType
                 'label' => 'Catégorie',
                 'placeholder' => '-- Choisir une catégorie --',
                 'class' => Category::class,
-                'choice_label' => function (Category $category) {
+                'choice_label' => static function (Category $category) {
                     return strtoupper($category->getName());
                 },
                 'required' => false,
@@ -84,7 +87,7 @@ class EventType extends AbstractType
                 'label' => "Groupe d'évênements",
                 'placeholder' => "-- Choisir une groupe d'évênements --",
                 'class' => EventGroup::class,
-                'choice_label' => function (EventGroup $eventGroup) {
+                'choice_label' => static function (EventGroup $eventGroup) {
                     return strtoupper($eventGroup->getName());
                 },
                 'required' => false,
@@ -113,7 +116,6 @@ class EventType extends AbstractType
             ->add('localisation', LocalisationType::class, [
                 'label' => false,
                 'required' => false,
-
             ])
             ->add('pictures', FileType::class, [
                 'label' => false,
@@ -140,7 +142,7 @@ class EventType extends AbstractType
         // ])
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Event::class,

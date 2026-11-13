@@ -8,8 +8,10 @@ use App\Entity\Event;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @extends Voter<string, Event|null>
+ */
 class EventVoter extends Voter
 {
     public const VIEW = 'view';
@@ -22,23 +24,22 @@ class EventVoter extends Voter
     public const CAN_CANCEL = 'CAN_CANCEL';
     public const CREATE_TRANSPORT = 'CREATE_TRANSPORT';
 
-    protected function supports($attribute, $subject): bool
+    protected function supports(string $attribute, mixed $subject): bool
     {
-        return (in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
+        return (\in_array($attribute, [self::VIEW, self::CAN_DELETE, self::CAN_EDIT, self::CAN_PARTICIPATE, self::CAN_CANCEL, self::CREATE_TRANSPORT])
             && $subject instanceof Event)
-            || (self::CAN_CREATE == $attribute && is_null($subject));
+            || (self::CAN_CREATE == $attribute && null === $subject);
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
-        /** @var User $user */
         $user = $token->getUser();
 
-        if (! $user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
 
@@ -49,7 +50,7 @@ class EventVoter extends Voter
             self::VIEW, self::CAN_CANCEL => $user->isParticipating($event),
             self::CREATE_TRANSPORT => $user->allowCreateTransport($event),
             self::CAN_DELETE, self::CAN_EDIT => $event->getUser() === $user,
-            self::CAN_PARTICIPATE => ! $user->isParticipating($event),
+            self::CAN_PARTICIPATE => !$user->isParticipating($event),
             self::CAN_CREATE => $user->isOrganizer(),
             default => false,
         };

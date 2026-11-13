@@ -12,18 +12,18 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210303205718 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE localisation ADD coordonnees_x VARCHAR(100) DEFAULT NULL, ADD coordonnees_y VARCHAR(100) DEFAULT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE localisation DROP coordonnees_x, DROP coordonnees_y');

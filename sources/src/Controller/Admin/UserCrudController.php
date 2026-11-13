@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +33,7 @@ class UserCrudController extends AbstractController
         $user = $userRepository->find((int) $request->query->get('userId'));
 
         if ($user) {
-            $user->setIsValidate(! $user->getIsValidate());
+            $user->setIsValidate(!$user->getIsValidate());
             $this->em->flush();
         }
 
@@ -44,15 +45,6 @@ class UserCrudController extends AbstractController
 
         return $this->render('admin/user/index.html.twig', [
             'users' => $users,
-        ]);
-    }
-
-    #[Route('/show/{id}', name: 'usercrud_show', methods: [Request::METHOD_GET])]
-    public function show(User $user): Response
-    {
-        return $this->render('admin/user/show.html.twig', [
-            'user' => $user,
-            'controller_name' => 'AdminController',
         ]);
     }
 
@@ -79,7 +71,7 @@ class UserCrudController extends AbstractController
         ]);
     }
 
-    #[Route('/edit/{id}', name: 'usercrud_edit', methods: [Request::METHOD_PUT])]
+    #[Route('/edit/{id}', name: 'usercrud_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(User $user, Request $request): Response
     {
         $form = $this->createForm(RegisterType::class, $user, ['chosen_role' => ['ROLE_USER']]);
@@ -101,9 +93,9 @@ class UserCrudController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'usercrud_delete', methods: [Request::METHOD_POST, Request::METHOD_DELETE])]
-    public function delete(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function delete(User $user, Request $request): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete'.$user->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 

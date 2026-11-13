@@ -13,16 +13,14 @@ class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void
     {
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return;
         }
 
         // Bloque tant qu'un administrateur n'a pas explicitement validé le compte
         // (couvre aussi bien is_validate = false que null).
         if (true !== $user->getIsValidate()) {
-            throw new CustomUserMessageAccountStatusException(
-                'Votre compte est en attente de validation par un administrateur.'
-            );
+            throw new CustomUserMessageAccountStatusException('Votre compte est en attente de validation par un administrateur.');
         }
     }
 

@@ -16,6 +16,9 @@ class Sender
 
     public const EVENT_DELETE = 'event_delete';
 
+    /**
+     * @param iterable<MailerRuleInterface> $senders
+     */
     public function __construct(
         #[AutowireIterator('app.mailer.sender')]
         private readonly iterable $senders,

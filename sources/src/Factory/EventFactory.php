@@ -23,6 +23,9 @@ class EventFactory
     ) {
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function create(FormInterface $form, Event $event, User $user): void
     {
         $event->setTag('pro')
@@ -33,11 +36,17 @@ class EventFactory
         $this->handleFromForm($form, $event);
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function edit(FormInterface $form, Event $event): void
     {
         $this->handleFromForm($form, $event);
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function handleFromForm(FormInterface $form, Event $event): void
     {
         foreach ($this->pictureFactory->handleFromForm($form) as $picture) {

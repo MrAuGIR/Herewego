@@ -12,10 +12,13 @@ class LogoFactory
 {
     public function __construct(
         #[Autowire(param: 'logo_directory')]
-        private string $logoDirectory
+        private string $logoDirectory,
     ) {
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function handleFromForm(FormInterface $form, Category $category): ?string
     {
         $logo = $form->get('pathLogo')->getData();
@@ -31,8 +34,8 @@ class LogoFactory
             $file
         );
 
-        if (! empty($category->getPathLogo())) {
-            unlink($this->logoDirectory.DIRECTORY_SEPARATOR.$category->getPathLogo());
+        if (!empty($category->getPathLogo())) {
+            unlink($this->logoDirectory.\DIRECTORY_SEPARATOR.$category->getPathLogo());
         }
 
         return $file;

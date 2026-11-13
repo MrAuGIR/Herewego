@@ -13,7 +13,7 @@ class CsvService
 {
     public function __construct(
         #[Autowire(param: 'csv_directory')]
-        private string $csvDirectory
+        private string $csvDirectory,
     ) {
     }
 
@@ -29,16 +29,21 @@ class CsvService
             $dataEvents[] = $line;
         }
 
-        return  $this->createFile($dataEvents);
+        return $this->createFile($dataEvents);
     }
 
+    /**
+     * @param Event[] $events
+     *
+     * @return \Generator<int, list<int|string|null>>
+     */
     private function generateLine(array $events): \Generator
     {
         foreach ($events as $event) {
             yield [
                 $event->getTitle(),
                 $event->getStartedAt()->format('Y-m-d'),
-                $event->getEndedAt()->format('Y-m-d'),
+                $event->getEndedAt()?->format('Y-m-d'),
                 $event->getCountViews(),
                 $event->getCategory()->getName(),
                 $event->getLocalisation()->getCityName(),
@@ -48,13 +53,15 @@ class CsvService
     }
 
     /**
+     * @param list<list<int|string|null>> $dataEvents
+     *
      * @throws CsvException
      */
     private function createFile(array $dataEvents): string
     {
         $fileSystem = new Filesystem();
         $fileName = $this->createFileName();
-        $filePath = $this->csvDirectory.DIRECTORY_SEPARATOR.$fileName;
+        $filePath = $this->csvDirectory.\DIRECTORY_SEPARATOR.$fileName;
 
         try {
             $fileSystem->mkdir($this->csvDirectory);

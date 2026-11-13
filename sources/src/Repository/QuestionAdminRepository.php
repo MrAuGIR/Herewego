@@ -9,11 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method QuestionAdmin|null find($id, $lockMode = null, $lockVersion = null)
- * @method QuestionAdmin|null findOneBy(array $criteria, array $orderBy = null)
- * @method QuestionAdmin[]    findAll()
- * @method QuestionAdmin[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
  * @extends ServiceEntityRepository<QuestionAdmin>
  */
 class QuestionAdminRepository extends ServiceEntityRepository

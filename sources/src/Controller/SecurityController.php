@@ -29,6 +29,8 @@ class SecurityController extends AbstractController
     /**
      * Garde-fou commun aux inscriptions : rate-limit par IP + détection honeypot.
      * Retourne true si la soumission doit être ignorée (bot honeypot).
+     *
+     * @param FormInterface<mixed> $form
      */
     private function isSpamSubmission(Request $request, FormInterface $form): bool
     {
@@ -111,7 +113,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/logout', name: 'app_logout', methods: [Request::METHOD_GET])]
-    public function logout()
+    public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
