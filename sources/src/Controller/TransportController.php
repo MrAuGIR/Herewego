@@ -77,7 +77,7 @@ class TransportController extends AbstractController
     #[IsGranted(TicketVoter::DELETE, 'ticket')]
     public function cancelTicket(int $transport_id, Ticket $ticket, Request $request): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('cancel'.$ticket->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('cancel'.$ticket->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
@@ -108,7 +108,7 @@ class TransportController extends AbstractController
         // Seul le gestionnaire du transport peut valider un ticket.
         $this->denyAccessUnlessGranted(TransportVoter::MANAGE, $transport);
 
-        if (! $this->isCsrfTokenValid('accept'.$ticket->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('accept'.$ticket->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
@@ -125,7 +125,7 @@ class TransportController extends AbstractController
     #[IsGranted(TicketVoter::DECLINE, 'ticket')]
     public function decline(Ticket $ticket, Request $request): RedirectResponse
     {
-        if (! $this->isCsrfTokenValid('decline'.$ticket->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('decline'.$ticket->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 
@@ -192,7 +192,7 @@ class TransportController extends AbstractController
     #[IsGranted(TransportVoter::DELETE, 'transport')]
     public function delete(Transport $transport, Request $request): Response
     {
-        if (! $this->isCsrfTokenValid('delete'.$transport->getId(), (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete'.$transport->getId(), (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
         }
 

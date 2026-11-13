@@ -16,29 +16,29 @@ class Ticket
     private ?int $id = null;
 
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $askedAt;
+    private ?\DateTimeInterface $askedAt = null;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $countPlaces;
+    private ?int $countPlaces = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $commentary;
+    private ?string $commentary = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isValidate;
+    private ?bool $isValidate = false;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $validateAt;
+    private ?\DateTimeInterface $validateAt = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $emailSendAt;
+    private ?\DateTimeInterface $emailSendAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tickets')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?User $user;
+    private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Transport::class, inversedBy: 'tickets')]
-    private ?Transport $transport;
+    private ?Transport $transport = null;
 
     public function getId(): ?int
     {

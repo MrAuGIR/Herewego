@@ -13,18 +13,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 readonly class EntityNotFoundListener
 {
     public function __construct(
-        private NotFoundRedirectService $notFoundRedirectService
+        private NotFoundRedirectService $notFoundRedirectService,
     ) {
     }
 
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        if (! $exception instanceof NotFoundHttpException) {
+        if (!$exception instanceof NotFoundHttpException) {
             return;
         }
 
-        if (! empty($response = $this->notFoundRedirectService->handle($event->getRequest()))) {
+        if (!empty($response = $this->notFoundRedirectService->handle($event->getRequest()))) {
             $event->setResponse($response);
         }
     }

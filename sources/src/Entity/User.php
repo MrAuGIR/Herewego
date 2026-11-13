@@ -26,6 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private string $email;
 
+    /** @var list<string> */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -71,18 +72,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'users')]
     private ?Localisation $localisation = null;
 
+    /** @var Collection<int, Ticket> */
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $tickets;
 
+    /** @var Collection<int, Participation> */
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $participations;
 
+    /** @var Collection<int, QuestionUser> */
     #[ORM\OneToMany(targetEntity: QuestionUser::class, mappedBy: 'user')]
     private Collection $questionUsers;
 
+    /** @var Collection<int, Transport> */
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $transports;
 
+    /** @var Collection<int, Event> */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $events;
 
@@ -124,6 +130,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -131,9 +139,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return array_values(array_unique($roles));
     }
 
+    /**
+     * @param list<string> $roles
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -321,7 +332,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Ticket[]
+     * @return Collection<int, Ticket>
      */
     public function getTickets(): Collection
     {
@@ -330,7 +341,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTicket(Ticket $ticket): self
     {
-        if (! $this->tickets->contains($ticket)) {
+        if (!$this->tickets->contains($ticket)) {
             $this->tickets[] = $ticket;
             $ticket->setUser($this);
         }
@@ -351,7 +362,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Participation[]
+     * @return Collection<int, Participation>
      */
     public function getParticipations(): Collection
     {
@@ -360,7 +371,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addParticipation(Participation $participation): self
     {
-        if (! $this->participations->contains($participation)) {
+        if (!$this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setUser($this);
         }
@@ -381,7 +392,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|QuestionUser[]
+     * @return Collection<int, QuestionUser>
      */
     public function getQuestionUsers(): Collection
     {
@@ -390,7 +401,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addQuestionUser(QuestionUser $questionUser): self
     {
-        if (! $this->questionUsers->contains($questionUser)) {
+        if (!$this->questionUsers->contains($questionUser)) {
             $this->questionUsers[] = $questionUser;
             $questionUser->setUser($this);
         }
@@ -411,7 +422,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Transport[]
+     * @return Collection<int, Transport>
      */
     public function getTransports(): Collection
     {
@@ -420,7 +431,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addTransport(Transport $transport): self
     {
-        if (! $this->transports->contains($transport)) {
+        if (!$this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setUser($this);
         }
@@ -440,6 +451,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
     public function getEvents(): Collection
     {
         return $this->events;
@@ -447,7 +461,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addEvent(Event $event): self
     {
-        if (! $this->events->contains($event)) {
+        if (!$this->events->contains($event)) {
             $this->events[] = $event;
             $event->setUser($this);
         }
@@ -479,17 +493,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function countValidatedTickets(): int
     {
-        $validatedTickets = array_filter($this->getTickets()->toArray(), function (Ticket $ticket) {
+        $validatedTickets = array_filter($this->getTickets()->toArray(), static function (Ticket $ticket) {
             return $ticket->getIsValidate();
         });
 
-        return count($validatedTickets);
+        return \count($validatedTickets);
     }
 
     public function allowCreateTransport(Event $event): bool
     {
         if ($this->isParticipating($event)) {
-            if (! $this->alreadyManageTransport($event)) {
+            if (!$this->alreadyManageTransport($event)) {
                 return true;
             }
         }
@@ -521,6 +535,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isOrganizer(): bool
     {
-        return in_array('ROLE_ORGANIZER', $this->getRoles(), true);
+        return \in_array('ROLE_ORGANIZER', $this->getRoles(), true);
     }
 }

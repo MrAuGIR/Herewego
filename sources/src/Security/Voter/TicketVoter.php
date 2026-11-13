@@ -9,6 +9,9 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Ticket>
+ */
 class TicketVoter extends Voter
 {
     public const CREATE = 'create';
@@ -26,11 +29,11 @@ class TicketVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
 
@@ -41,7 +44,7 @@ class TicketVoter extends Voter
             self::CREATE => true,
             self::DELETE, self::EDIT => $ticket->getUser() === $user,
             self::DECLINE => $ticket->getTransport()->getUser() === $user,
-            default => throw new \LogicException('This code should not be reached!')
+            default => throw new \LogicException('This code should not be reached!'),
         };
     }
 }

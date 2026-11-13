@@ -15,15 +15,15 @@ class EventGroup
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id;
+    private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $name;
-
+    private ?string $name = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $pathImage;
+    private ?string $pathImage = null;
 
+    /** @var Collection<int, Event> */
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'eventGroup')]
     private Collection $Events;
 
@@ -61,6 +61,9 @@ class EventGroup
         return $this;
     }
 
+    /**
+     * @return Collection<int, Event>
+     */
     public function getEvents(): Collection
     {
         return $this->Events;
@@ -68,7 +71,7 @@ class EventGroup
 
     public function addEvent(Event $event): self
     {
-        if (! $this->Events->contains($event)) {
+        if (!$this->Events->contains($event)) {
             $this->Events[] = $event;
             $event->setEventGroup($this);
         }

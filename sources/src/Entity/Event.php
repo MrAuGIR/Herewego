@@ -17,76 +17,79 @@ class Event
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id;
+    private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
     #[Assert\Length(min: 5, max: 255, minMessage: 'La question doit faire au moins 5 caractères', maxMessage: 'Le titre doit faire moins de 255 caractères')]
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $title;
+    private ?string $title = null;
 
     #[Assert\NotBlank(message: 'La description est obligatoire.')]
     #[ORM\Column(type: 'text')]
-    private ?string $description;
+    private ?string $description = null;
 
     #[Assert\NotBlank(message: "La date de début d'événement est obligatoire.")]
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $startedAt;
+    private ?\DateTimeInterface $startedAt = null;
 
     #[Assert\NotBlank(message: "La date de fin d'événement est obligatoire.")]
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $endedAt;
+    private ?\DateTimeInterface $endedAt = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $website;
+    private ?string $website = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $phone;
+    private ?string $phone = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $countViews;
+    private ?int $countViews = 0;
 
     #[ORM\Column(type: 'text')]
-    private ?string $tag;
+    private ?string $tag = null;
 
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $createdAt;
+    private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $slug;
+    private ?string $slug = null;
 
     #[ORM\ManyToOne(targetEntity: EventGroup::class, inversedBy: 'Events')]
-    private ?EventGroup $eventGroup;
+    private ?EventGroup $eventGroup = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'events')]
     #[Assert\NotBlank(message: 'La catégorie est obligatoire.')]
-    private ?Category $category;
+    private ?Category $category = null;
 
+    /** @var Collection<int, Picture> */
     #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
     private Collection $pictures;
 
+    /** @var Collection<int, Transport> */
     #[ORM\OneToMany(targetEntity: Transport::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $transports;
 
+    /** @var Collection<int, Participation> */
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $participations;
 
     #[ORM\ManyToOne(targetEntity: Localisation::class, cascade: ['persist', 'remove'], inversedBy: 'events')]
-    private ?Localisation $localisation;
+    private ?Localisation $localisation = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $facebookLink;
+    private ?string $facebookLink = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $instagramLink;
+    private ?string $instagramLink = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $twitterLink;
+    private ?string $twitterLink = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'events')]
-    private ?User $user;
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -256,6 +259,9 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection<int, Picture>
+     */
     public function getPictures(): Collection
     {
         return $this->pictures;
@@ -263,7 +269,7 @@ class Event
 
     public function addPicture(Picture $picture): self
     {
-        if (! $this->pictures->contains($picture)) {
+        if (!$this->pictures->contains($picture)) {
             $this->pictures[] = $picture;
             $picture->setEvent($this);
         }
@@ -283,6 +289,9 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection<int, Transport>
+     */
     public function getTransports(): Collection
     {
         return $this->transports;
@@ -290,7 +299,7 @@ class Event
 
     public function addTransport(Transport $transport): self
     {
-        if (! $this->transports->contains($transport)) {
+        if (!$this->transports->contains($transport)) {
             $this->transports[] = $transport;
             $transport->setEvent($this);
         }
@@ -310,6 +319,9 @@ class Event
         return $this;
     }
 
+    /**
+     * @return Collection<int, Participation>
+     */
     public function getParticipations(): Collection
     {
         return $this->participations;
@@ -317,7 +329,7 @@ class Event
 
     public function addParticipation(Participation $participation): self
     {
-        if (! $this->participations->contains($participation)) {
+        if (!$this->participations->contains($participation)) {
             $this->participations[] = $participation;
             $participation->setEvent($this);
         }

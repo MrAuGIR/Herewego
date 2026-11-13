@@ -9,11 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Transport|null find($id, $lockMode = null, $lockVersion = null)
- * @method Transport|null findOneBy(array $criteria, array $orderBy = null)
- * @method Transport[]    findAll()
- * @method Transport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
  * @extends ServiceEntityRepository<Transport>
  */
 class TransportRepository extends ServiceEntityRepository
@@ -58,14 +53,12 @@ class TransportRepository extends ServiceEntityRepository
      *
      * @return Transport[]
      */
-    public function findTransportToAlert()
+    public function findTransportToAlert(): array
     {
-        $date = new \DateTime('now');
-        $date = $date->modify('-2 day');
-
         $query = $this->createQueryBuilder('p')
-            ->where('p.goStartedAt > :date')
-            ->setParameter('date', $date);
+            ->where('p.goStartedAt BETWEEN :now AND :limit')
+            ->setParameter('now', new \DateTime('now'))
+            ->setParameter('limit', new \DateTime('+2 days'));
 
         return $query->getQuery()->getResult();
     }

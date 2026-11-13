@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Dto\EventQueryDto;
+use App\Entity\Category;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Event|null find($id, $lockMode = null, $lockVersion = null)
- * @method Event|null findOneBy(array $criteria, array $orderBy = null)
- * @method Event[]    findAll()
- * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
  * @extends ServiceEntityRepository<Event>
  */
 class EventRepository extends ServiceEntityRepository
@@ -29,11 +25,11 @@ class EventRepository extends ServiceEntityRepository
      *
      * @return Event[]
      */
-    public function findLast($category = null): array
+    public function findLast(Category|int|null $category = null): array
     {
         if (null === $category) {
             return $this->createQueryBuilder('e')
-                ->orderBy('e.createdAt', 'ASC')
+                ->orderBy('e.createdAt', 'DESC')
                 ->setMaxResults(6)
                 ->getQuery()
                 ->getResult();
@@ -42,7 +38,7 @@ class EventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->andWhere('e.category = :category')
             ->setParameter('category', $category)
-            ->orderBy('e.createdAt', 'ASC')
+            ->orderBy('e.createdAt', 'DESC')
             ->setMaxResults(6)
             ->getQuery()
             ->getResult();
@@ -56,12 +52,15 @@ class EventRepository extends ServiceEntityRepository
     public function findByPopularity(): array
     {
         return $this->createQueryBuilder('e')
-            ->orderBy('e.countViews', 'ASC')
+            ->orderBy('e.countViews', 'DESC')
             ->setMaxResults(6)
             ->getQuery()
             ->getResult();
     }
 
+    /**
+     * @return Event[]
+     */
     public function findByFilters(EventQueryDto $dto): array
     {
         $date = new \DateTime();
@@ -70,18 +69,17 @@ class EventRepository extends ServiceEntityRepository
             ->andWhere('e.endedAt > :date')
             ->setParameter('date', $date);
 
-
-        if (! empty($categories = $dto->categories)) {
+        if (!empty($categories = $dto->categories)) {
             $query->andWhere('e.category in (:cats)')
                 ->setParameter('cats', array_values($categories));
         }
 
-        if (! empty($keyWord = $dto->q)) {
+        if (!empty($keyWord = $dto->q)) {
             $query->andWhere('e.title LIKE :title')
             ->setParameter('title', $keyWord.'%');
         }
 
-        if (! empty($localisation = $dto->localisation)) {
+        if (!empty($localisation = $dto->localisation)) {
             $query->innerJoin('e.localisation', 'l')
                 ->andWhere('l.cityName LIKE :localisation')
                 ->setParameter('localisation', $localisation.'%');
@@ -107,12 +105,17 @@ class EventRepository extends ServiceEntityRepository
             ->where('c.endedAt > :date')
             ->setParameter('date', $date);
 
-        if (! empty($categories = $dto->categories)) {
+        if (!empty($categories = $dto->categories)) {
             $query->andWhere('c.category IN(:cats)')
                 ->setParameter('cats', array_values($categories));
         }
 
-        if (! empty($localisation = $dto->localisation)) {
+        if (!empty($keyWord = $dto->q)) {
+            $query->andWhere('c.title LIKE :title')
+                ->setParameter('title', $keyWord.'%');
+        }
+
+        if (!empty($localisation = $dto->localisation)) {
             $query->innerJoin('c.localisation', 'l')
                 ->andWhere('l.cityName LIKE :localisation')
                 ->setParameter('localisation', $localisation.'%');
@@ -124,7 +127,7 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByDateAfterNow($organizerId): array
+    public function findByDateAfterNow(?int $organizerId): array
     {
         $date = new \DateTime();
 
@@ -142,7 +145,7 @@ class EventRepository extends ServiceEntityRepository
     /**
      * @return Event[]
      */
-    public function findByDateBeforeNow($organizerId): array
+    public function findByDateBeforeNow(?int $organizerId): array
     {
         $date = new \DateTime();
 

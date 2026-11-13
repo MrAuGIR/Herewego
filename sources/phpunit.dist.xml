@@ -31,6 +31,10 @@
         <include>
             <directory>src</directory>
         </include>
+        <exclude>
+            <file>src/Kernel.php</file>
+            <directory>src/DataFixtures</directory>
+        </exclude>
 
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
@@ -40,5 +44,6 @@
     </source>
 
     <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
     </extensions>
 </phpunit>

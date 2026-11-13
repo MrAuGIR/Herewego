@@ -9,11 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method EventGroup|null find($id, $lockMode = null, $lockVersion = null)
- * @method EventGroup|null findOneBy(array $criteria, array $orderBy = null)
- * @method EventGroup[]    findAll()
- * @method EventGroup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- *
  * @extends ServiceEntityRepository<EventGroup>
  */
 class EventGroupRepository extends ServiceEntityRepository

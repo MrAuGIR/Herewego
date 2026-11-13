@@ -48,8 +48,8 @@ class TagService
      */
     public function createHtmlTag(string $tagCode, int|string $eventId, string $eventTitle): string
     {
-        $title = htmlspecialchars($eventTitle, ENT_QUOTES, 'UTF-8');
-        $code = htmlspecialchars($tagCode, ENT_QUOTES, 'UTF-8');
+        $title = htmlspecialchars($eventTitle, \ENT_QUOTES, 'UTF-8');
+        $code = htmlspecialchars($tagCode, \ENT_QUOTES, 'UTF-8');
 
         if (null !== $this->urlGenerator) {
             $url = $this->urlGenerator->generate('event_show', ['id' => $eventId], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -60,8 +60,8 @@ class TagService
             $baseUrl = '';
         }
 
-        $url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-        $img = htmlspecialchars($baseUrl.'/img/hwg_header.png', ENT_QUOTES, 'UTF-8');
+        $url = htmlspecialchars($url, \ENT_QUOTES, 'UTF-8');
+        $img = htmlspecialchars($baseUrl.'/img/hwg_header.png', \ENT_QUOTES, 'UTF-8');
 
         return "<div style='border: 3px solid #054550; width: 120px;'>
                     <a style='text-decoration:none;color:black;' title='{$title}' href='{$url}'>

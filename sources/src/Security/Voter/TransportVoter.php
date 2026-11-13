@@ -9,6 +9,9 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Transport>
+ */
 class TransportVoter extends Voter
 {
     public const VIEW = 'view';
@@ -26,11 +29,11 @@ class TransportVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (! $user instanceof User) {
+        if (!$user instanceof User) {
             return false;
         }
 
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+        if (\in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             return true;
         }
 

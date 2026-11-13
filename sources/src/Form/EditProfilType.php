@@ -11,9 +11,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<User>
+ */
 class EditProfilType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('email', EmailType::class, [
@@ -36,12 +39,11 @@ class EditProfilType extends AbstractType
                 'label' => false, // fait disparaitre le 'localisation' dans le formulaire
             ]);
 
-        if (in_array('ROLE_ORGANIZER', $options['chosen_role'])) {
+        if (\in_array('ROLE_ORGANIZER', $options['chosen_role'])) {
             $builder->add('companyName', TextType::class, [
                 'label' => 'votre raison social',
                 'attr' => ['placeholder' => 'renseigner votre raison social'],
                 'required' => false,
-
             ])
                 ->add('siret', TextType::class, [
                     'label' => 'votre numéro de siret',
@@ -55,7 +57,7 @@ class EditProfilType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,

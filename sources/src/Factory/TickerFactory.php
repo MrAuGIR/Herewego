@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 readonly class TickerFactory
 {
     public function __construct(
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
     ) {
     }
 
@@ -29,7 +29,7 @@ readonly class TickerFactory
 
     public function validTicket(Transport $transport, Ticket $ticket): bool
     {
-        if (($transport->getRemainingPlace() >= $ticket->getCountPlaces()) && ! $ticket->getIsValidate()) {
+        if (($transport->getRemainingPlace() >= $ticket->getCountPlaces()) && !$ticket->getIsValidate()) {
             $ticket->setIsValidate(true);
             $transport->setRemainingPlace($transport->getRemainingPlace() - $ticket->getCountPlaces());
             $ticket->setValidateAt(new \DateTime());

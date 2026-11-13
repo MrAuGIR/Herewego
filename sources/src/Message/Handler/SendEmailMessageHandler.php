@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class SendEmailMessageHandler
 {
     public function __construct(
-        private Sender $sender
+        private Sender $sender,
     ) {
     }
 

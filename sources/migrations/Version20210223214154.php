@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210223214154 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE transport ADD localisation_start_id INT DEFAULT NULL, ADD localisation_return_id INT DEFAULT NULL');
@@ -27,7 +27,7 @@ final class Version20210223214154 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_66AB212E564C7328 ON transport (localisation_return_id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE transport DROP FOREIGN KEY FK_66AB212EEB8A9E18');

@@ -38,7 +38,7 @@ services:
         build: php
         container_name: ${PROJECT_NAME}_www
         ports:
-          - "3000:80"
+          - "${WWW_PORT:-3000}:80"
         volumes:
             - ./php/vhosts:/etc/apache2/sites-enabled
             - ${LOCAL_PROJECT_ROOT}:/var/www/html

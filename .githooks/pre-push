@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Hook pre-push : qualité + tests exécutés dans les conteneurs Docker.
+# Installation : make hooks-install   —   Contournement d'urgence : git push --no-verify
+#
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# PROJECT_NAME est défini dans .env (préfixe des conteneurs)
+PROJECT_NAME="$(grep -E '^PROJECT_NAME=' .env | cut -d= -f2)"
+
+bold() { printf '\n\033[1m▶ %s\033[0m\n' "$1"; }
+fail() { printf '\n\033[31m✖ %s\033[0m\n' "$1" >&2; exit 1; }
+
+for svc in www db; do
+  if ! docker ps --format '{{.Names}}' | grep -qx "${PROJECT_NAME}_${svc}"; then
+    fail "Conteneur ${PROJECT_NAME}_${svc} arrêté : lancez « make start » puis relancez le push (ou git push --no-verify)."
+  fi
+done
+
+run() {
+  bold "$1"
+  shift
+  "$@" || fail "Échec : $*  —  push annulé (corrigez, ou git push --no-verify en dernier recours)."
+}
+
+run "PHP-CS-Fixer (dry-run)"       make --no-print-directory cs
+run "PHPStan"                      make --no-print-directory phpstan
+run "Lint Symfony + schéma Doctrine" make --no-print-directory lint
+run "composer audit (CVE)"        make --no-print-directory audit
+run "PHPUnit + couverture"         make --no-print-directory test-coverage
+
+printf '\n\033[32m✔ Qualité et tests OK — push autorisé.\033[0m\n'

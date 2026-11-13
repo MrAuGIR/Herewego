@@ -8,6 +8,13 @@ parameters:
     logo_directory: '%kernel.project_dir%/public/logo'
     csv_directory: '%kernel.project_dir%/public/csv'
 
+when@test:
+    parameters:
+        # Les tests n'écrivent jamais dans public/ : fichiers isolés dans var/
+        images_directory: '%kernel.project_dir%/var/test-files/uploads'
+        logo_directory: '%kernel.project_dir%/var/test-files/logo'
+        csv_directory: '%kernel.project_dir%/var/test-files/csv'
+
 services:
     # default configuration for services in *this* file
     _defaults:

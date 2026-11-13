@@ -7,3 +7,7 @@
 *.sql
 *.sql.gz
 *.tar.gz
+
+# Documents d'exploitation prod (runbook, sauvegardes serveur) — jamais versionnés
+/deploy_prod.md
+*.bak

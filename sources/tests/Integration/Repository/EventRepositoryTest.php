@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional;
+namespace App\Tests\Integration\Repository;
 
 use App\Dto\EventQueryDto;
 use App\Entity\Category;
 use App\Repository\EventRepository;
+use App\Tests\Support\CreatesEntities;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * Vérifie que les requêtes corrigées (Lot 3) s'exécutent sans erreur DQL.
@@ -14,8 +16,10 @@ use App\Repository\EventRepository;
  * Avant correction : EventRepository::findLast($category) générait un DQL
  * invalide, et getCountEvent un paramètre ':cats' incohérent.
  */
-final class EventRepositoryTest extends DatabaseTestCase
+final class EventRepositoryTest extends KernelTestCase
 {
+    use CreatesEntities;
+
     private function repo(): EventRepository
     {
         return self::getContainer()->get(EventRepository::class);
@@ -29,8 +33,8 @@ final class EventRepositoryTest extends DatabaseTestCase
     public function testFindLastWithCategoryExecutes(): void
     {
         $category = (new Category())->setName('Sport')->setSlug('sport')->setColor('#000');
-        $this->em->persist($category);
-        $this->em->flush();
+        $this->em()->persist($category);
+        $this->em()->flush();
 
         // Ne doit pas lever d'exception DQL (bug corrigé).
         self::assertSame([], $this->repo()->findLast($category));
