@@ -1,52 +1,140 @@
 name: CI
 
+# Qualité + sécurité + tests + couverture sur chaque PR et chaque merge vers develop ou main
+# (flux : feature/* → develop → main).
 on:
-  push:
-    branches: [main, develop]
   pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: '8.2'
+  PHP_EXTENSIONS: pdo_mysql, intl, mbstring, dom, xml, ctype, iconv, openssl, fileinfo, gd, zip, xsl
 
 jobs:
   quality:
-    name: Lint · PHPStan · Tests
+    name: Qualité (PHP-CS-Fixer, PHPStan, lint Symfony)
     runs-on: ubuntu-latest
+    env:
+      # Aucune BDD ici : serverVersion évite toute connexion pour détecter la plateforme.
+      DATABASE_URL: "mysql://root:root@127.0.0.1:3306/herewego?serverVersion=8.0&charset=utf8mb4"
     defaults:
       run:
         working-directory: sources
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: ctype, iconv, intl, pdo_sqlite, mbstring, zip
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
           coverage: none
-          tools: composer:v2
 
       - name: Cache Composer
         uses: actions/cache@v4
         with:
           path: sources/vendor
           key: composer-${{ hashFiles('sources/composer.lock') }}
-          restore-keys: composer-
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        run: composer install --no-interaction --prefer-dist --no-progress
 
-      - name: Coding standards (php-cs-fixer)
-        run: composer check-style
+      - name: PHP-CS-Fixer
+        run: composer cs-check
 
-      - name: Static analysis (PHPStan)
-        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+      - name: PHPStan (niveau 6, sans baseline)
+        run: composer phpstan
 
-      - name: Prepare test database
+      - name: Lint (container, YAML, Twig, mapping Doctrine)
+        run: composer lint
+
+  security:
+    name: Sécurité (composer audit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: none
+
+      - name: Audit des dépendances (CVE connues, paquets abandonnés)
+        run: composer audit --locked --no-interaction
+
+  tests:
+    name: Tests & couverture (PHPUnit, MySQL 8)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sources
+    services:
+      mysql:
+        image: mysql:8.0
         env:
-          APP_ENV: test
+          MYSQL_ROOT_PASSWORD: root
+          # Doctrine ajoute le suffixe `_test` (config when@test) → base réelle ciblée.
+          MYSQL_DATABASE: herewego_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      APP_ENV: test
+      DATABASE_URL: "mysql://root:root@127.0.0.1:3306/herewego?serverVersion=8.0&charset=utf8mb4"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: pcov
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: sources/vendor
+          key: composer-${{ hashFiles('sources/composer.lock') }}
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare test database (migrations depuis zéro)
+        run: php bin/console doctrine:migrations:migrate -n
+
+      - name: PHPUnit (avec couverture)
+        run: composer test-coverage
+
+      - name: Seuil de couverture (70 %)
         run: |
-          php bin/console doctrine:schema:create --no-interaction
+          {
+            echo '### Couverture backend'
+            php bin/coverage-check.php var/coverage/clover.xml 70
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          exit "${PIPESTATUS[0]}"
 
-      - name: Tests (PHPUnit)
-        env:
-          APP_ENV: test
-        run: vendor/bin/phpunit
+      - name: Rapport de couverture
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-backend
+          path: sources/var/coverage/html
+          if-no-files-found: ignore
