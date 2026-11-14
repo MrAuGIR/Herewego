@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -22,7 +22,7 @@ class SecurityController extends AbstractController
     public function __construct(
         private readonly UserFactory $userFactory,
         private readonly OrganizerFactory $organizerFactory,
-        private readonly RateLimiterFactory $registrationLimiter,
+        private readonly RateLimiterFactoryInterface $registrationLimiter,
     ) {
     }
 

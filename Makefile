@@ -44,6 +44,10 @@ test-coverage:
 	$(WWW_COV) composer test-coverage
 	$(WWW) composer coverage-check
 
+# Purge des entrées expirées du cache applicatif (table cache_items)
+cache-prune:
+	$(WWW) php bin/console cache:pool:prune
+
 quality: cs phpstan lint
 
 check: quality audit test-coverage
@@ -53,4 +57,4 @@ hooks-install:
 	git config core.hooksPath .githooks
 	@echo "Hooks git installés (.githooks)."
 
-.PHONY: start stop bash cs cs-fix phpstan lint audit test-db test test-coverage quality check hooks-install
+.PHONY: start stop bash cs cs-fix phpstan lint audit test-db test test-coverage cache-prune quality check hooks-install
