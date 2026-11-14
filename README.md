@@ -82,3 +82,23 @@ Sur chaque PR vers `develop` ou `main` et chaque push dans ces branches,
 [GitHub Actions](.github/workflows/ci.yml) lance 3 jobs : qualité (CS, PHPStan, lint),
 sécurité (`composer audit`), tests + couverture (MySQL 8, base montée depuis les migrations).
 Le rapport de couverture est publié en artefact et résumé dans l'onglet *Summary* du run.
+
+## Cache applicatif (production)
+
+Le cache applicatif (`cache.app`, dont le rate limiter d'inscription : une entrée
+par IP) est stocké **en base** (table `cache_items`, adaptateur Doctrine DBAL) et non
+en fichiers : l'adaptateur fichier écrit un fichier par entrée sans jamais supprimer
+les expirées, ce qui peut saturer le **quota d'inodes** de l'hébergement mutualisé
+(incident Bibliotheque : 127 000 fichiers dans `var/cache/prod/pools`).
+
+Au déploiement de ce changement (depuis `sources/`) :
+
+```bash
+php bin/console doctrine:migrations:migrate -n --env=prod   # crée cache_items
+php bin/console cache:clear --env=prod
+rm -rf var/cache/prod/pools/app                             # anciens fichiers, devenus inutiles
+```
+
+Purge des lignes expirées (sans impact sur le quota de fichiers) :
+`php bin/console cache:pool:prune --env=prod` (`make cache-prune` en local), à
+planifier si possible (cron hebdomadaire).

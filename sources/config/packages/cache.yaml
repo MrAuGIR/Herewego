@@ -3,8 +3,16 @@ framework:
         # Unique name of your app: used to compute stable namespaces for cache keys.
         #prefix_seed: your_vendor_name/app_name
 
-        # The "app" cache stores to the filesystem by default.
-        # The data in this cache should persist between deploys.
+        # Le cache applicatif est stocké en base (table `cache_items`, créée par
+        # migration) et non sur le système de fichiers : l'adaptateur fichier écrit
+        # un fichier par entrée et ne supprime jamais les expirées, ce qui sature le
+        # quota d'inodes de l'hébergement mutualisé (incident Bibliotheque : 127 000
+        # fichiers dans var/cache/prod/pools). Concerne notamment le rate limiter
+        # d'inscription (une entrée par IP).
+        # Purge des entrées expirées : `php bin/console cache:pool:prune`.
+        app: cache.adapter.doctrine_dbal
+        default_doctrine_dbal_provider: database_connection
+
         # Other options include:
 
         # Redis
